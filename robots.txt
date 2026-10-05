@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://majian901104-del.github.io/ipo-learning-circle-india/sitemap.xml
