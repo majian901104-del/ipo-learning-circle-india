@@ -36,3 +36,51 @@ body{letter-spacing:.002em}.header{backdrop-filter:blur(12px);background:rgba(25
   .cta .inner{padding-bottom:28px}
   .intel-hero .mast-actions .outline,.mast-actions .outline{min-height:44px;display:inline-flex;align-items:center}
 }
+
+/* V17.3 mobile audit fixes */
+.community-float:focus-visible,.mobile-nav summary:focus-visible,.mobile-panel a:focus-visible{outline:2px solid #d4b170;outline-offset:3px}
+@keyframes ctaDotPulse{0%,100%{box-shadow:0 0 0 4px rgba(212,177,112,.12)}50%{box-shadow:0 0 0 9px rgba(212,177,112,.03)}}
+@media(max-width:600px){
+  .top .inner{padding:6px 18px;justify-content:center;font-size:9px;letter-spacing:.08em}
+  .top .inner>span:last-child{display:none}
+  .nav{padding:11px 16px;gap:12px;min-height:58px}
+  .brand{min-width:0}
+  .brand b{font-size:18px;white-space:nowrap}
+  .brand small{display:none}
+  .mobile-nav{flex:0 0 auto}
+  .mobile-nav summary{min-width:58px;min-height:44px;padding:0 10px;display:flex;align-items:center;justify-content:center}
+  .mobile-panel{max-height:calc(100vh - 92px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:10px;padding-bottom:16px}
+  .mobile-panel a{min-height:44px;display:flex;align-items:center;padding:10px 0}
+  .intel-hero .inner{padding:52px 18px 38px;gap:30px}
+  .intel-hero h1{font-size:36px;line-height:1.04;margin-bottom:20px}
+  .intel-hero p{font-size:15px;line-height:1.6}
+  .intel-hero .mast-actions{width:100%;gap:12px;margin-top:24px}
+  .intel-hero .mast-actions .outline{width:100%;justify-content:center;min-height:48px}
+  .intel-hero .mast-actions>a:not(.outline){min-height:44px;display:flex;align-items:center}
+  .intel-panel{margin-top:2px}
+  .intel-row{padding:13px 0}
+  .intel-row b{font-size:16px}
+  .ticker .inner{padding:0 18px;scrollbar-width:none}
+  .ticker .inner::-webkit-scrollbar{display:none}
+  .tick{min-width:150px;padding:12px 14px}
+  .tick:first-child{padding-left:0}
+  .institution-band .inner{grid-template-columns:1fr 1fr;padding:24px 18px;gap:18px 22px}
+  .institution-band .lead{grid-column:1/-1;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .institution-band b{font-size:21px}
+  .institution-band small{font-size:8px;line-height:1.35}
+  .section{padding:48px 18px}
+  .command-grid{gap:36px}
+  .terminal-row{grid-template-columns:62px 1fr 50px;gap:10px;padding:15px 12px}
+  .terminal-row time{font-size:9px}
+  .terminal-row b{font-size:15px;line-height:1.25}
+  .terminal-row a{font-size:8px}
+  .report{min-height:0;padding:18px 0}
+  .report h3{font-size:23px;margin:18px 0 10px}
+  .community-float{min-height:60px}
+  .community-float .cf-dot{animation:ctaDotPulse 2.8s ease-in-out infinite}
+}
+@media(max-width:360px){
+  .community-float small{display:none}
+  .community-float{min-height:56px}
+  .intel-hero h1{font-size:33px}
+}
