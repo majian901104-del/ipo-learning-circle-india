@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>IPO Desk Access | Angel Research</title>
+<link rel="stylesheet" href="site.css">
+<style>
+.apply-wrap{min-height:100vh;background:#f4f1e9;padding:48px 20px 90px}
+.apply-shell{max-width:980px;margin:0 auto;display:grid;grid-template-columns:.85fr 1.15fr;background:#fff;border:1px solid #d9dedf;box-shadow:0 24px 70px rgba(7,27,37,.12)}
+.apply-side{background:#071b25;color:#fff;padding:54px 44px}
+.apply-side .eyebrow{color:#d2b57d}.apply-side h1{font-family:Georgia,serif;font-size:44px;line-height:1.05;font-weight:400;margin:0 0 18px}.apply-side p{color:#b9c7cd;font-size:14px}
+.apply-points{margin-top:32px;border-top:1px solid #294854}.apply-points div{padding:15px 0;border-bottom:1px solid #294854;font-size:12px;color:#d9e1e4}
+.apply-card{padding:48px 46px}.apply-card h2{font-family:Georgia,serif;font-weight:400;font-size:32px;margin:0 0 8px}.apply-card>p{color:#65747c;font-size:13px;margin:0 0 28px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field.full{grid-column:1/-1}.field label{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#65747c;font-weight:700;margin-bottom:7px}.field input,.field select{width:100%;border:1px solid #d9dedf;background:#fff;padding:13px 12px;font:inherit;color:#102733}.field input:focus,.field select:focus{outline:2px solid #c7a76d;outline-offset:1px}
+.consent{display:flex;gap:10px;align-items:flex-start;margin:22px 0 20px;font-size:11px;color:#65747c}.consent input{margin-top:3px}
+.submit{width:100%;border:0;background:#0b2431;color:#fff;padding:16px 18px;font-size:11px;font-weight:800;letter-spacing:.1em;cursor:pointer}.submit:disabled{opacity:.55;cursor:not-allowed}
+.form-note{font-size:10px;color:#7a878d;margin-top:14px;line-height:1.5}.setup-note{display:none;margin-top:16px;padding:12px 14px;background:#fff5df;border:1px solid #ead2a1;color:#6e5425;font-size:12px}
+@media(max-width:760px){.apply-shell{grid-template-columns:1fr}.apply-side{padding:36px 24px}.apply-side h1{font-size:35px}.apply-card{padding:32px 22px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="apply-wrap">
+  <div class="apply-shell">
+    <section class="apply-side">
+      <div class="eyebrow">India Primary Markets Desk</div>
+      <h1>Access the IPO intelligence community.</h1>
+      <p>Complete a short investor profile before entering the community. Your information is used only for IPO research updates and community access.</p>
+      <div class="apply-points">
+        <div>Daily IPO &amp; listing updates</div>
+        <div>GMP and subscription monitoring</div>
+        <div>Institutional-style issuer research</div>
+        <div>Primary-market news &amp; alerts</div>
+      </div>
+    </section>
+    <section class="apply-card">
+      <h2>IPO Desk Access</h2>
+      <p>30 seconds · Basic profile only</p>
+      <form id="leadForm" method="POST" target="leadSink">
+        <div class="form-grid">
+          <div class="field"><label>Full Name *</label><input name="full_name" autocomplete="name" required></div>
+          <div class="field"><label>Age Range *</label><select name="age_range" required><option value="">Select</option><option>25–34</option><option>35–44</option><option>45–54</option><option>55+</option></select></div>
+          <div class="field"><label>WhatsApp Number *</label><input name="whatsapp" type="tel" autocomplete="tel" placeholder="+91..." required></div>
+          <div class="field"><label>Email</label><input name="email" type="email" autocomplete="email"></div>
+          <div class="field"><label>City / State</label><input name="city_state" autocomplete="address-level1"></div>
+          <div class="field"><label>Investor Type</label><select name="investor_type"><option value="">Select</option><option>Retail Investor</option><option>HNI</option><option>Business Owner</option><option>Professional</option></select></div>
+          <div class="field full"><label>IPO Interest</label><select name="ipo_interest"><option>All IPOs</option><option>Mainboard IPO</option><option>SME IPO</option><option>Pre-IPO</option></select></div>
+        </div>
+        <label class="consent"><input type="checkbox" name="consent" value="Yes" required><span>I agree to receive IPO research and community updates via WhatsApp and acknowledge that market information is for educational purposes only.</span></label>
+        <input type="hidden" name="source_page" value="IPO Desk Access">
+        <input type="hidden" name="utm_source" id="utm_source">
+        <input type="hidden" name="utm_campaign" id="utm_campaign">
+        <button class="submit" id="submitBtn" type="submit">CONTINUE TO IPO DESK →</button>
+        <div class="form-note">Your contact details are not displayed publicly. Investment in securities is subject to market risk.</div>
+        <div class="setup-note" id="setupNote">Lead capture is being connected. Please use the current community access button for now.</div>
+      </form>
+      <iframe name="leadSink" hidden></iframe>
+    </section>
+  </div>
+</div>
+<script>
+const WEB_APP_URL='__APPS_SCRIPT_WEB_APP_URL__';
+const COMMUNITY_URL='join.html';
+const params=new URLSearchParams(location.search);
+document.getElementById('utm_source').value=params.get('utm_source')||'';
+document.getElementById('utm_campaign').value=params.get('utm_campaign')||'';
+const form=document.getElementById('leadForm');
+const btn=document.getElementById('submitBtn');
+const note=document.getElementById('setupNote');
+const configured=WEB_APP_URL.startsWith('https://script.google.com/macros/s/');
+if(configured){form.action=WEB_APP_URL}
+form.addEventListener('submit',function(e){
+  if(!configured){e.preventDefault();note.style.display='block';return}
+  btn.disabled=true;btn.textContent='SUBMITTING…';
+  setTimeout(function(){location.href=COMMUNITY_URL},1100);
+});
+</script>
+</body>
+</html>
