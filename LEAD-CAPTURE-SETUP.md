@@ -1,12 +1,16 @@
-# IPO Desk lead capture deployment
+# IPO Desk lead capture — hardened deployment
 
-1. Open https://script.google.com and create a new project.
-2. Paste the contents of `apps-script.gs` into Code.gs and save.
-3. Deploy > New deployment > Web app.
-4. Execute as: **Me**.
-5. Who has access: **Anyone**.
-6. Deploy and copy the `https://script.google.com/macros/s/.../exec` URL.
-7. Replace `__APPS_SCRIPT_WEB_APP_URL__` in `apply.html` with that URL.
-8. After testing one submission in the Google Sheet, change all public community CTA links to `apply.html`.
+The public website is already connected to Google Apps Script. After changing backend code, update the existing Apps Script deployment so the current /exec URL stays the same.
 
-Data destination: Google Sheet **IPO Desk Leads**, tab **Leads**.
+1. Open the existing Apps Script project.
+2. Replace Code.gs with the current contents of `apps-script.gs`.
+3. Save.
+4. Deploy > Manage deployments.
+5. Edit the existing Web app deployment.
+6. Create a new version and deploy it.
+7. Keep:
+   - Execute as: Me
+   - Who has access: Anyone
+8. Test one valid lead from `apply.html` and confirm one new row in **IPO Desk Leads / Leads**.
+
+The hardened backend adds server-side input validation, spreadsheet-formula sanitization, a honeypot, a lightweight form key, and five-minute duplicate suppression by WhatsApp number.
