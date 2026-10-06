@@ -181,3 +181,14 @@ body{letter-spacing:.002em}.header{backdrop-filter:blur(12px);background:rgba(25
 .compare-cta{margin-top:32px;background:#0b2431;color:#fff;padding:30px;display:flex;justify-content:space-between;gap:30px;align-items:center}.compare-cta .eyebrow{margin-bottom:8px}.compare-cta h2{font-size:31px}.compare-cta p{color:#b8c5ca;font-size:12px;margin-bottom:0}.compare-cta .button{background:#d0b077;color:#071b25}
 @media(max-width:850px){.compare-summary{grid-template-columns:1fr 1fr}.compare-summary>div:nth-child(2){border-right:0}.compare-summary>div:nth-child(-n+2){border-bottom:1px solid var(--line)}.compare-callouts{grid-template-columns:1fr}.compare-callouts p{min-height:0}.compare-cta{align-items:flex-start;flex-direction:column}}
 @media(max-width:560px){.compare-summary{grid-template-columns:1fr}.compare-summary>div{border-right:0;border-bottom:1px solid var(--line);padding-left:0}.compare-summary>div:last-child{border-bottom:0}.compare-table th,.compare-table td{padding:13px 12px}.compare-cta{padding:23px 18px}.compare-cta .button{width:100%;text-align:center}}
+
+/* V18.6 trust architecture */
+.trust-rail{background:#fff;border-bottom:1px solid var(--line)}
+.trust-rail .inner{display:grid;grid-template-columns:repeat(4,1fr);padding:0 28px}
+.trust-rail .inner>div{padding:18px 20px;border-right:1px solid var(--line)}
+.trust-rail .inner>div:first-child{padding-left:0}.trust-rail .inner>div:last-child{border-right:0}
+.trust-rail small{display:block;font-size:8px;letter-spacing:.1em;color:var(--gold);font-weight:700}
+.trust-rail b{display:block;font-family:Georgia,serif;font-size:16px;font-weight:400;margin:5px 0 4px}
+.trust-rail a{font-size:8px;color:var(--muted);letter-spacing:.05em}
+@media(max-width:820px){.trust-rail .inner{grid-template-columns:1fr 1fr}.trust-rail .inner>div:nth-child(2){border-right:0}.trust-rail .inner>div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+@media(max-width:520px){.trust-rail .inner{grid-template-columns:1fr;padding:0 18px}.trust-rail .inner>div{padding:13px 0;border-right:0;border-bottom:1px solid var(--line)}.trust-rail .inner>div:last-child{border-bottom:0}.trust-rail b{font-size:15px}}
