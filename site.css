@@ -84,3 +84,15 @@ body{letter-spacing:.002em}.header{backdrop-filter:blur(12px);background:rgba(25
   .community-float{min-height:56px}
   .intel-hero h1{font-size:33px}
 }
+
+/* V18 GMP intelligence & conversion */
+.gmp-section{background:#f6f3eb;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.gmp-head{align-items:flex-end}.gmp-head p{margin:10px 0 0;color:var(--muted);font-size:13px;max-width:620px}.gmp-stamp{font-size:9px;letter-spacing:.1em;color:var(--muted);white-space:nowrap}
+.gmp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.gmp-card{background:#fff;border:1px solid var(--line);padding:22px;min-height:260px;box-shadow:0 8px 26px rgba(7,27,37,.04)}.gmp-card.hot{border-top:3px solid var(--gold)}
+.gmp-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.gmp-top span{font-size:8px;letter-spacing:.09em;color:var(--muted)}.gmp-top b{font-size:8px;letter-spacing:.08em;color:var(--gold);border:1px solid #d9c7a6;padding:4px 6px}
+.gmp-card h3{font-family:Georgia,serif;font-size:23px;font-weight:400;line-height:1.15;margin:24px 0 12px}.gmp-number{font-family:Georgia,serif;font-size:38px;line-height:1;color:#163c31}.gmp-number small{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#567066;margin-left:7px;font-weight:700}
+.gmp-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:22px 0 16px}.gmp-metrics div{padding:12px 8px 12px 0;border-right:1px solid var(--line)}.gmp-metrics div:last-child{border-right:0}.gmp-metrics small{display:block;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;line-height:1.25}.gmp-metrics strong{display:block;font-size:14px;margin-top:5px}.gmp-metrics .up{color:#1c6b4e}.gmp-metrics .down{color:#9b4b3a}
+.gmp-foot{display:flex;justify-content:space-between;gap:12px;align-items:center}.gmp-foot span{font-size:9px;color:var(--muted)}.gmp-foot a{font-size:9px;font-weight:800;letter-spacing:.08em}
+.gmp-bottom{display:flex;justify-content:space-between;gap:28px;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}.gmp-bottom p{margin:0;max-width:800px;font-size:10px;color:#748187}.gmp-bottom .button{flex:0 0 auto}
+@media(max-width:900px){.gmp-grid{grid-template-columns:1fr 1fr}.gmp-card:last-child{grid-column:1/-1}}
+@media(max-width:600px){.gmp-grid{grid-template-columns:1fr}.gmp-card:last-child{grid-column:auto}.gmp-card{min-height:0;padding:18px}.gmp-number{font-size:34px}.gmp-metrics{grid-template-columns:1fr 1fr 1fr}.gmp-metrics strong{font-size:13px}.gmp-bottom{align-items:stretch;flex-direction:column}.gmp-bottom .button{text-align:center}.gmp-stamp{white-space:normal}}
