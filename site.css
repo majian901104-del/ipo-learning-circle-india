@@ -598,3 +598,10 @@ a,button,input,select{font-family:Arial,"Helvetica Neue",Helvetica,sans-serif}
 .industry-cell b{font-size:20px!important;margin-top:7px!important}
 .industry-cell span{font-size:13px!important;margin-top:6px!important}
 @media(max-width:620px){.industry-photo{height:190px}}
+
+.issuer-photo-band{background:#fff;border-bottom:1px solid var(--line)}
+.issuer-photo-band .inner{padding-top:0;padding-bottom:34px}
+.issuer-photo-band figure{margin:0;position:relative;height:300px;overflow:hidden;background:#e7ebe9}
+.issuer-photo-band img{display:block;width:100%;height:100%;object-fit:cover;filter:none!important;image-rendering:auto}
+.issuer-photo-band figcaption{position:absolute;left:18px;bottom:16px;background:rgba(7,27,37,.88);color:#fff;padding:8px 10px;font-size:12px;font-weight:700;letter-spacing:.06em}
+@media(max-width:620px){.issuer-photo-band .inner{padding-left:0;padding-right:0;padding-bottom:24px}.issuer-photo-band figure{height:220px}.issuer-photo-band figcaption{left:12px;right:12px;bottom:12px;font-size:11px}}
