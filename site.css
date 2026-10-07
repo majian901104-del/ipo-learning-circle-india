@@ -290,3 +290,241 @@ linear-gradient(135deg,#f7f5ef 0 55%,#eef1ed 55% 100%)}.intel-hero.v242:before{c
 .hero-calendar{background:#f7f6f2;color:#071b25;border-color:var(--line)}.hero-calendar .inner{grid-template-columns:180px repeat(5,1fr)}.hc-title{border-color:var(--line)}.hc-title small{color:#8b6d3e}.hc-event{border-color:var(--line);background:#f7f6f2}.hc-event.active{background:#ece8dd}.hc-event time{color:#8b6d3e}.hc-event time span,.hc-event small{color:#7a8882}.hc-event em{color:#8b6d3e}.dashboard-launch{background:#0b2431;color:#fff;border-color:#0b2431}.dashboard-launch small{color:#d2b57d}.dashboard-launch span{color:#9eb0b7}.dashboard-launch a{border-color:#758991;color:#fff}
 @media(max-width:980px){.institutional-hero .ih-grid{grid-template-columns:1fr;min-height:0}.ih-copy{padding:58px 28px 52px}.ih-photo{min-height:460px}.hs-grid{grid-template-columns:1fr 1fr}.hs-card:last-child{grid-column:1/-1}.hero-calendar .inner{grid-template-columns:150px repeat(5,180px)}}
 @media(max-width:620px){.institutional-hero .inner{padding-left:0;padding-right:0}.ih-copy{padding:42px 18px 38px}.ih-copy h1{font-size:40px;line-height:1.02;margin:15px 0 18px}.ih-copy p{font-size:12px;line-height:1.6}.ih-actions{display:grid;grid-template-columns:1fr;margin-top:24px}.ih-actions .button{width:100%}.ih-meta{justify-content:space-between;gap:8px;margin-top:25px}.ih-photo{min-height:330px}.ih-photo figcaption{padding:18px}.ih-photo figcaption a{display:none}.trust-rail.v242-trust .inner{padding-left:18px;padding-right:18px}.home-snapshot .inner{padding-top:46px;padding-bottom:48px}.hs-head{align-items:flex-start;flex-direction:column;gap:10px}.hs-head h2{font-size:31px}.hs-grid{grid-template-columns:1fr}.hs-card:last-child{grid-column:auto}.hs-card{min-height:245px;padding:21px}.hs-card h3{margin-top:24px}.hs-number{font-size:36px}.hero-calendar .inner{grid-template-columns:118px repeat(5,150px)}}
+
+/* V24.2Q readability and image-quality audit
+   Safety rule: no designed text token remains below 12px on desktop. */
+.brand small,
+.table th,
+.metric small,
+.brief small,
+.issuer-tile small,
+.proof span,
+.deal small,
+.notice time,
+.notice a,
+.badge,
+.section-nav a,
+.intel-row small,
+.intel-row em,
+.tick small,
+.terminal-head,
+.terminal-row time,
+.terminal-row span,
+.terminal-row a,
+.insight-item small,
+.dbchip,
+.issuer-line.head,
+.issuer-line a,
+.institution-band small,
+.report .type,
+.report a,
+.source-note,
+.updated,
+.source-pill,
+.fact-ribbon small,
+.risk-item:before,
+.community-float small,
+.top .inner,
+.gmp-stamp,
+.gmp-top span,
+.gmp-top b,
+.gmp-metrics small,
+.gmp-foot span,
+.gmp-foot a,
+.gmp-bottom p,
+.pulse-title small,
+.pulse-card small,
+.pulse-card span,
+.pulse-card em,
+.pulse-cta span,
+.pulse-disclaimer,
+.panel-head b,
+.spark-bars span,
+.spark-bars small,
+.panel-note,
+.timeline-mini span,
+.listing-banner small,
+.score-label,
+.score-overview a,
+.score-head,
+.score-method,
+.rank-main small,
+.rank-score small,
+.score-rank-foot p,
+.compare-summary small,
+.compare-table th:first-child,.compare-table td:first-child,
+.compare-table th span,
+.compare-table td small,
+.muted-cell,
+.risk-tag,
+.compare-callouts small,
+.compare-callouts a,
+.trust-rail small,
+.trust-rail a,
+.value-prop b,
+.reality-score small,
+.reality-card .tag,
+.reality-pair small,
+.source-line,
+.method-card span,
+.dash-hero-card small,
+.dash-hero-card a,
+.dash-tabs a,
+.dash-card-top,
+.dash-mini span,
+.dash-card>a,
+.dash-source,
+.dash-reality-row small,
+.dash-reality-row span,
+.sub-dashboard small,
+.calendar-day time small,
+.calendar-day span,
+.dash-score-grid em,
+.dashboard-launch small,
+.dashboard-launch span,
+.dashboard-launch a,
+.mv-head b,.mv-head small,
+.mv-brand small,
+.mv-bars b,
+.mv-bars small,
+.mv-reality small,
+.mv-reality b em,
+.mv-date span,
+.mv-watch small,
+.mv-watch>div>span,
+.mv-watch>a,
+.mv-foot,
+.source-lead small,.source-network a small,
+.source-lead span,
+.source-network a em,
+.vc-head small,
+.vc-head>a,
+.cv-name b,
+.cv-name small,
+.vc-legend,
+.demand-viz span,
+.vc-caption,
+.rc-top,
+.rc-bottom small,
+.rc-bottom em,
+.rc-ring small,
+.process-line small,
+.ds-head b,.ds-head small,
+.ds-label,
+.ds-issue span,
+.ds-ring small,
+.ds-kpis small,
+.ds-watch small,
+.ds-foot,
+.dash-card-visual .viz-label,
+.dash-card-dateviz small,
+.dash-card-signal span,
+.is-head small,
+.is-head>strong,
+.is-gauge small,
+.is-kpis small,
+.is-timeline small,
+.is-timeline b,
+.is-note,
+.outcome-title small,
+.outcome-title p,
+.outcome-bar small,
+.outcome-bar em,
+.intel-tile small,
+.intel-tile p,
+.intel-tile>a,
+.listing-column span,
+.heat-viz span,
+.radar-date small,
+.cal-cell time small,
+.cal-cell span,
+.cal-cell em,
+.research-cover .cover-top,
+.research-cover .cover-bottom small,
+.research-card-copy .type,
+.research-card-copy p,
+.research-card-copy a,
+.source-badge,
+.update-status,
+.industry-cell small,
+.industry-cell span,
+.news-kicker,
+.news-card>a,
+.news-source,
+.story-step small,
+.story-step em,
+.story-example small,
+.story-example a,
+.platform-status,
+.business-lens-head small,
+.business-lens-head p,
+.business-node small,
+.business-node em,
+.business-source,
+.hero-version,
+.hero-proof span,
+.terminal-status small,
+.hc-title small,
+.hc-event time span,
+.hc-event b,
+.hc-event small,
+.hc-event em,
+.rate-dial small,
+.news-timeline small,
+.news-card.v242-news p,
+.ih-copy .eyebrow,
+.ih-actions .button,
+.ih-meta,
+.ih-photo figcaption small,
+.ih-photo figcaption a,
+.trust-rail.v242-trust a,
+.hs-head small,
+.hs-head>a,
+.hs-top,
+.hs-card p,
+.hs-source,
+.hs-pair div small{font-size:12px!important}
+html{-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility}
+body{font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+p{font-size:14px!important;line-height:1.65}
+.nav .links a,.desk,.mobile-nav summary,.mobile-panel a{font-size:12px!important}
+.eyebrow{font-size:11px!important;line-height:1.35;letter-spacing:.12em}
+.button,.mast-actions a,.textlink{font-size:12px!important}
+.risk-band,.footer,.footer a,.footer p,.legal{font-size:12px;line-height:1.55}
+img{image-rendering:auto;max-width:100%}
+
+/* Research library rebuilt for readable editorial cards */
+.research-visual-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px!important;margin-top:34px!important}
+.research-visual-card{min-height:500px!important}
+.research-cover{height:250px!important;padding:24px!important}
+.research-cover .cover-top{font-size:12px!important;line-height:1.2}
+.research-cover .cover-bottom small{font-size:11px!important;line-height:1.3}
+.research-cover .cover-bottom b{font-size:29px!important;line-height:1.04!important;max-width:280px!important;margin-top:10px!important}
+.research-cover .cover-mark{font-size:88px!important}
+.research-card-copy{padding:25px!important}
+.research-card-copy .type{font-size:11px!important;line-height:1.35}
+.research-card-copy h3{font-size:26px!important;line-height:1.12!important;margin:13px 0 12px!important}
+.research-card-copy p{font-size:14px!important;line-height:1.6!important}
+.research-card-copy a{font-size:12px!important;line-height:1.3;margin-top:10px}
+.source-badges{gap:8px!important;margin-top:16px!important}
+.source-badge{font-size:11px!important;line-height:1.2;padding:6px 8px!important}
+.update-status{font-size:11px!important;line-height:1.3;margin-top:14px!important}
+
+/* Dense data surfaces: readable without turning into oversized marketing cards */
+.dash-card p,.intel-tile p,.news-card p,.business-lens-head p,.score-rank-foot p,.outcome-title p{font-size:13px!important;line-height:1.55!important}
+.dash-card-top,.dash-source,.dash-tabs a,.dash-card>a,.compare-table th,.compare-table td,.source-line,.source-note,.updated,.gmp-stamp,.score-label,.score-head,.score-method,.vc-caption,.ds-label,.ds-foot,.is-note{font-size:12px!important;line-height:1.4}
+.fact-ribbon small,.gmp-metrics small,.compare-summary small,.reality-score small,.reality-pair small,.dash-mini span,.dash-reality-row small,.sub-dashboard small,.calendar-day time small,.industry-cell small,.industry-cell span,.business-node small,.business-node em,.hs-top,.hs-source,.hs-pair div small{font-size:11px!important;line-height:1.35}
+
+/* Avoid washed-out or softened hero imagery */
+.ih-photo img{filter:none!important;image-rendering:auto;transform:translateZ(0)}
+@media(max-width:1180px){.research-visual-grid{grid-template-columns:1fr 1fr!important}}
+@media(max-width:700px){
+  body{font-size:15px}
+  p{font-size:14px!important}
+  .research-visual-grid{grid-template-columns:1fr!important;gap:18px!important}
+  .research-cover{height:225px!important;padding:20px!important}
+  .research-cover .cover-bottom b{font-size:27px!important}
+  .research-card-copy{padding:21px!important}
+  .research-card-copy h3{font-size:24px!important}
+  .source-badge,.update-status{font-size:11px!important}
+}
