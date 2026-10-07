@@ -827,3 +827,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
  .issuer-photo-band figure{height:220px!important}
  .article h2{font-size:26px!important}
 }
+
+/* V24.2Q7 remove decorative score rings */
+.ds-ring,.is-gauge{width:auto!important;height:auto!important;min-width:112px;border-radius:0!important;background:none!important;border:1px solid rgba(255,255,255,.22)!important;padding:16px 18px!important;display:block!important}
+.ds-ring:after,.is-gauge:after{display:none!important}
+.ds-ring div,.is-gauge div{text-align:left!important}
+.ds-ring b,.is-gauge b{font-size:30px!important;line-height:1!important}
+.ds-ring small,.is-gauge small{font-size:12px!important;margin-top:7px;display:block}
+.is-score{align-items:stretch!important}
+@media(max-width:620px){
+ .ds-ring,.is-gauge{min-width:0!important;padding:14px!important}
+ .ds-ring b,.is-gauge b{font-size:27px!important}
+}
