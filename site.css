@@ -1005,3 +1005,46 @@ html,body{overflow-x:hidden}
  .track-summary div{padding:17px 14px}
  .track-summary b{font-size:20px}
 }
+
+
+/* Mobile layout correction: shared editorial pages and customer-facing About. */
+.clean-hero .inner,.trust-hero .inner{padding-left:clamp(20px,3vw,32px);padding-right:clamp(20px,3vw,32px)}
+.clean-hero-grid{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:40px}
+.clean-hero-grid>*,.clean-grid>*{min-width:0}
+.clean-hero h1{font-size:48px;line-height:1.14;letter-spacing:-.015em;overflow-wrap:break-word}
+.clean-hero p{font-size:17px!important;line-height:1.7!important;color:#344c56!important}
+.clean-card{min-height:0;padding:24px}
+.clean-card .num{font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;line-height:1.4;color:#795b2d}
+.clean-card h3{font-family:Arial,Helvetica,sans-serif;font-size:21px;font-weight:600;line-height:1.35;margin:12px 0 10px;overflow-wrap:break-word}
+.clean-card p{font-size:16px!important;line-height:1.65!important;color:#344c56!important}
+.clean-photo figcaption{max-width:calc(100% - 28px);font-size:12px;line-height:1.5;letter-spacing:.03em}
+.about-actions{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin:24px 0}
+.about-actions .button{min-height:48px;font-size:14px!important;letter-spacing:.02em;white-space:normal;text-align:center}
+.about-method{font-size:15px;font-weight:600;text-decoration:underline;text-underline-offset:5px;line-height:1.5}
+.client-about .reg-status{font-size:12px!important;line-height:1.5;letter-spacing:.03em;max-width:100%;white-space:normal}
+.client-about .section{padding-top:48px;padding-bottom:48px}
+.client-about .section h2{font-size:34px;line-height:1.2}
+.client-about .section-head{gap:28px;margin-bottom:24px}
+.client-about .section-head p{font-size:16px!important;line-height:1.7!important;color:#344c56!important}
+@media(max-width:900px){
+ .clean-hero-grid{grid-template-columns:minmax(0,1fr);gap:28px}
+ .clean-hero h1{font-size:40px}
+ .clean-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+ .clean-hero .inner,.trust-hero .inner{padding:32px 20px}
+ .clean-hero h1,.trust-hero h1{font-family:Arial,Helvetica,sans-serif;font-size:32px;font-weight:600;line-height:1.2;letter-spacing:-.02em;margin:12px 0 18px}
+ .clean-hero p,.trust-hero p{font-size:16px!important;line-height:1.7!important;margin:0 0 20px}
+ .clean-hero-grid{gap:26px}
+ .clean-photo{height:235px}
+ .clean-grid{grid-template-columns:minmax(0,1fr);gap:14px}
+ .clean-card{padding:20px}
+ .clean-card h3{font-size:20px;margin:8px 0}
+ .clean-card p{font-size:16px!important;line-height:1.65!important}
+ .client-about .section{padding:32px 20px!important}
+ .client-about .section h2{font-family:Arial,Helvetica,sans-serif;font-size:28px;font-weight:600;line-height:1.25}
+ .client-about .section-head{gap:14px;margin-bottom:22px}
+ .about-actions{gap:16px;margin:22px 0 20px;align-items:flex-start;flex-direction:column}
+ .about-actions .button{width:100%;max-width:360px}
+ .clean-photo figcaption{left:12px;bottom:12px;max-width:calc(100% - 24px);font-size:12px}
+}
