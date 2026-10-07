@@ -725,3 +725,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
  .community-float small{display:none!important}
  .footer .inner{padding-bottom:92px}
 }
+
+/* V24.2Q5 table and trust-rail QA */
+.trust-rail.v242-trust b{font-size:14px!important;line-height:1.4!important}
+.trust-rail.v242-trust small,.trust-rail.v242-trust a{font-size:12px!important}
+.compare-table-wrap{scrollbar-width:thin}
+@media(max-width:760px){
+ .compare-table th:first-child,.compare-table td:first-child{position:sticky;left:0;z-index:3;background:#fff!important;box-shadow:1px 0 0 #d5ddda}
+ .compare-table thead th:first-child{z-index:4;background:#0b2431!important;color:#fff}
+ .compare-table .focus-row td:first-child{background:#f3eee2!important}
+ .compare-table{min-width:820px}
+ .fact-ribbon b{font-size:18px}
+}
