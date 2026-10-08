@@ -1,13 +1,18 @@
 [
   [
-    "About Us",
+    "About Angel Research",
     "about.html",
-    "Learn about Angel Research, an India IPO information and education platform, and its source standards."
+    "Investment perspectives, wealth planning resources and source-labelled India market research."
   ],
   [
-    "Our Businesses",
+    "Investment Strategies",
+    "asset-management.html",
+    "Understand equity, fixed income, funds, alternatives and portfolio construction."
+  ],
+  [
+    "Our Focus",
     "businesses.html",
-    "Explore the IPO monitoring, market comparison and research tools on Angel Research."
+    "Explore Angel Research investment perspectives, wealth planning resources and IPO research."
   ],
   [
     "Capital Markets",
@@ -15,9 +20,9 @@
     "Understand IPO offer documents, subscription demand and listing results in India’s primary markets."
   ],
   [
-    "Contact & Office",
+    "Contact & Research Updates",
     "contact.html",
-    "Find IPO community access, research resources and information correction guidance."
+    "Request investment research and wealth planning updates from Angel Research."
   ],
   [
     "Methodology & Sources",
@@ -35,9 +40,9 @@
     "Read the editorial standards for sources, uncertainty, corrections and dated IPO coverage."
   ],
   [
-    "Angel Research | India IPO & Primary Markets Intelligence",
+    "Investment & Wealth Perspectives",
     "index.html",
-    "Explore dated India IPO coverage, subscription reports, listing outcomes and source references from Angel Research."
+    "Explore wealth planning, asset allocation, investment strategies and India market research, including our IPO centre."
   ],
   [
     "Investor Information",
@@ -120,12 +125,17 @@
     "Understand IPO, liquidity and grey-market risks before relying on market information."
   ],
   [
+    "Search",
+    "search.html",
+    "Search Angel Research’s IPO reviews, information sources and research pages."
+  ],
+  [
     "Terms of Use",
     "terms.html",
     "Read the terms governing use of Angel Research’s IPO information and external resources."
   ],
   [
-    "IPO Track Record",
+    "IPO Listing Reviews",
     "track-record.html",
     "Angel Research track record preserving pre-listing GMP context, issue prices and actual IPO listing outcomes."
   ],
@@ -133,5 +143,10 @@
     "Transaction Monitor",
     "transactions.html",
     "India IPO issuer intelligence and primary-market research."
+  ],
+  [
+    "Wealth Planning",
+    "wealth-management.html",
+    "Explore financial goals, risk tolerance, liquidity, asset allocation and portfolio review."
   ]
 ]
