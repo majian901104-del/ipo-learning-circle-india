@@ -36,7 +36,7 @@
     </section>
     <section class="apply-card">
       <h2>Research Update Request</h2><p class="access-notice">Community invitations are currently unavailable. You can still request research updates with this form.</p>
-      <p>Required: name, age range and WhatsApp number. <a href="service-process.html">What happens next?</a></p>
+      <p>Required: name, age range and WhatsApp number. This form requests updates only; it does not open an investment account or guarantee community access. <a href="service-process.html">What happens next?</a></p>
       <form id="leadForm" method="POST" action="https://script.google.com/macros/s/AKfycbzjF1oOfUZCxK90vPYeOy_bcYL_ubvTjCdMZRciwWoK7a6GnaXyj0XH51P6LhECSL0/exec">
         <div class="form-grid">
           <div class="field"><label for="full_name">Full Name *</label><input id="full_name" name="full_name" minlength="2" autocomplete="name" maxlength="80" required></div>
@@ -47,15 +47,15 @@
           <div class="field"><label for="investor_type">Investor Type</label><select id="investor_type" name="investor_type"><option value="">Select</option><option>Retail Investor</option><option>HNI</option><option>Business Owner</option><option>Professional</option></select></div>
           <div class="field full"><label for="ipo_interest">Area of Interest</label><select id="ipo_interest" name="ipo_interest"><option>Investing &amp; Wealth Planning</option><option>Asset Allocation &amp; Strategies</option><option>All IPOs</option><option>Mainboard IPO</option><option>SME IPO</option><option>Pre-IPO</option></select></div>
         </div>
-        <label class="consent"><input type="checkbox" name="consent" value="Yes" required><span>I agree to receive investment research and community updates via WhatsApp and acknowledge that market information is for educational purposes only.</span></label>
+        <label class="consent"><input type="checkbox" name="consent" value="Yes" required><span>I consent to the collection and storage of the details I provide for research-update enquiries and to being contacted on WhatsApp about those updates. I understand that I can decline to submit and that this is not an investment account application.</span></label>
         <div style="position:absolute;left:-9999px;top:-9999px" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
         <input type="hidden" name="form_key" value="ipo-desk-v1">
         <input type="hidden" name="source_page" value="Research Update Request">
         <input type="hidden" name="utm_source" id="utm_source">
         <input type="hidden" name="utm_campaign" id="utm_campaign">
         <button class="submit" id="submitBtn" type="submit" disabled>REQUEST RESEARCH UPDATES →</button>
-        <div class="form-note">Your contact details are stored for community access and research updates. We never ask for trading passwords, bank login details or OTPs. Read our <a href="privacy.html" target="_blank" rel="noopener">Privacy Notice</a> and <a href="terms.html" target="_blank" rel="noopener">Terms</a>. Investment in securities is subject to market risk.</div>
-        <div class="setup-note" id="setupNote" role="status" aria-live="polite" hidden></div><noscript><p>Please enable JavaScript to confirm your submission, or <a href="ipo-dashboard.html">browse IPO research</a>.</p></noscript>
+        <div class="form-note">Before submitting: a public email contact for data requests is not yet provided. Please review the Privacy Notice and do not submit if you require that channel. Your contact details may be stored for research-update enquiries. We never ask for trading passwords, bank login details or OTPs. Read our <a href="privacy.html" target="_blank" rel="noopener">Privacy Notice</a> and <a href="terms.html" target="_blank" rel="noopener">Terms</a>. Investment in securities is subject to market risk.</div>
+        <div class="setup-note" id="setupNote" role="status" aria-live="polite" tabindex="-1" hidden></div><noscript><p>Please enable JavaScript to confirm your submission, or <a href="ipo-dashboard.html">browse IPO research</a>.</p></noscript>
       </form>
       
     </section>
