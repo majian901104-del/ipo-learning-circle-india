@@ -28,7 +28,7 @@ form.addEventListener('submit',async event => {
   try {
     const body = new URLSearchParams();
     new FormData(form).forEach((value,key) => body.append(key,String(value)));
-    const response = await fetch(form.action,{method:'POST',body,signal:controller.signal});
+    const response = await fetch(form.action,{method:'POST',body,signal:controller.signal,redirect:'follow'});
     if(!response.ok) throw Error('network');
     const result = await response.json();
     if(result.ok !== true) throw Error(result.error || 'rejected');
@@ -38,7 +38,8 @@ form.addEventListener('submit',async event => {
     target.searchParams.set('status','received');
     location.assign(target.href);
   } catch(error) {
-    status.textContent = 'We could not confirm receipt. Your details remain on this page. Please retry; repeated submissions are checked for duplicates.';
+    status.textContent = 'Submission not confirmed. Please do not assume your request was received. Your entries are still here; you may retry later. If the issue persists, do not submit repeatedly.';
+    status.focus();
     button.disabled = false; button.textContent = 'RETRY REQUEST';
     sending = false;
   } finally {
