@@ -50,3 +50,31 @@ p{line-height:1.7}.eyebrow{font-size:13px!important;letter-spacing:.12em!importa
 .corporate-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}.corporate-layout h2{margin:12px 0 22px}.corporate-layout p{font-size:17px;color:#4b6172}.corporate-facts{padding:28px;background:#f4f7fa;border:1px solid #dbe3e9}.corporate-facts h2{font-size:25px!important}.corporate-facts dl{margin:0 0 22px}.corporate-facts dt{font-size:13px;color:#536a7c;font-weight:700;margin-top:18px}.corporate-facts dd{margin:5px 0;font-size:16px;overflow-wrap:anywhere}.parent-overview{background:#fff}.registration-wrap{overflow-x:auto;margin:24px 0}.registration-table{border-collapse:collapse;width:100%;min-width:640px;font-size:16px}.registration-table caption{text-align:left;font-size:14px;padding-bottom:14px;color:#4b6172}.registration-table th{background:#143650;color:#fff;text-align:left;padding:17px}.registration-table td{padding:18px 17px;border-bottom:1px solid #dbe3e9;vertical-align:top}.registration-table tr:nth-child(even){background:#f4f7fa}@media(max-width:760px){.corporate-layout{grid-template-columns:minmax(0,1fr);gap:24px}.corporate-facts{padding:24px}.registration-table{font-size:15px}}
 
 .service-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}.service-steps article{border:1px solid #dbe3e9;padding:30px}.service-steps span{font-size:15px;color:#58788f;font-weight:700}.service-steps h2{font-size:25px!important;margin:12px 0 20px}.service-steps p,.contact-faq p{font-size:16px;color:#4b6172}.contact-faq{background:#f4f7fa}.contact-faq h2{margin:14px 0 28px}.contact-faq details{border-top:1px solid #cbd8e2;padding:19px 0;max-width:950px}.contact-faq summary{font-size:18px;font-weight:600;cursor:pointer;line-height:1.5}.contact-faq p{max-width:850px}.apply-wrap{background:#f4f7fa!important}.apply-card .access-notice{font-size:14px!important}.apply-back{min-height:44px;display:inline-flex;align-items:center}.apply-card input,.apply-card select{min-height:48px;font-size:16px!important}@media(max-width:620px){.service-steps{grid-template-columns:minmax(0,1fr)}.service-steps article{padding:24px}.contact-faq summary{font-size:17px}.apply-wrap{padding-top:20px!important}.apply-side h1{line-height:1.18!important}}
+
+
+/* 2026-10-10 mobile legibility and keyboard accessibility audit.
+   Progressive overrides only; preserve existing layout and brand rules. */
+:where(a,button,input,select,textarea,summary):focus-visible{
+  outline:3px solid #236a95!important;
+  outline-offset:3px!important;
+}
+:where(img,video,iframe){max-width:100%}
+:where(.inner,.nav,.corporate-layout,.clean-hero-grid,.ih-grid,.wealth-grid,.footgrid){min-width:0}
+:where(.inner,.corporate-layout,.clean-hero-grid,.ih-grid,.wealth-grid,.footgrid) > * {min-width:0}
+:where(p,li,td,dd,.clean-card,.wealth-card){overflow-wrap:break-word}
+@media(max-width:760px){
+  .top{font-size:13px!important}
+  .brand small{font-size:12px!important;line-height:1.35!important;letter-spacing:.035em!important}
+  .eyebrow{font-size:13px!important;line-height:1.5!important;letter-spacing:.045em!important}
+  .mobile-panel a,.mobile-nav summary{font-size:16px!important;line-height:1.45!important}
+  .mobile-panel a{min-height:44px;display:flex;align-items:center}
+  .button,.desk,.apply-back{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .ih-copy p,.wealth-hero p,.clean-hero p,.corporate-layout p,.section-head p{font-size:16px!important;line-height:1.65!important}
+  .source-note,.form-note,.hs-source,.ih-meta,.trust-rail small{font-size:13px!important;line-height:1.5!important}
+  .section,.clean-hero,.wealth-hero{scroll-margin-top:80px}
+  .registration-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .registration-table th,.registration-table td{white-space:normal}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important}
+}
