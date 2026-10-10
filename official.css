@@ -78,3 +78,18 @@ p{line-height:1.7}.eyebrow{font-size:13px!important;letter-spacing:.12em!importa
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important}
 }
+
+/* Editorial visual system V25: consistent photo-first service pages. */
+.editorial-hero{padding:0!important;background:#eef2f4!important;overflow:hidden}
+.editorial-hero .editorial-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(26px,4vw,64px);align-items:stretch;padding-top:48px;padding-bottom:48px}
+.editorial-hero-copy{min-width:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,3vw,36px) 0}
+.editorial-hero .editorial-hero-copy h1{font-size:clamp(38px,4vw,62px)!important;line-height:1.08!important;max-width:15ch;margin:16px 0 24px!important;color:#102e43!important;letter-spacing:-.035em!important}
+.editorial-hero .editorial-hero-copy p{max-width:52ch;font-size:clamp(17px,1.5vw,20px)!important;line-height:1.65!important;color:#435c70!important}
+.editorial-hero .ih-actions{margin-top:25px!important;display:flex;flex-wrap:wrap;gap:12px}
+.editorial-hero-image{position:relative;margin:0;min-width:0;min-height:420px;overflow:hidden;background:linear-gradient(135deg,#18394e,#477589)}
+.editorial-hero-image img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;object-position:center;display:block}
+.editorial-hero-image:after{content:'';position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(7,28,42,.66));pointer-events:none}
+.editorial-hero-image figcaption{position:absolute;z-index:1;bottom:22px;left:26px;right:20px;color:#fff;font-weight:700;font-size:13px;letter-spacing:.08em;line-height:1.5}
+.editorial-kicker{margin-top:34px;padding-top:17px;border-top:1px solid #c8d6df;font-size:12px;font-weight:700;letter-spacing:.07em;color:#42637a}
+@media(max-width:900px){.editorial-hero .editorial-hero-grid{grid-template-columns:1fr;gap:20px;padding-top:30px;padding-bottom:30px}.editorial-hero-image{min-height:360px}.editorial-hero-copy{padding:16px 0}.editorial-hero .editorial-hero-copy h1{max-width:20ch}}
+@media(max-width:620px){.editorial-hero .editorial-hero-grid{padding:22px 0 26px!important;gap:16px!important}.editorial-hero .editorial-hero-copy h1{font-size:clamp(34px,9vw,43px)!important;margin:12px 0 16px!important}.editorial-hero .editorial-hero-copy p{font-size:17px!important;line-height:1.6!important}.editorial-hero-image{min-height:260px;aspect-ratio:4/3}.editorial-hero-image figcaption{left:18px;bottom:14px;font-size:12px}.editorial-hero .ih-actions .button{width:100%;text-align:center}.editorial-kicker{margin-top:22px;font-size:11px;line-height:1.6}}
