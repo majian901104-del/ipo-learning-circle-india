@@ -133,7 +133,7 @@ test('V3.2 report aggregates source campaign daily and countries with owner key'
  assert.equal(res.headers.get('Cache-Control'),'no-store, private');
  const body=await res.json();
  assert.equal(body.ok,true);assert.deepEqual(body.totals,{views:29,redirects:8,visitorSessions:0,clickSessions:0});
- assert.deepEqual(body.campaigns[0],{source:'x',campaign:'gurjot_ipo',views:25,redirects:8});
+ assert.deepEqual(body.campaigns[0],{source:'x',campaign:'gurjot_ipo',views:25,redirects:8,visitorSessions:0,clickSessions:0});
  assert.equal(body.daily[0].views,29);
  assert.equal(body.countries[0].country,'IN');
  assert.equal(body.regions[0].region,'MH');
@@ -172,7 +172,7 @@ test('V3.2.1 new tab session event counts are separate from raw click requests',
  assert.equal(records[0].blobs[6],'mobile');
  assert.equal(records[0].blobs[7],'android');
  assert.equal(records[0].blobs[8],'pixel_8');
- assert.equal(records[0].blobs[5],'unknown');
+ assert.equal(records[0].blobs[5],'unk');
  const link=new Request('https://worker.example/join?c=gurjot_ipo&s=x&m=influencer&u=1&d=mobile&o=android&model=pixel_8',{headers:{'Sec-Fetch-Mode':'navigate'}});
  assert.equal((await worker.fetch(link,env)).status,302);
  assert.deepEqual(records.map(r=>r.blobs[0]),['page_view','page_session','join_click','join_session']);
