@@ -10,7 +10,7 @@ var today=dayIST();
 function status(v){return today<v.open?'Scheduled upcoming':today>v.close?'Scheduled window elapsed':'Scheduled window'}
 function sortItems(items){return items.slice().sort(function(a,b){return a.open.localeCompare(b.open)||a.name.localeCompare(b.name)})}
 function item(v){
- var href='ipo-current.html#'+encodeURIComponent(v.id);
+ var href='ipo-company.html?issue='+encodeURIComponent(v.id);
  return '<article class="ipo-card" id="'+esc(v.id)+'"><div class="ipo-card-top"><span class="ipo-pill">'+esc(v.segment)+'</span><span class="ipo-state">'+esc(status(v))+'</span></div><h3>'+esc(v.name)+'</h3><div class="ipo-band">₹'+esc(v.low)+'–'+esc(v.high)+'</div><div class="ipo-row"><span>Scheduled bid window</span><b>'+esc(dateFmt(v.open))+' – '+esc(dateFmt(v.close))+'</b></div><div class="ipo-row"><span>Indicative issue size</span><b>'+esc(v.size)+'</b></div><div class="ipo-row"><span>Retail lot</span><b>'+esc(v.lot?String(v.lot)+' shares':'See offer document')+'</b></div><p>'+esc(v.notes)+'</p><a href="'+href+'">ISSUE DETAILS &amp; SOURCES →</a></article>';
 }
 function render(el){
