@@ -32,9 +32,11 @@ jobs:
           node --check conversion-config.js
           node --check conversion-tracker.js
           node --check analytics-dashboard.js
+          node --check analytics-dashboard-v323.js
           node --check conversion-worker/src/reports.mjs
           node --check conversion-worker/src/index.mjs
           node --test conversion-worker/test/conversion.test.mjs
+          node --test tests/admin-dashboard-v323.test.cjs
           node build-ga4.cjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
