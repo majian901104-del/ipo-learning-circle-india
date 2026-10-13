@@ -135,7 +135,14 @@ const countryNames={
  DE:'德国',JP:'日本',PK:'巴基斯坦',BD:'孟加拉国',LK:'斯里兰卡',
  NP:'尼泊尔',ID:'印度尼西亚',TH:'泰国',PH:'菲律宾',VN:'越南'
 };
-const countryName=code=>countryNames[String(code||'').toUpperCase()]||String(code||'未知');
+const countryName=code=>{const key=String(code||'').toUpperCase();return countryNames[key]||(key==='UNK'||key==='UNKNOWN'?'未知':(key||'未知'))};
+const indiaRegions={MH:'马哈拉施特拉邦',DL:'德里',KA:'卡纳塔克邦',TN:'泰米尔纳德邦',TG:'特伦甘纳邦',TS:'特伦甘纳邦',GJ:'古吉拉特邦',RJ:'拉贾斯坦邦',UP:'北方邦',WB:'西孟加拉邦',KL:'喀拉拉邦',HR:'哈里亚纳邦',PB:'旁遮普邦',MP:'中央邦',BR:'比哈尔邦',OD:'奥迪沙邦',AP:'安得拉邦',AS:'阿萨姆邦',JK:'查谟和克什米尔',HP:'喜马偕尔邦',UK:'北阿坎德邦',CG:'恰蒂斯加尔邦',GA:'果阿邦'};
+const malaysiaRegions={'14':'吉隆坡','10':'雪兰莪','07':'槟城','01':'柔佛','12':'沙巴','13':'砂拉越','05':'霹雳','09':'玻璃市'};
+function regionDisplay(x){const c=String(x.country||'').toUpperCase(),r=String(x.region||'').toUpperCase();
+ if(r==='UNKNOWN'||r==='UNK'||!r)return countryName(c)+' · 地区未知';
+ const lookup=c==='IN'?indiaRegions:c==='MY'?malaysiaRegions:{};
+ return countryName(c)+' · '+r+(lookup[r]?'（'+lookup[r]+'）':'');
+}
 const osNames={ios:'iOS / iPhone',android:'Android',windows:'Windows',macos:'macOS',
  linux:'Linux',other:'其他系统',unknown:'系统未知'};
 const deviceNames={mobile:'手机',tablet:'平板',desktop:'电脑',unknown:'未知设备'};
@@ -163,7 +170,7 @@ function renderDevices(){
  barList('model-list',report?.models,x=>(x.model||'未知').replaceAll('_',' ')+' · '+(osNames[x.os]||x.os),null,7);
 }
 function renderRegions(){
- barList('region-list',report?.regions,x=>countryName(x.country)+' · '+(x.region==='UNKNOWN'?'未知邦／省':x.region),null,11);
+ barList('region-list',report?.regions,x=>regionDisplay(x),null,11);
 }
 function render(){
  renderTotals();renderTable();renderTrend();renderCountries();renderDevices();renderRegions();
