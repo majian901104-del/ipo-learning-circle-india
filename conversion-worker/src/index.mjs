@@ -9,6 +9,7 @@
  * configured in Cloudflare, or with an *.workers.dev host.
  */
 'use strict';
+import {handleReport} from './reports.mjs';
 const DEFAULT_JOIN='https://cc.stockscode.click';
 const ALLOW_ORIGINS=new Set([
  'https://angelresearchindia.com',
@@ -58,6 +59,7 @@ export default {
  async fetch(request,env){
   const url=new URL(request.url);
   const origin=request.headers.get('Origin')||'';
+  if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
     return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS}),
       200,{'Content-Type':'application/json','Cache-Control':'no-store'});
