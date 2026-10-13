@@ -6,6 +6,8 @@ workers_dev = true
 [vars]
 COMMUNITY_DESTINATION = "https://cc.stockscode.click"
 
+# V3.1 redeploy after enabling Cloudflare Analytics Engine in the dashboard.
+# The dataset name and Worker binding match the newly enabled account.
 [[analytics_engine_datasets]]
 binding = "ANALYTICS"
 dataset = "angel_research_conversion_v31"
