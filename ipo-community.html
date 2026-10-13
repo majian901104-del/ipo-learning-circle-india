@@ -127,22 +127,12 @@
   var campaign=(qp.get('utm_campaign')||'ipo_community_v2').slice(0,120);
   var medium=(qp.get('utm_medium')||'').slice(0,80);
   var content=(qp.get('utm_content')||'').slice(0,80);
-  function emit(name,extra){
-    var fields=Object.assign({campaign_source:source,campaign_name:campaign,campaign_medium:medium,campaign_content:content},extra||{});
-    try{
-      if(typeof window.gtag==='function')window.gtag('event',name,fields);
-      else if(Array.isArray(window.dataLayer))window.dataLayer.push(Object.assign({event:name},fields));
-    }catch(_e){}
-  }
-  document.querySelectorAll('[data-cta]').forEach(function(link){
-    link.addEventListener('click',function(){emit('ipo_community_outbound_click',{button_location:link.getAttribute('data-cta')});});
-  });
+  // Community links are measured by the shared GA4 script after consent.
   document.querySelectorAll('[data-form-link]').forEach(function(link){
     var dest=new URL(link.getAttribute('href'),window.location.href);
     if(source!=='direct')dest.searchParams.set('utm_source',source);
     dest.searchParams.set('utm_campaign',campaign);
     link.setAttribute('href',dest.pathname+dest.search);
-    link.addEventListener('click',function(){emit('ipo_request_updates_click',{button_location:'secondary_form'});});
   });
   var heroButton=document.querySelector('[data-cta="hero"]');
   if(heroButton && 'IntersectionObserver' in window){
@@ -151,7 +141,7 @@
     },{threshold:0});
     visibilityObserver.observe(heroButton);
   }else{document.body.classList.add('sticky-visible');}
-  emit('ipo_campaign_landing_view',{page_variant:'v2_1'});
+  // GA4's standard page_view covers the landing page when analytics is accepted.
 })();
 </script>
 </body>
