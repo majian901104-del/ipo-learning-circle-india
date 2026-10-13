@@ -6,14 +6,14 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0b2235">
-<title>推广数据管理中心 V3.2.1 | Angel Research</title>
+<title>推广数据管理中心 V3.2.2 | Angel Research</title>
 <meta name="description" content="中文版私有推广数据管理后台：网站访问、WhatsApp 跳转、印度来源、手机设备、博主推广效果。">
 <link rel="stylesheet" href="analytics-dashboard.css">
 </head>
 <body>
 <header class="topbar">
  <div class="wrap topbar-inner">
-  <div class="brand"><span class="brand-mark">AR</span><span><strong>天使研究 · ANGEL RESEARCH</strong><small>推广数据管理中心 · V3.2.1</small></span></div>
+  <div class="brand"><span class="brand-mark">AR</span><span><strong>天使研究 · ANGEL RESEARCH</strong><small>推广数据管理中心 · V3.2.2</small></span></div>
   <nav class="topnav"><a href="promotion-kit.html">推广专属链接 ↗</a><a href="ipo-community.html">IPO 落地页 ↗</a></nav>
  </div>
 </header>
@@ -55,6 +55,10 @@
     <button class="action outline" id="lock" type="button">锁定后台</button>
    </div>
   </div>
+  <div class="view-options">
+    <label class="toggle" for="exclude-tests"><input type="checkbox" id="exclude-tests" checked> <span>排除测试推广数据</span></label>
+    <small>默认隐藏 <code>test*</code>、<code>qa_*</code>、<code>internal_*</code> 活动；关闭可查看全部记录。直接访问不是测试活动。</small>
+  </div>
   <div class="notice accounting-note"><b>统计口径：</b>“估算访问会话”和“估算WS点击会话”采用同一浏览器标签页内的首次事件去重，<b>不等于真实独立人数</b>。访问次数与跳转次数可包含同一人重复操作；成功进入群组的人数需要单独核对。</div>
   <div class="metric-grid" aria-label="核心统计指标">
    <div class="metric"><span>网站访问会话（估算）</span><strong id="metric-sessions">—</strong><small>按浏览器标签页粗略去重，非独立人数</small></div>
@@ -64,6 +68,18 @@
    <div class="metric"><span>跳转次数 ÷ 页面访问次数</span><strong id="metric-rate">—</strong><small>事件数量比率，非真实人数转化率</small></div>
    <div class="metric"><span>每位确认进群者成本</span><strong id="metric-cpa">—</strong><small>根据手工登记的费用及实际进群人数计算</small></div>
   </div>
+  <section class="panel india-focus" aria-label="印度市场推广分析">
+    <div class="section-top"><div><div class="kicker">印度目标市场 · 专项分析</div><h2>印度访问与 WhatsApp 跳转</h2></div>
+      <span class="india-label">仅统计 Cloudflare 标记为 IN 的请求</span></div>
+    <div class="india-summary">
+      <div><small>印度页面访问事件</small><strong id="india-views">—</strong></div>
+      <div><small>印度访客事件占比</small><strong id="india-share">—</strong></div>
+      <div><small>印度 WhatsApp 跳转次数</small><strong id="india-clicks">—</strong></div>
+    </div>
+    <h3 class="panel-subtitle">印度主要邦／地区分布</h3>
+    <div id="india-region-list" class="country-list indian-regions"></div>
+    <p class="helper">按请求发生地估算，不代表真实国籍、居住地或独立人数；检测到的测试活动也会随筛选条件排除。</p>
+  </section>
   <div class="analysis-grid">
    <section class="panel graph-panel"><div class="section-top"><div><div class="kicker">访问趋势</div><h2>每日访问与跳转变化</h2></div>
     <div class="legend"><span><i class="view-swatch"></i> 页面访问</span><span><i class="click-swatch"></i> WS跳转</span></div></div>
@@ -76,6 +92,7 @@
   </div>
   <div class="analysis-grid device-area">
     <section class="panel"><div class="section-top"><div><div class="kicker">手机及电脑设备</div><h2>设备类型、系统与型号</h2></div></div>
+     <div class="device-quality"><span>设备类别识别覆盖</span><strong id="device-coverage">—</strong></div>
      <div id="device-list" class="country-list"></div>
      <h3 class="panel-subtitle">可识别的手机型号</h3>
      <div id="model-list" class="country-list"></div>
@@ -92,9 +109,14 @@
     <input id="search" type="search" placeholder="输入博主名称或推广活动..." aria-label="搜索博主或活动">
     <a href="promotion-kit.html" class="action outline">+ 创建博主专属推广链接</a></div>
    <div class="table-scroll"><table>
-    <thead><tr><th>推广活动 / 来源</th><th>访问会话<br>估算</th><th>WS点击会话<br>估算</th><th>网页访问次数</th><th>WS跳转次数</th><th>次数比率</th><th>费用 ₹</th><th>帖子曝光量</th><th>实际进群人数</th><th>每位进群成本 ₹</th></tr></thead>
+    <thead><tr><th>推广活动 / 来源</th><th>访问会话<br>估算</th><th>WS点击会话<br>估算</th><th>网页访问次数</th><th>WS跳转次数</th><th>次数比率</th><th>印度访问次数</th><th>印度访问占比</th><th>印度WS跳转</th><th>费用 ₹</th><th>帖子曝光量</th><th>实际进群人数</th><th>每次WS跳转成本 ₹</th><th>每位真实进群成本 ₹</th></tr></thead>
     <tbody id="campaign-body"></tbody></table></div>
-    <p class="helper">估算会话不是实际独立人数；过去已记录的历史事件无法补出此前没有采集的会话或具体手机型号。若次数比率超过100%，可能是重复点击或统计覆盖差异。</p>
+    <p class="helper">费用、帖子曝光和真实进群人数需要手工录入，属于整场合作数据，不会随上面的日期筛选自动分摊。请只比较相同日期及推广范围；访问与点击均为事件次数，不等于真实人数。</p>
+  </section>
+  <section class="panel cost-rank" aria-label="博主投放成本排行榜">
+    <div class="section-top"><div><div class="kicker">推广费用 · 投放效率</div><h2>博主成本效率排行</h2>
+      <p class="section-sub">仅展示已填推广费用、并在所选日期内有 WhatsApp 跳转事件的活动。按每次跳转成本由低到高排序；不是实际进群获客成本。</p></div></div>
+    <div id="cost-rank-list" class="rank-list"></div>
   </section>
   <section class="bottom-grid">
    <div class="panel methodology"><div class="kicker">数据说明</div><h2>分清访问、点击和真实进群。</h2>
@@ -112,7 +134,7 @@
   </section>
  </section>
 </main>
-<footer><div class="wrap footer-inner"><span>天使研究 · V3.2.1 中文版</span><span>仅管理员使用 · 汇总统计非独立人数 · 不承诺投资回报</span></div></footer>
+<footer><div class="wrap footer-inner"><span>天使研究 · V3.2.2 中文版</span><span>仅管理员使用 · 汇总统计非独立人数 · 不承诺投资回报</span></div></footer>
 <script src="conversion-config.js" defer></script>
 <script src="analytics-dashboard.js" defer></script>
 </body></html>
