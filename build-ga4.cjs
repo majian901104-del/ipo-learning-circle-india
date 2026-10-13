@@ -1,5 +1,6 @@
 /* GitHub Pages build step: add the same privacy-respecting GA4 integration to
- * every HTML page, including future pages. This edits the Actions checkout
+ * every HTML page, including future pages.
+ * V3.1 also preloads an independent, safe-disabled aggregate counting module. This edits the Actions checkout
  * only; it does not rewrite each source page in the GitHub repository.
  * No tag is sent until ga4-config.js contains a valid G- ID and the visitor
  * explicitly accepts optional analytics in their browser.
@@ -22,7 +23,9 @@ function visit(dir){
     const rel=path.relative(path.dirname(full),root).replace(/\\/g,'/');
     const prefix=rel?rel+'/':'';
     const scripts='<script src="'+prefix+'ga4-config.js" defer></script>\n'
-       +'<script src="'+prefix+'ga4-analytics.js" defer></script>\n';
+       +'<script src="'+prefix+'ga4-analytics.js" defer></script>\n'
+       +'<script src="'+prefix+'conversion-config.js" defer></script>\n'
+       +'<script src="'+prefix+'conversion-tracker.js" defer></script>\n';
     s=s.replace(/<\/head\s*>/i,scripts+'</head>');
     fs.writeFileSync(full,s,'utf8');
     injected++;
