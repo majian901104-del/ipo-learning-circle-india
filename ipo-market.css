@@ -1,0 +1,43 @@
+/* Angel Research V3 IPO market modules, source dated. */
+.ipo-module{font-family:Arial,Helvetica,sans-serif;color:#1c3949;scroll-margin-top:80px}
+.ipo-module *{box-sizing:border-box}.ipo-board-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:25px}
+.ipo-kicker{font-size:12px;font-weight:800;letter-spacing:.12em;color:#937142;text-transform:uppercase}
+.ipo-board-head h2,.ipo-archive h2,.ipo-sources h2{font:400 clamp(31px,3.7vw,44px)/1.2 Georgia,serif;color:#112f41;margin:12px 0}
+.ipo-board-head p,.ipo-archive p,.ipo-sources p{font-size:14px;color:#526c79;margin:0;line-height:1.65}
+.ipo-full-link{flex:none;color:#123c51;font-size:13px;font-weight:800;text-decoration:underline;text-underline-offset:4px}
+.ipo-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ipo-card{display:flex;flex-direction:column;min-width:0;background:white;padding:25px;border:1px solid #dbe3e5;border-radius:4px;scroll-margin-top:25px}
+.ipo-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ipo-pill{background:#eaf0f2;color:#234b61;font-size:10px;letter-spacing:.06em;font-weight:800;padding:5px 7px;text-transform:uppercase}
+.ipo-state{font-size:11px;color:#637681;text-align:right}
+.ipo-card h3{font-size:20px!important;line-height:1.23!important;margin:20px 0 13px!important;color:#183548;font-family:Arial,Helvetica,sans-serif!important;letter-spacing:-.025em}
+.ipo-band{font-family:Georgia,serif;font-size:30px;line-height:1.2;color:#143e51;margin-bottom:17px}
+.ipo-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-top:1px solid #e8eded;padding:10px 0;font-size:12px}
+.ipo-row span{color:#61757f}.ipo-row b{color:#263e4d;text-align:right;font-weight:700}
+.ipo-card p{color:#546b77;font-size:13px;line-height:1.6;margin:12px 0 20px;flex:1}
+.ipo-card a{font-size:12px;letter-spacing:.035em;font-weight:800;color:#164b62;text-decoration:underline;text-underline-offset:4px}
+.ipo-caution{font-size:12px;color:#58707e;border-left:3px solid #b59b70;background:#f8f7f3;padding:12px 16px;margin:20px 0 0;line-height:1.7}
+.ipo-aged{background:#fff0dc;border-left:4px solid #aa663b;padding:14px 17px;color:#6d4824;margin-bottom:20px;font-size:14px}
+.ipo-filters{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0}
+.ipo-filters button{border:1px solid #c4d2d8;background:#fff;color:#23485b;font-size:13px;font-weight:750;padding:9px 15px;cursor:pointer;border-radius:3px}
+.ipo-filters button[aria-pressed="true"]{background:#173d50;color:#fff;border-color:#173d50}
+.ipo-archive,.ipo-sources{border-top:1px solid #dce3e5;padding-top:28px;margin-top:44px}
+.ipo-archive-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:22px}
+.ipo-archive-list>div{display:flex;flex-direction:column;padding:20px;background:#f5f8f8;gap:10px}
+.ipo-archive-list b{font-size:16px}.ipo-archive-list span{font-size:13px;color:#5d727f;line-height:1.6;flex:1}.ipo-archive-list a,.ipo-sources a{color:#17455c;font-size:12px;font-weight:800}
+.ipo-sources a{display:inline-block;margin:16px 17px 0 0}
+.ipo-market-block{padding:65px 0;background:#f4f7f8;border-top:1px solid #e3eaed;border-bottom:1px solid #dae5e8}
+.ipo-market-block .inner{max-width:1280px;margin:auto;padding:0 26px}
+.ipo-market-banner{background:#0c2e40;padding:19px 0;color:white;text-align:center}
+.ipo-market-banner a{color:white;font-size:13px;font-weight:800;text-underline-offset:4px}
+.ipo-page-header{background:#102f43;color:#fff;padding:76px 0 70px}
+.ipo-page-header .ipo-wrap{max-width:1150px;margin:auto;padding:0 24px}
+.ipo-page-header h1{font:400 clamp(40px,5vw,68px)/1.1 Georgia,serif;letter-spacing:-.025em;color:white;margin:15px 0}
+.ipo-page-header p{color:#d1e1e7;font-size:17px;line-height:1.7;max-width:760px}
+.ipo-page-main{max-width:1190px;margin:0 auto;padding:55px 24px 82px}
+.ipo-page-nav{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px 24px;background:white;border-bottom:1px solid #dbe3e5}
+.ipo-page-nav a{color:#163e52;font-weight:750;font-size:13px}
+.ipo-market-join{display:inline-block;background:#157651!important;color:#fff!important;padding:12px 16px;border-radius:4px;text-decoration:none}
+.ipo-page-footer{padding:35px 24px;background:#eaf0f1;text-align:center;font-size:12px;color:#47616e;line-height:1.7}
+@media(max-width:1000px){.ipo-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.ipo-card-grid,.ipo-archive-list{grid-template-columns:1fr}.ipo-board-head{display:block}.ipo-board-head h2{font-size:33px}.ipo-full-link{display:inline-block;margin-top:13px}.ipo-card{padding:20px}.ipo-card h3{margin:14px 0 10px!important}.ipo-market-block{padding:42px 0}.ipo-market-block .inner{padding:0 18px}.ipo-page-header{padding:44px 0}.ipo-page-header p{font-size:15px}.ipo-page-main{padding:34px 18px 60px}.ipo-page-nav{padding:12px 18px}.ipo-page-nav>a:nth-child(2){display:none}.ipo-page-nav .ipo-market-join{font-size:12px}.ipo-archive-list>div{padding:18px}}
