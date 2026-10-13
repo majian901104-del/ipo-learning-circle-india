@@ -132,7 +132,7 @@ test('V3.2 report aggregates source campaign daily and countries with owner key'
  assert.equal(res.headers.get('Access-Control-Allow-Origin'),'https://angelresearchindia.com');
  assert.equal(res.headers.get('Cache-Control'),'no-store, private');
  const body=await res.json();
- assert.equal(body.ok,true);assert.deepEqual(body.totals,{views:29,redirects:8});
+ assert.equal(body.ok,true);assert.deepEqual(body.totals,{views:29,redirects:8,visitorSessions:0,clickSessions:0});
  assert.deepEqual(body.campaigns[0],{source:'x',campaign:'gurjot_ipo',views:25,redirects:8});
  assert.equal(body.daily[0].views,29);
  assert.equal(body.countries[0].country,'IN');
