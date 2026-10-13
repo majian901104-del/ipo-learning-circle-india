@@ -192,6 +192,18 @@ function exportCsv(){
 function init(){
  loadNotes();
  if(!worker)setNotice('The Worker URL is unavailable. Check conversion-config.js.','error');
+ $('generate-key').addEventListener('click',async()=>{
+   const bytes=new Uint8Array(32);
+   w.crypto.getRandomValues(bytes);
+   const generated=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+   $('access-key').value=generated;
+   try{
+     await w.navigator.clipboard.writeText(generated);
+     setNotice('Secure key generated and copied. Paste it into the Cloudflare Worker secret REPORT_ACCESS_KEY. Do not share it in chat, files or screenshots.','ok');
+   }catch(_e){
+     setNotice('A secure key was generated in the password field, but clipboard access was blocked. Use the browser copy control to copy it privately.','error');
+   }
+ });
  $('access-form').addEventListener('submit',event=>{
   event.preventDefault();
   const v=$('access-key').value;
