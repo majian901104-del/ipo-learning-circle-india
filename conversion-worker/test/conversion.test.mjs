@@ -84,14 +84,20 @@ function reportEnv(){
            {campaign:'direct',source:'direct',event:'page_view',total:4}
          ]};
        }
+       if(options.query.includes('blob7 AS device')){
+         return {data:[
+           {device:'mobile',os:'android',model:'pixel_8',event:'page_view',total:5},
+           {device:'desktop',os:'windows',model:'unknown',event:'page_view',total:2}
+         ]};
+       }
        if(options.query.includes('toDate(timestamp) AS day')){
          return {data:[
            {day:'2026-10-13',event:'page_view',total:29},
            {day:'2026-10-13',event:'join_click',total:8}
          ]};
        }
-       return {data:[{country:'IN',event:'page_view',total:27},
-         {country:'MY',event:'page_view',total:2}]};
+       return {data:[{country:'IN',region:'MH',event:'page_view',total:27},
+         {country:'MY',region:'14',event:'page_view',total:2}]};
      }
    }
  }};
@@ -130,7 +136,10 @@ test('V3.2 report aggregates source campaign daily and countries with owner key'
  assert.deepEqual(body.campaigns[0],{source:'x',campaign:'gurjot_ipo',views:25,redirects:8});
  assert.equal(body.daily[0].views,29);
  assert.equal(body.countries[0].country,'IN');
- assert.equal(queries.length,3);
+ assert.equal(body.regions[0].region,'MH');
+ assert.equal(body.devices[0].os,'android');
+ assert.equal(body.models[0].model,'pixel_8');
+ assert.equal(queries.length,4);
  assert.ok(queries.every(q=>q.query.includes('events.analyticsEngine.angel_research_conversion_v31')));
  assert.ok(queries.every(q=>q.params.start.endsWith('Z')));
 });
@@ -149,4 +158,46 @@ test('V3.2 report CORS preflight allows Authorization on trusted domain',async()
  const res=await worker.fetch(req,env);
  assert.equal(res.status,204);
  assert.equal(res.headers.get('Access-Control-Allow-Headers'),'Authorization');
+});
+
+test('V3.2.1 new tab session event counts are separate from raw click requests',async()=>{
+ const {env,records}=setup();
+ const request=new Request('https://worker.example/collect',{method:'POST',
+  headers:{Origin:'https://angelresearchindia.com','Content-Type':'text/plain'},
+  body:JSON.stringify({event:'page_view',firstSession:true,path:'/ipo-community.html',
+   source:'x',campaign:'gurjot_ipo',medium:'influencer',device:'mobile',os:'android',model:'pixel 8'})
+ });
+ assert.equal((await worker.fetch(request,env)).status,204);
+ assert.deepEqual(records.map(r=>r.blobs[0]),['page_view','page_session']);
+ assert.equal(records[0].blobs[6],'mobile');
+ assert.equal(records[0].blobs[7],'android');
+ assert.equal(records[0].blobs[8],'pixel_8');
+ assert.equal(records[0].blobs[5],'unknown');
+ const link=new Request('https://worker.example/join?c=gurjot_ipo&s=x&m=influencer&u=1&d=mobile&o=android&model=pixel_8',{headers:{'Sec-Fetch-Mode':'navigate'}});
+ assert.equal((await worker.fetch(link,env)).status,302);
+ assert.deepEqual(records.map(r=>r.blobs[0]),['page_view','page_session','join_click','join_session']);
+});
+test('V3.2.1 old page and join calls remain backwards-compatible and do not fabricate sessions',async()=>{
+ const {env,records}=setup();
+ const a=new Request('https://worker.example/collect',{method:'POST',
+  headers:{Origin:'https://angelresearchindia.com'},
+  body:JSON.stringify({event:'page_view',path:'/',source:'direct'})});
+ await worker.fetch(a,env);
+ await worker.fetch(new Request('https://worker.example/join?c=direct'),env);
+ assert.deepEqual(records.map(r=>r.blobs[0]),['page_view','join_click']);
+});
+test('V3.2.1 only opt-in client sends model; report hides rare model groups',async()=>{
+ const {env}=reportEnv();
+ env.ANALYTICS_SQL.query=async(options)=>{
+   if(options.query.includes('blob7 AS device'))return {data:[
+     {device:'mobile',os:'android',model:'rare_android',event:'page_view',total:1},
+     {device:'mobile',os:'ios',model:'unknown',event:'page_view',total:4}
+   ]};
+   return {data:[]};
+ };
+ const body=await (await worker.fetch(reportRequest(reportSecret),env)).json();
+ assert.equal(body.ok,true);
+ assert.equal(body.models.length,0);
+ assert.equal(body.devices.length,2);
+ assert.deepEqual(body.totals,{views:0,redirects:0,visitorSessions:0,clickSessions:0});
 });
