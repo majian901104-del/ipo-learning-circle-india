@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b3d"><meta name="robots" content="noindex,nofollow"><title>Campaign Attribution Console | Angel Research</title>
+<meta name="description" content="Create source-specific IPO promotional URLs and estimate paid collaboration acquisition costs. No personal data is stored.">
+<style>
+:root{--ink:#1a3748;--muted:#586e7a;--deep:#0e2b3d;--gold:#caaf7c;--green:#15805d;--edge:#dce4e8}
+*{box-sizing:border-box}body{font:15px/1.6 Arial,Helvetica,sans-serif;margin:0;color:var(--ink);background:#f4f6f7}a{color:inherit}button,input,select{font:inherit}a:focus-visible,input:focus-visible,button:focus-visible{outline:3px solid #dab77c;outline-offset:2px}
+header{background:var(--deep);color:white;padding:25px 0;border-bottom:4px solid #bea174}.container{max-width:1040px;width:calc(100% - 40px);margin:auto}.nav{display:flex;align-items:center;justify-content:space-between;gap:18px}.logo{font-size:16px;font-weight:800;letter-spacing:.12em}.nav a{font-size:13px;color:#d4e5ed;text-underline-offset:4px}.hero{padding:55px 0 45px;color:white;background:linear-gradient(112deg,#102f43,#17455a)}.tag{font-size:11px;color:#f0cd93;font-weight:800;letter-spacing:.16em}.hero h1{font:400 clamp(34px,5vw,56px)/1.1 Georgia,serif;letter-spacing:-.02em;margin:17px 0}.hero p{font-size:16px;color:#d1e4ec;max-width:750px;margin:0}
+main{padding:36px 0 65px}.panel{background:white;border:1px solid var(--edge);padding:30px;border-radius:5px;margin-bottom:22px}.panel h2{font:400 30px/1.2 Georgia,serif;margin:0 0 6px}.panel p{color:var(--muted);margin:0 0 22px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.field input,.field select{border:1px solid #cad8df;height:46px;border-radius:3px;padding:0 12px;background:#fff;min-width:0}.full{grid-column:1/-1}.btn{border:1px solid var(--deep);background:var(--deep);color:white;padding:13px 20px;border-radius:4px;cursor:pointer;font-size:13px;font-weight:800}.btn.secondary{background:white;color:var(--deep)}.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:17px}.link-result{background:#ecf3f4;border-left:3px solid #a78a5d;padding:14px 16px;overflow-wrap:anywhere;font:14px/1.65 monospace;margin-top:18px}.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:19px}.metric{background:#f2f5f5;padding:18px;border:1px solid #e3e8e9}.metric small{display:block;color:#617682;font-size:12px}.metric strong{font-size:25px;line-height:1.35;display:block;margin-top:5px}.notice{font-size:13px;color:#516977;line-height:1.7;background:#f6f2e9;border-left:3px solid #b69863;padding:15px;margin-top:19px}.status{font-size:12px;color:#667784;margin-top:10px}.footer{padding:28px;background:#e9edef;font-size:12px;color:#607580;text-align:center}@media(max-width:670px){.container{width:calc(100% - 28px)}.nav{display:block}.nav a{display:inline-block;margin-top:9px}.hero{padding:36px 0}.panel{padding:20px}.grid,.metric-grid{grid-template-columns:1fr}.panel h2{font-size:27px}.metric strong{font-size:22px}} 
+</style></head><body>
+<header><div class="container nav"><span class="logo">ANGEL RESEARCH · PROMOTION</span><a href="ipo-community.html">View IPO Landing Page ↗</a></div></header>
+<section class="hero"><div class="container"><div class="tag">V3.1 · INTERNAL PLANNING UTILITY</div><h1>Campaign Attribution Console</h1><p>Create a unique link for each creator, and compare website visits, community redirects and confirmed WhatsApp joins. All report figures below must be entered from verified sources.</p></div></section>
+<main class="container">
+<section class="panel"><h2>1. Generate an influencer link</h2><p>One link per creator. Send the generated URL to the creator; use that link in their sponsored post.</p>
+<div class="grid">
+<div class="field"><label for="platform">Platform</label><select id="platform"><option value="x">X (Twitter)</option><option value="youtube">YouTube</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option></select></div>
+<div class="field"><label for="creator">Creator ID / campaign name</label><input id="creator" value="gurjot_ipo" maxlength="45" autocomplete="off" spellcheck="false" pattern="[a-zA-Z0-9_-]+"></div>
+<div class="field full"><label for="destination">Landing page</label><select id="destination"><option value="ipo-community.html">IPO Community Landing Page</option><option value="ipo-current.html">IPO Market Calendar</option><option value="index.html">Angel Research Homepage</option></select></div>
+</div>
+<div class="link-result" id="campaign-url" aria-live="polite"></div>
+<div class="actions"><button class="btn" type="button" id="copy-link">COPY PROMOTIONAL LINK</button><span class="status" role="status" id="copy-status"></span></div>
+</section>
+<section class="panel"><h2>2. Calculate campaign performance</h2><p>Enter independently verified figures after publishing. No numbers here are live or automatically pulled from GA4 or Cloudflare.</p>
+<div class="grid">
+<div class="field"><label for="spend">Campaign spend (INR)</label><input id="spend" type="number" min="0" step="1" value="15000" inputmode="numeric"></div>
+<div class="field"><label for="views">Post impressions (from X)</label><input id="views" type="number" min="0" step="1" placeholder="Confirmed impressions" inputmode="numeric"></div>
+<div class="field"><label for="site-visits">Verified site visits</label><input id="site-visits" type="number" min="0" step="1" placeholder="GA4 / privacy-safe aggregate" inputmode="numeric"></div>
+<div class="field"><label for="join-clicks">Community redirect requests</label><input id="join-clicks" type="number" min="0" step="1" placeholder="Worker join_click count" inputmode="numeric"></div>
+<div class="field full"><label for="actual-joins">Confirmed WhatsApp joins</label><input id="actual-joins" type="number" min="0" step="1" placeholder="Group admin verified membership" inputmode="numeric"></div>
+</div>
+<div class="metric-grid">
+<div class="metric"><small>Cost per site visit</small><strong id="cpv">—</strong></div>
+<div class="metric"><small>Cost per redirect request</small><strong id="cpc">—</strong></div>
+<div class="metric"><small>Cost per confirmed join</small><strong id="cpa">—</strong></div>
+</div>
+<div class="metric-grid">
+<div class="metric"><small>Impression → visit rate</small><strong id="visit-rate">—</strong></div>
+<div class="metric"><small>Visit → redirect rate</small><strong id="click-rate">—</strong></div>
+<div class="metric"><small>Redirect → confirmed join rate</small><strong id="join-rate">—</strong></div>
+</div>
+<div class="notice"><strong>Definitions:</strong> X post impressions, GA4 page views, independent Worker visits, redirect requests and real WhatsApp members are different measurements. They may not match. Only use the same campaign, dates and reporting scope when calculating conversion rates. Rejecting optional analytics can reduce the recorded sample.</div>
+</section>
+<section class="panel"><h2>3. Attribution status</h2><p>Independent aggregate tracking requires a Cloudflare Worker deployment and verified HTTPS URL before it can be enabled on the website.</p>
+<p id="state" aria-live="polite"></p><p><a href="https://github.com/majian901104-del/ipo-learning-circle-india/blob/main/V3-CONVERSION-SETUP.md" target="_blank" rel="noopener noreferrer">Implementation notes and activation steps ↗</a></p>
+</section>
+</main><footer class="footer">Angel Research · Internal marketing utility. This page does not collect or retain your inputs on a remote server.</footer>
+<script src="conversion-config.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const project={x:'influencer',youtube:'creator',facebook:'sponsored_post',instagram:'creator'};
+function build(){
+ const source=$('platform').value,medium=project[source]||'influencer';
+ const slug=$('creator').value.toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,45)||'campaign';
+ const path=$('destination').value;
+ const url=new URL(path,'https://angelresearchindia.com/');
+ url.searchParams.set('utm_source',source);url.searchParams.set('utm_medium',medium);
+ url.searchParams.set('utm_campaign',slug);
+ $('campaign-url').textContent=url.href;
+}
+function n(id){const text=$(id).value.trim();return text===''?null:Number(text)}
+function cost(v){return Number.isFinite(v)?new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(v):'—'}
+function percent(a,b){return a!==null&&b!==null&&b>0?(100*a/b).toFixed(2)+'%':'—'}
+function calc(){
+ let spend=n('spend'),views=n('views'),visits=n('site-visits'),clicks=n('join-clicks'),joins=n('actual-joins');
+ $('cpv').textContent=visits>0?cost(spend/visits):'—';
+ $('cpc').textContent=clicks>0?cost(spend/clicks):'—';
+ $('cpa').textContent=joins>0?cost(spend/joins):'—';
+ $('visit-rate').textContent=percent(visits,views);
+ $('click-rate').textContent=percent(clicks,visits);
+ $('join-rate').textContent=percent(joins,clicks);
+}
+['platform','creator','destination'].forEach(id=>$(id).addEventListener('input',build));
+['spend','views','site-visits','join-clicks','actual-joins'].forEach(id=>$(id).addEventListener('input',calc));
+$('copy-link').addEventListener('click',async()=>{
+ try{await navigator.clipboard.writeText($('campaign-url').textContent);$('copy-status').textContent='Copied.'}
+ catch(_e){$('copy-status').textContent='Select and copy the link displayed above.'}
+});
+const enabled=window.AngelConversionConfig&&window.AngelConversionConfig.enabled===true;
+$('state').textContent=enabled?'Configured: independent Worker base URL entered. Verify live counts against Cloudflare Analytics Engine.':'Pending: Cloudflare Worker is not yet connected. Current site retains direct community links and consented GA4 tracking.';
+build();calc();
+})();
+</script></body></html>
