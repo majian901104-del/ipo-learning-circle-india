@@ -114,6 +114,16 @@ function deviceGroups(rows){
     }).filter(v=>v.views>=3).sort((a,b)=>b.views-a.views).slice(0,20)
   };
 }
+function addIndiaBreakdown(campaigns,rows){
+  const index=new Map(campaigns.map(c=>[c.source+'|'+c.campaign,c]));
+  for(const c of campaigns){c.indiaViews=0;c.indiaRedirects=0}
+  for(const row of rows){
+    const item=index.get(String(row.source||'direct')+'|'+String(row.campaign||'direct'));
+    if(!item)continue;
+    if(row.event==='page_view')item.indiaViews+=metric(row);
+    if(row.event==='join_click')item.indiaRedirects+=metric(row);
+  }
+}
 function totals(campaigns){
   return campaigns.reduce((a,v)=>({
     views:a.views+v.views,redirects:a.redirects+v.redirects,
@@ -150,36 +160,46 @@ export async function handleReport(request,env){
   const days=Number(dayString);
   const start=new Date(Date.now()-days*86400000).toISOString();
   const params={start};
+  // Bounded server-side filters apply consistently to ALL dashboard panels.
+  const excludeTest=url.searchParams.get('exclude_test')==='1';
+  const cleanClause=excludeTest?" AND blob3 NOT LIKE 'test%' AND blob3 NOT LIKE 'qa_%' AND blob3 NOT LIKE 'internal_%'":'';
   const grouped=`SELECT blob3 AS campaign, blob4 AS source, blob1 AS event, COUNT(*) AS total
     FROM ${DATASET}
-    WHERE timestamp >= $start
+    WHERE timestamp >= $start${cleanClause}
     GROUP BY blob3, blob4, blob1 ORDER BY total DESC LIMIT 500`;
   const timeseries=`SELECT toDate(timestamp) AS day, blob1 AS event, COUNT(*) AS total
     FROM ${DATASET}
-    WHERE timestamp >= $start
+    WHERE timestamp >= $start${cleanClause}
     GROUP BY day, blob1 ORDER BY day ASC LIMIT 90`;
   const byCountry=`SELECT blob6 AS country, blob10 AS region, blob1 AS event, COUNT(*) AS total
     FROM ${DATASET}
-    WHERE timestamp >= $start
+    WHERE timestamp >= $start${cleanClause}
     GROUP BY blob6, blob10, blob1 ORDER BY total DESC LIMIT 300`;
   const byDevice=`SELECT blob7 AS device, blob8 AS os, blob9 AS model, blob1 AS event, COUNT(*) AS total
     FROM ${DATASET}
-    WHERE timestamp >= $start
+    WHERE timestamp >= $start${cleanClause}
     GROUP BY blob7, blob8, blob9, blob1 ORDER BY total DESC LIMIT 300`;
+  const indianCampaigns=`SELECT blob3 AS campaign, blob4 AS source, blob1 AS event, COUNT(*) AS total
+    FROM ${DATASET}
+    WHERE timestamp >= $start${cleanClause} AND blob6 = 'IN' AND blob1 IN ('page_view', 'join_click')
+    GROUP BY blob3, blob4, blob1 ORDER BY total DESC LIMIT 300`;
   try{
     const responses=await Promise.all([
       env.ANALYTICS_SQL.query({query:grouped,params}),
       env.ANALYTICS_SQL.query({query:timeseries,params}),
       env.ANALYTICS_SQL.query({query:byCountry,params}),
-      env.ANALYTICS_SQL.query({query:byDevice,params})
+      env.ANALYTICS_SQL.query({query:byDevice,params}),
+      env.ANALYTICS_SQL.query({query:indianCampaigns,params})
     ]);
     if(responses.some(x=>!x||!Array.isArray(x.data)))throw new Error('Unexpected Analytics SQL response');
     const campaigns=summarize(responses[0].data);
+    addIndiaBreakdown(campaigns,responses[4].data);
     const geo=countries(responses[2].data);
     const hardware=deviceGroups(responses[3].data);
     return json({ok:true,days,asOf:new Date().toISOString(),start,
       sourceType:'Cloudflare Analytics Engine aggregate events',
-      countsAre:'Page and redirect requests are events; visitorSessions and clickSessions are tab-based estimates, NOT verified unique people or successful joins',
+      countsAre:'Event counts include repeats. Browser tab estimates are NOT verified unique visitors or confirmed WhatsApp joins.',
+      excludeTest,
       campaigns,totals:totals(campaigns),
       daily:daily(responses[1].data),
       countries:geo.countries,regions:geo.regions,
