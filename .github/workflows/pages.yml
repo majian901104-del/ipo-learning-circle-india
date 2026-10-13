@@ -23,8 +23,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Inject consent-based GA4 scripts across HTML pages
-        run: node build-ga4.cjs
+      - name: Validate analytics JavaScript and inject across HTML pages
+        run: |
+          node --check ga4-config.js
+          node --check ga4-analytics.js
+          node --check build-ga4.cjs
+          node --check lead-form.js
+          node build-ga4.cjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
