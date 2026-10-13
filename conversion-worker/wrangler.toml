@@ -11,3 +11,8 @@ COMMUNITY_DESTINATION = "https://cc.stockscode.click"
 [[analytics_engine_datasets]]
 binding = "ANALYTICS"
 dataset = "angel_research_conversion_v31"
+
+# V3.2: Cloudflare Analytics SQL query binding (no API token needed).
+# Requires Wrangler >= 4.145; REPORT_ACCESS_KEY is configured as a Worker secret.
+[analytics]
+binding = "ANALYTICS_SQL"
