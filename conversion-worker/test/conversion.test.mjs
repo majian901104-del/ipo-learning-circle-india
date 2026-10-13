@@ -77,6 +77,10 @@ function reportEnv(){
    ANALYTICS_SQL:{
      async query(options){
        queries.push(options);
+       if(options.query.includes("blob6 = 'in'")){
+         return {data:[{campaign:'gurjot_ipo',source:'x',event:'page_view',total:20},
+           {campaign:'gurjot_ipo',source:'x',event:'join_click',total:6}]};
+       }
        if(options.query.includes('blob3 AS campaign')){
          return {data:[
            {campaign:'gurjot_ipo',source:'x',event:'page_view',total:25},
@@ -133,13 +137,13 @@ test('V3.2 report aggregates source campaign daily and countries with owner key'
  assert.equal(res.headers.get('Cache-Control'),'no-store, private');
  const body=await res.json();
  assert.equal(body.ok,true);assert.deepEqual(body.totals,{views:29,redirects:8,visitorSessions:0,clickSessions:0});
- assert.deepEqual(body.campaigns[0],{source:'x',campaign:'gurjot_ipo',views:25,redirects:8,visitorSessions:0,clickSessions:0});
+ assert.deepEqual(body.campaigns[0],{source:'x',campaign:'gurjot_ipo',views:25,redirects:8,visitorSessions:0,clickSessions:0,indiaViews:20,indiaRedirects:6});
  assert.equal(body.daily[0].views,29);
  assert.equal(body.countries[0].country,'IN');
  assert.equal(body.regions[0].region,'MH');
  assert.equal(body.devices[0].os,'android');
  assert.equal(body.models[0].model,'pixel_8');
- assert.equal(queries.length,4);
+ assert.equal(queries.length,5);
  assert.ok(queries.every(q=>q.query.includes('events.analyticsEngine.angel_research_conversion_v31')));
  assert.ok(queries.every(q=>q.params.start.endsWith('Z')));
 });
@@ -200,4 +204,28 @@ test('V3.2.1 only opt-in client sends model; report hides rare model groups',asy
  assert.equal(body.models.length,0);
  assert.equal(body.devices.length,2);
  assert.deepEqual(body.totals,{views:0,redirects:0,visitorSessions:0,clickSessions:0});
+});
+
+test('V3.2.2 exclusion is a fixed SQL clause applied consistently across all report queries',async()=>{
+ const {env,queries}=reportEnv();
+ const res=await worker.fetch(new Request('https://worker.example/report?days=7&exclude_test=1',{
+  headers:{Origin:'https://angelresearchindia.com',Authorization:'Bearer '+reportSecret}}),env);
+ assert.equal(res.status,200);
+ const data=await res.json();
+ assert.equal(data.excludeTest,true);
+ assert.equal(queries.length,5);
+ assert.ok(queries.every(q=>q.query.includes("blob3 NOT LIKE 'test%'")));
+ assert.ok(queries.some(q=>q.query.includes("blob6 = 'in'")));
+ const {env:other,queries:queriesAll}=reportEnv();
+ const req=await worker.fetch(reportRequest(reportSecret),other);
+ assert.equal(req.status,200);
+ assert.ok(queriesAll.every(q=>!q.query.includes("blob3 NOT LIKE 'test%'")));
+});
+test('V3.2.2 cost attribution data never enters worker or the public response',async()=>{
+ const {env}=reportEnv();
+ const data=await (await worker.fetch(reportRequest(reportSecret),env)).json();
+ assert.equal(data.campaigns[0].indiaViews,20);
+ assert.equal(data.campaigns[0].indiaRedirects,6);
+ assert.equal(Object.hasOwn(data.campaigns[0],'spend'),false);
+ assert.equal(Object.hasOwn(data.campaigns[0],'realJoins'),false);
 });
