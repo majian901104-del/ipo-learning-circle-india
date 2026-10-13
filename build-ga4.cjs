@@ -17,6 +17,8 @@ function visit(dir){
     if(entry.isDirectory()) {visit(full);continue}
     if(!entry.isFile() || !/\.html$/i.test(entry.name))continue;
     found++;
+    // Private reporting pages must not inflate the public marketing funnel.
+    if(entry.name==='analytics-dashboard.html'){skipped++;continue}
     let s=fs.readFileSync(full,'utf8');
     if(s.includes('src="ga4-analytics.js"') || s.includes('/ga4-analytics.js"')){skipped++;continue}
     if(!/<\/head\s*>/i.test(s))throw new Error('HTML has no closing head: '+full);
