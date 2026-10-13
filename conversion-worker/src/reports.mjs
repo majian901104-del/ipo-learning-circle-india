@@ -181,7 +181,7 @@ export async function handleReport(request,env){
     GROUP BY blob7, blob8, blob9, blob1 ORDER BY total DESC LIMIT 300`;
   const indianCampaigns=`SELECT blob3 AS campaign, blob4 AS source, blob1 AS event, COUNT(*) AS total
     FROM ${DATASET}
-    WHERE timestamp >= $start${cleanClause} AND blob6 = 'IN' AND blob1 IN ('page_view', 'join_click')
+    WHERE timestamp >= $start${cleanClause} AND blob6 = 'in' AND blob1 IN ('page_view', 'join_click')
     GROUP BY blob3, blob4, blob1 ORDER BY total DESC LIMIT 300`;
   try{
     const responses=await Promise.all([
