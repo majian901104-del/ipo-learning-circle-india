@@ -33,6 +33,10 @@ form.addEventListener('submit',async event => {
     const result = await response.json();
     if(result.ok !== true) throw Error(result.error || 'rejected');
     status.textContent = 'Request received. Opening your request status…';
+    // Count only successfully recorded, non-duplicate form enquiries.
+    if(!result.duplicate && window.AngelAnalytics && window.AngelAnalytics.isEnabled()) {
+      window.AngelAnalytics.track('generate_lead',{lead_type:'research_updates'});
+    }
     // Only a readable affirmative server response can continue this flow.
     const target = new URL('join.html',location.href);
     target.searchParams.set('status','received');
