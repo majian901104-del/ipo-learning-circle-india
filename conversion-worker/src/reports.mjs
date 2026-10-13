@@ -47,12 +47,14 @@ function summarize(rows){
     const campaign=String(row.campaign||'direct').slice(0,48);
     const source=String(row.source||'direct').slice(0,32);
     const event=String(row.event||'');
-    if(event!=='join_click'&&event!=='page_view')continue;
+    if(!['join_click','page_view','page_session','join_session'].includes(event))continue;
     const key=source+'|'+campaign;
-    if(!map.has(key))map.set(key,{source,campaign,views:0,redirects:0});
+    if(!map.has(key))map.set(key,{source,campaign,views:0,redirects:0,visitorSessions:0,clickSessions:0});
     const rec=map.get(key);
     if(event==='join_click')rec.redirects+=metric(row);
-    else rec.views+=metric(row);
+    else if(event==='page_view')rec.views+=metric(row);
+    else if(event==='page_session')rec.visitorSessions+=metric(row);
+    else if(event==='join_session')rec.clickSessions+=metric(row);
   }
   return Array.from(map.values()).sort((a,b)=>b.views-a.views||b.redirects-a.redirects).slice(0,150);
 }
@@ -61,27 +63,63 @@ function daily(rows){
   for(const row of rows){
     const day=String(row.day||'').slice(0,10);
     if(!/^\d{4}-\d\d-\d\d$/.test(day))continue;
-    if(!map.has(day))map.set(day,{day,views:0,redirects:0});
+    if(!map.has(day))map.set(day,{day,views:0,redirects:0,visitorSessions:0,clickSessions:0});
     const rec=map.get(day);
     if(row.event==='page_view')rec.views+=metric(row);
     else if(row.event==='join_click')rec.redirects+=metric(row);
+    else if(row.event==='page_session')rec.visitorSessions+=metric(row);
+    else if(row.event==='join_session')rec.clickSessions+=metric(row);
   }
   return Array.from(map.values()).sort((a,b)=>a.day.localeCompare(b.day));
 }
 function countries(rows){
-  const map=new Map();
+  const map=new Map(),regions=new Map();
   for(const row of rows){
     if(row.event!=='page_view')continue;
     const country=String(row.country||'unknown').toUpperCase().slice(0,8);
+    const region=String(row.region||'unknown').toUpperCase().slice(0,15);
     map.set(country,(map.get(country)||0)+metric(row));
+    const key=country+'|'+region;
+    regions.set(key,(regions.get(key)||0)+metric(row));
   }
-  return Array.from(map.entries()).map(([country,views])=>({country,views}))
-    .sort((a,b)=>b.views-a.views).slice(0,30);
+  return {
+    countries:Array.from(map.entries()).map(([country,views])=>({country,views}))
+      .sort((a,b)=>b.views-a.views).slice(0,30),
+    regions:Array.from(regions.entries()).map(([key,views])=>{
+      const pos=key.indexOf('|');
+      return {country:key.slice(0,pos),region:key.slice(pos+1),views};
+    }).sort((a,b)=>b.views-a.views).slice(0,50)
+  };
+}
+function deviceGroups(rows){
+  const map=new Map(),models=new Map();
+  for(const row of rows){
+    if(row.event!=='page_view')continue;
+    const device=String(row.device||'unknown').slice(0,12);
+    const os=String(row.os||'unknown').slice(0,16);
+    const model=String(row.model||'unknown').slice(0,36);
+    const key=device+'|'+os;
+    map.set(key,(map.get(key)||0)+metric(row));
+    if(model!=='unknown'&&model!==''){const mkey=os+'|'+model;models.set(mkey,(models.get(mkey)||0)+metric(row))}
+  }
+  return {
+    devices:Array.from(map.entries()).map(([key,views])=>{
+      const pos=key.indexOf('|');
+      return {device:key.slice(0,pos),os:key.slice(pos+1),views};
+    }).sort((a,b)=>b.views-a.views).slice(0,35),
+    // Suppress rare model group counts to reduce inference from individual visits.
+    models:Array.from(models.entries()).map(([key,views])=>{
+      const pos=key.indexOf('|');
+      return {os:key.slice(0,pos),model:key.slice(pos+1),views};
+    }).filter(v=>v.views>=3).sort((a,b)=>b.views-a.views).slice(0,20)
+  };
 }
 function totals(campaigns){
   return campaigns.reduce((a,v)=>({
-    views:a.views+v.views,redirects:a.redirects+v.redirects
-  }),{views:0,redirects:0});
+    views:a.views+v.views,redirects:a.redirects+v.redirects,
+    visitorSessions:a.visitorSessions+v.visitorSessions,
+    clickSessions:a.clickSessions+v.clickSessions
+  }),{views:0,redirects:0,visitorSessions:0,clickSessions:0});
 }
 export async function handleReport(request,env){
   const origin=request.headers.get('Origin')||'';
@@ -120,24 +158,32 @@ export async function handleReport(request,env){
     FROM ${DATASET}
     WHERE timestamp >= $start
     GROUP BY day, blob1 ORDER BY day ASC LIMIT 90`;
-  const byCountry=`SELECT blob6 AS country, blob1 AS event, COUNT(*) AS total
+  const byCountry=`SELECT blob6 AS country, blob10 AS region, blob1 AS event, COUNT(*) AS total
     FROM ${DATASET}
     WHERE timestamp >= $start
-    GROUP BY blob6, blob1 ORDER BY total DESC LIMIT 100`;
+    GROUP BY blob6, blob10, blob1 ORDER BY total DESC LIMIT 300`;
+  const byDevice=`SELECT blob7 AS device, blob8 AS os, blob9 AS model, blob1 AS event, COUNT(*) AS total
+    FROM ${DATASET}
+    WHERE timestamp >= $start
+    GROUP BY blob7, blob8, blob9, blob1 ORDER BY total DESC LIMIT 300`;
   try{
     const responses=await Promise.all([
       env.ANALYTICS_SQL.query({query:grouped,params}),
       env.ANALYTICS_SQL.query({query:timeseries,params}),
-      env.ANALYTICS_SQL.query({query:byCountry,params})
+      env.ANALYTICS_SQL.query({query:byCountry,params}),
+      env.ANALYTICS_SQL.query({query:byDevice,params})
     ]);
     if(responses.some(x=>!x||!Array.isArray(x.data)))throw new Error('Unexpected Analytics SQL response');
     const campaigns=summarize(responses[0].data);
+    const geo=countries(responses[2].data);
+    const hardware=deviceGroups(responses[3].data);
     return json({ok:true,days,asOf:new Date().toISOString(),start,
       sourceType:'Cloudflare Analytics Engine aggregate events',
-      countsAre:'approximate event requests, not unique people or successful joins',
+      countsAre:'Page and redirect requests are events; visitorSessions and clickSessions are tab-based estimates, NOT verified unique people or successful joins',
       campaigns,totals:totals(campaigns),
       daily:daily(responses[1].data),
-      countries:countries(responses[2].data)
+      countries:geo.countries,regions:geo.regions,
+      devices:hardware.devices,models:hardware.models
     },200,origin);
   }catch(err){
     // Never reflect internal SQL details, credentials, or raw rows to the client.
