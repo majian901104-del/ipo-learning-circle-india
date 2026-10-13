@@ -80,6 +80,7 @@ function mock(){
  main.classList.remove('is-menu-open');
  const d={
   readyState:'complete',activeElement:menu,title:'',
+  addEventListener:()=>{},
   getElementById:id=>controls[id],
   querySelector:sel=>sel==='.admin-shell'?main:null,
   querySelectorAll:sel=>sel==='.admin-nav-item'?navButtons:
