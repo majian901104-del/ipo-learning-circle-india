@@ -1,0 +1,11 @@
+name = "angel-research-conversion-v31"
+main = "src/index.mjs"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+COMMUNITY_DESTINATION = "https://cc.stockscode.click"
+
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+dataset = "angel_research_conversion_v31"
