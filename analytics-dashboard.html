@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0b2235">
 <title>推广数据管理中心 V3.2.2 | Angel Research</title>
 <meta name="description" content="中文版私有推广数据管理后台：网站访问、WhatsApp 跳转、印度来源、手机设备、博主推广效果。">
-<link rel="stylesheet" href="analytics-dashboard.css">
+<link rel="stylesheet" href="analytics-dashboard.css?v=20261014-v322">
 </head>
 <body>
 <header class="topbar">
@@ -56,8 +56,8 @@
    </div>
   </div>
   <div class="view-options">
-    <label class="toggle" for="exclude-tests"><input type="checkbox" id="exclude-tests" checked> <span>排除测试推广数据</span></label>
-    <small>默认隐藏 <code>test*</code>、<code>qa_*</code>、<code>internal_*</code> 活动；关闭可查看全部记录。直接访问不是测试活动。</small>
+    <label class="toggle" for="exclude-tests"><input type="checkbox" id="exclude-tests" checked> <span>排除有测试标记的推广活动</span></label>
+    <small>默认隐藏 <code>test*</code>、<code>qa_*</code>、<code>internal_*</code> 活动；关闭可查看全部记录。直接访问中的人工测试无法自动识别。</small>
   </div>
   <div class="notice accounting-note"><b>统计口径：</b>“估算访问会话”和“估算WS点击会话”采用同一浏览器标签页内的首次事件去重，<b>不等于真实独立人数</b>。访问次数与跳转次数可包含同一人重复操作；成功进入群组的人数需要单独核对。</div>
   <div class="metric-grid" aria-label="核心统计指标">
@@ -66,7 +66,7 @@
    <div class="metric"><span>网站页面访问次数</span><strong id="metric-views">—</strong><small>包含重复浏览、刷新</small></div>
    <div class="metric"><span>WhatsApp 链接跳转次数</span><strong id="metric-clicks">—</strong><small>包含重复点击，不代表成功进群</small></div>
    <div class="metric"><span>跳转次数 ÷ 页面访问次数</span><strong id="metric-rate">—</strong><small>事件数量比率，非真实人数转化率</small></div>
-   <div class="metric"><span>每位确认进群者成本</span><strong id="metric-cpa">—</strong><small>根据手工登记的费用及实际进群人数计算</small></div>
+   <div class="metric"><span>每位确认进群者成本</span><strong id="metric-cpa">—</strong><small>仅计算推广费用与实际进群人数均已登记的活动</small></div>
   </div>
   <section class="panel india-focus" aria-label="印度市场推广分析">
     <div class="section-top"><div><div class="kicker">印度目标市场 · 专项分析</div><h2>印度访问与 WhatsApp 跳转</h2></div>
@@ -115,7 +115,7 @@
   </section>
   <section class="panel cost-rank" aria-label="博主投放成本排行榜">
     <div class="section-top"><div><div class="kicker">推广费用 · 投放效率</div><h2>博主成本效率排行</h2>
-      <p class="section-sub">仅展示已填推广费用、并在所选日期内有 WhatsApp 跳转事件的活动。按每次跳转成本由低到高排序；不是实际进群获客成本。</p></div></div>
+      <p class="section-sub">仅展示已填推广费用、且所选日期内存在WS跳转的活动。按“登记的合作总费用 ÷ 当前筛选期跳转次数”排序，属于参考值；不同投放周期不要直接比较，更不是实际进群获客成本。</p></div></div>
     <div id="cost-rank-list" class="rank-list"></div>
   </section>
   <section class="bottom-grid">
@@ -124,7 +124,7 @@
     <p><b>WS点击会话（估算）：</b>同一标签页、同一推广活动首次点击跳转记录一次。不是 WhatsApp 已入群人数。</p>
     <p><b>页面访问和链接跳转：</b>是原始事件次数，可能包含同一用户重复浏览和点击。</p>
     <p><b>实际成功进群：</b>需要依据 WhatsApp 群管理记录核实，无法仅靠网站跳转自动确认。</p>
-    <p><b>GA4：</b>仍独立运行，统计口径和隐私授权覆盖范围不同，不能将它的数字与这里简单相加。</p>
+    <p><b>GA4：</b>如需查看另一种活跃用户指标，可在 <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">Google Analytics 4 中查看活跃用户 ↗</a>。GA4 依赖浏览器隐私设置与授权，并不能精确代表所有访客，也不能与这里的会话数简单相加。</p>
    </div>
    <div class="panel actions-panel"><div class="kicker">推广管理工具</div><h2>为每位博主建立专属链接。</h2>
     <p>可为 X、YouTube、Facebook 和 Instagram 合作对象分别生成带来源标记的推广网址，方便归因。</p>
@@ -136,5 +136,5 @@
 </main>
 <footer><div class="wrap footer-inner"><span>天使研究 · V3.2.2 中文版</span><span>仅管理员使用 · 汇总统计非独立人数 · 不承诺投资回报</span></div></footer>
 <script src="conversion-config.js" defer></script>
-<script src="analytics-dashboard.js" defer></script>
+<script src="analytics-dashboard.js?v=20261014-v322" defer></script>
 </body></html>
