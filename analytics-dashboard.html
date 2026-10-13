@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0b2235">
+<title>V3.2 Campaign Intelligence | Angel Research</title>
+<meta name="description" content="Private owner-only aggregate campaign analytics. Requires a Cloudflare Worker report access key.">
+<link rel="stylesheet" href="analytics-dashboard.css">
+</head>
+<body>
+<header class="topbar">
+ <div class="wrap topbar-inner">
+  <div class="brand"><span class="brand-mark">AR</span><span><strong>ANGEL RESEARCH</strong><small>CAMPAIGN INTELLIGENCE · V3.2</small></span></div>
+  <nav class="topnav"><a href="promotion-kit.html">Link builder ↗</a><a href="ipo-community.html">IPO landing page ↗</a></nav>
+ </div>
+</header>
+<main class="wrap" id="main">
+ <section class="intro">
+  <div><div class="eyebrow"><span class="pulse"></span> CONVERSION OPERATIONS CENTER</div>
+  <h1>Know what converts.<br><em>Not just what gets views.</em></h1>
+  <p>Live Cloudflare aggregate events, campaign attribution and verified marketing costs — in one private dashboard.</p></div>
+  <div class="intro-side"><div class="intro-side-head">DATA SOURCE</div><div class="source-text">Cloudflare Analytics Engine</div><div class="source-sub">Anonymized counts · not individual users</div><div class="source-rule"></div><div class="source-status" id="source-status"><span class="status-dot"></span> Awaiting owner access</div></div>
+ </section>
+ <section class="auth-panel" id="auth-panel" aria-labelledby="auth-title">
+   <div class="auth-info"><div class="eyebrow muted">PRIVATE REPORT ACCESS</div><h2 id="auth-title">Connect your Cloudflare data</h2><p>Enter the private report access key configured as a Cloudflare Worker secret. Your key stays in memory only and disappears when this page closes or reloads.</p></div>
+   <form id="access-form" autocomplete="off" class="auth-form">
+     <label for="access-key">OWNER ACCESS KEY</label>
+     <input id="access-key" type="password" minlength="32" placeholder="Enter your private 32+ character key" spellcheck="false" autocomplete="off" required>
+     <button class="action primary" type="submit" id="connect-btn">Unlock live reports <span aria-hidden="true">→</span></button>
+   </form>
+ </section>
+ <div id="status" class="notice" role="status" aria-live="polite">Private reporting is locked. GA4 and WhatsApp links continue operating independently.</div>
+ <section id="reporting" aria-label="Campaign performance" hidden>
+ <div class="toolbar">
+  <div class="time-controls" role="group" aria-label="Time interval">
+    <button class="time-btn" type="button" data-days="1" aria-pressed="false">24 hours</button>
+    <button class="time-btn active" type="button" data-days="7" aria-pressed="true">7 days</button>
+    <button class="time-btn" type="button" data-days="30" aria-pressed="false">30 days</button>
+  </div>
+  <div class="right-tools"><span id="updated-at">Awaiting data</span><button class="action outline" id="refresh" type="button">↻ Refresh</button><button class="action outline" id="export" type="button">↓ CSV</button><button class="action outline" id="lock" type="button">Lock</button></div>
+ </div>
+ <div class="metric-grid" aria-label="Key marketing metrics">
+  <div class="metric"><span>AGGREGATE PAGE REQUESTS</span><strong id="metric-views">—</strong><small>Page events, not unique visitors</small></div>
+  <div class="metric"><span>COMMUNITY REDIRECTS</span><strong id="metric-clicks">—</strong><small>Requests, not confirmed group joins</small></div>
+  <div class="metric"><span>REDIRECT / PAGE RATIO</span><strong id="metric-rate">—</strong><small>Event ratio, not person-level conversion</small></div>
+  <div class="metric"><span>VERIFIED JOIN COST</span><strong id="metric-cpa">—</strong><small>Uses owner-entered confirmed joins</small></div>
+ </div>
+ <div class="analysis-grid">
+  <section class="panel graph-panel"><div class="section-top"><div><div class="kicker">DAILY ACTIVITY</div><h2>Visits and redirect requests</h2></div><div class="legend"><span><i class="view-swatch"></i> Visits</span><span><i class="click-swatch"></i> Redirects</span></div></div><div class="chart" id="daily-chart" role="img" aria-label="Daily aggregate page views and community redirects"></div><div class="helper">Counts can include repeat page loads and repeated taps. Dates shown in UTC.</div></section>
+  <section class="panel geo-panel"><div class="section-top"><div><div class="kicker">AUDIENCE GEO</div><h2>Top traffic countries</h2></div></div><div id="country-list" class="country-list"></div><div class="helper">Approximate country of the Worker request; not verified residency.</div></section>
+ </div>
+ <section class="panel campaigns"><div class="section-top"><div><div class="kicker">CAMPAIGN PERFORMANCE</div><h2>Performance by promoter</h2><p class="section-sub">Cloudflare numbers load automatically. Ad cost, post impressions and actual WhatsApp joins are entered by you and saved only in this browser.</p></div></div>
+  <div class="table-toolbar"><label for="search" class="sr-only">Filter campaigns</label><input id="search" type="search" placeholder="Search promoter or campaign..." aria-label="Search campaigns"><a href="promotion-kit.html" class="action outline">+ New creator link</a></div>
+  <div class="table-scroll"><table><thead><tr><th>Campaign / Source</th><th>Page events</th><th>Redirects</th><th>Ratio</th><th>Spend ₹</th><th>Post views</th><th>Real joins</th><th>₹ / real join</th></tr></thead><tbody id="campaign-body"></tbody></table></div>
+  <p class="helper">A ratio greater than 100% is possible with repeat clicks or differing measurement coverage. Do not treat it as a people-based conversion rate.</p>
+ </section>
+ <section class="bottom-grid">
+  <div class="panel methodology"><div class="kicker">HOW TO INTERPRET</div><h2>Measure outcomes, not assumptions.</h2><p><b>Page requests:</b> aggregated client-side tracking requests that were eligible to be counted.</p><p><b>Community redirects:</b> visits to the Worker’s outbound invitation route.</p><p><b>Confirmed WhatsApp joins:</b> you enter this number separately from your community administrator records. It is never inferred from clicks.</p><p><b>Attribution:</b> UTM source and campaign. Reports only include what the independent Worker recorded; GA4 data is a separate sample and must not be added.</p></div>
+  <div class="panel actions-panel"><div class="kicker">CAMPAIGN TOOLS</div><h2>Ready for your next creator.</h2><p>Build source-specific promotional URLs for X, YouTube, Facebook and Instagram to measure performance by partnership.</p><a class="action primary block" href="promotion-kit.html">Create influencer link ↗</a><p class="helper">No personal data or access key is saved on our server by this dashboard.</p></div>
+ </section>
+ </section>
+</main>
+<footer><div class="wrap footer-inner"><span>ANGEL RESEARCH · V3.2</span><span>Private reports · Source-aware analytics · No guaranteed investment outcomes</span></div></footer>
+<script src="conversion-config.js" defer></script>
+<script src="analytics-dashboard.js" defer></script>
+</body></html>
