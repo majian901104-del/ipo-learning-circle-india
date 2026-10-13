@@ -29,6 +29,10 @@ jobs:
           node --check ga4-analytics.js
           node --check build-ga4.cjs
           node --check lead-form.js
+          node --check conversion-config.js
+          node --check conversion-tracker.js
+          node --check conversion-worker/src/index.mjs
+          node --test conversion-worker/test/conversion.test.mjs
           node build-ga4.cjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
