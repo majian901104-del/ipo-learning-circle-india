@@ -1,17 +1,18 @@
 # Angel Research — V3.1 Conversion Measurement (13 Oct 2026)
 
 ## Deployment truth
-- **LIVE on GitHub Pages:** GA4 tracking (visitor consent), the inactive conversion frontend, the attribution link builder (`promotion-kit.html`), and 41-page code injection.
-- **NOT DEPLOYED:** Cloudflare Worker conversion backend. No independent visit/click metrics exist until Cloudflare is configured and this Worker is deployed.
-- **SAFE DEFAULT:** `conversion-config.js` contains `enabled:false` and an empty Worker base; all WhatsApp links continue going DIRECTLY to `https://cc.stockscode.click`.
+- **LIVE on GitHub Pages:** GA4 tracking (visitor consent), the enabled V3.1 conversion frontend, the attribution link builder (`promotion-kit.html`), and 41-page code injection.
+- **CLOUDFLARE DEPLOYED:** `angel-research-conversion-v31.majian901104.workers.dev`; user verified `/health` returned `{"status":"ok","aggregate":true}`.
+- **CONFIGURED:** `conversion-config.js` has `enabled:true` and the Worker URL. Eligible outbound community clicks redirect through its `/join` endpoint to the same final destination, `https://cc.stockscode.click`. Visitors opting out continue directly.
+- **STILL NEEDS REAL-BROWSER QA:** Confirm the final WhatsApp destination, aggregated page-view and join-click entries, campaign attribution, and consent opt-out using an actual browser; a successful `/health` response alone does not prove any counts were recorded.
 - **NEVER COLLECTED by the Worker dataset:** IP addresses, personal identifiers, names, phone numbers, email addresses, full URLs, visitor cookies, browser/device fingerprints or session identifiers.
 - The Worker records aggregate-only page-view and redirect-request counters by campaign, source, medium, page path and coarse country. It does NOT validate actual WhatsApp group membership and cannot guarantee complete bot-free reporting.
 - The website does not require an optional Google Analytics acceptance to open the community link.
 - If the visitor explicitly rejects optional site analytics or signals Global Privacy Control / Do Not Track, the site does not send its optional independent conversion requests.
 
-## Activate the independent layer
+## Reactivate or redeploy the independent layer (already activated)
 
-1. Sign in to a **Cloudflare account that you control** (or create one at https://dash.cloudflare.com/). GitHub authorization alone cannot deploy a Cloudflare Worker.
+1. Sign in to the existing **Cloudflare account that you control** (or create one at https://dash.cloudflare.com/). GitHub authorization alone cannot deploy a Cloudflare Worker.
 2. Open your already-connected GitHub project at `majian901104-del/ipo-learning-circle-india`.
 3. Deploy the independent Worker from the repo directory `conversion-worker`, using Wrangler from a trusted local machine:
 
@@ -22,8 +23,8 @@ npx wrangler deploy
 ```
 
    The config in `conversion-worker/wrangler.toml` defines an Analytics Engine dataset `angel_research_conversion_v31` and a destination URL restricted in code to `https://cc.stockscode.click`. On successful deploy, Wrangler prints the Worker HTTPS URL. **Never paste API tokens into source files or ChatGPT.**
-4. Visit `https://YOUR-WORKER-URL/health` in the browser. You should receive JSON with `"status":"ok"` and `"aggregate":true`. No personal information is collected by the health check.
-5. Supply the **public Worker URL only** for the frontend connection. In `conversion-config.js`, set `enabled: true` and `workerBase: 'https://YOUR-VERIFIED-WORKER-URL'`. Publish to main; the GitHub Pages workflow will redeploy automatically.
+4. Visit `https://angel-research-conversion-v31.majian901104.workers.dev/health` in the browser; the user already confirmed the JSON response `{"status":"ok","aggregate":true}`. The health check does not create an analytics event.
+5. The **public Worker URL** is now stored in `conversion-config.js`, with `enabled:true`. The GitHub Pages workflow redeploys automatically; no account token is embedded in the page.
 6. With the site analytics preference not explicitly denied, open the landing page with a test UTM campaign, click the green community CTA and confirm that you arrive at the intended WhatsApp community. Verify both `page_view` and `join_click` data after a short delay.
 7. Use the private Cloudflare Analytics Engine SQL API to inspect aggregated counts. Keep the **Cloudflare account ID / private read token server-side** and never embed them in a website page or public GitHub code.
 
@@ -72,6 +73,7 @@ This URL is safe to put in an X paid partnership post with correct advertisement
 - **Cost per confirmed join:** Paid creator fee / independently verified actual joins. If zero joins or unknown, display blank, not zero.
 - **Privacy:** No bypassing explicit refusal, no cookies for the independent Worker and no person-level tracking. Laws differ by jurisdiction; confirm your notice and legal basis before switching on anonymous aggregation.
 - **Worker reports are not automatically imported into GA4** or the marketing console. The console is a local calculator, not a live reporting backend.
+- **Privacy opt-out:** Selecting No thanks, sending GPC, or sending DNT disables client-side optional aggregate requests; it also restores the normal direct community URL. Before making a choice, non-identifying operational aggregates may be sent according to the site privacy notice.
 
 ## Testing and validation
 
