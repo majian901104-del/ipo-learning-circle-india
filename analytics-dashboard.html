@@ -1,71 +1,118 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0b2235">
-<title>V3.2 Campaign Intelligence | Angel Research</title>
-<meta name="description" content="Private owner-only aggregate campaign analytics. Requires a Cloudflare Worker report access key.">
+<title>推广数据管理中心 V3.2.1 | Angel Research</title>
+<meta name="description" content="中文版私有推广数据管理后台：网站访问、WhatsApp 跳转、印度来源、手机设备、博主推广效果。">
 <link rel="stylesheet" href="analytics-dashboard.css">
 </head>
 <body>
 <header class="topbar">
  <div class="wrap topbar-inner">
-  <div class="brand"><span class="brand-mark">AR</span><span><strong>ANGEL RESEARCH</strong><small>CAMPAIGN INTELLIGENCE · V3.2</small></span></div>
-  <nav class="topnav"><a href="promotion-kit.html">Link builder ↗</a><a href="ipo-community.html">IPO landing page ↗</a></nav>
+  <div class="brand"><span class="brand-mark">AR</span><span><strong>天使研究 · ANGEL RESEARCH</strong><small>推广数据管理中心 · V3.2.1</small></span></div>
+  <nav class="topnav"><a href="promotion-kit.html">推广专属链接 ↗</a><a href="ipo-community.html">IPO 落地页 ↗</a></nav>
  </div>
 </header>
 <main class="wrap" id="main">
  <section class="intro">
-  <div><div class="eyebrow"><span class="pulse"></span> CONVERSION OPERATIONS CENTER</div>
-  <h1>Know what converts.<br><em>Not just what gets views.</em></h1>
-  <p>Live Cloudflare aggregate events, campaign attribution and verified marketing costs — in one private dashboard.</p></div>
-  <div class="intro-side"><div class="intro-side-head">DATA SOURCE</div><div class="source-text">Cloudflare Analytics Engine</div><div class="source-sub">Anonymized counts · not individual users</div><div class="source-rule"></div><div class="source-status" id="source-status"><span class="status-dot"></span> Awaiting owner access</div></div>
+  <div><div class="eyebrow"><span class="pulse"></span> 推广投放 · 数据分析 · 转化评估</div>
+   <h1>看清流量来源。<br><em>掌握真实转化。</em></h1>
+   <p>集中查看网站访问、WhatsApp 社群跳转、国家／邦省来源、手机设备，以及每位博主的推广效果。</p></div>
+  <div class="intro-side"><div class="intro-side-head">数据来源</div>
+   <div class="source-text">Cloudflare 统计引擎</div>
+   <div class="source-sub">合规汇总计数 · 不识别具体访客</div>
+   <div class="source-rule"></div>
+   <div class="source-status" id="source-status"><span class="status-dot"></span> 尚未解锁管理权限</div>
+  </div>
  </section>
  <section class="auth-panel" id="auth-panel" aria-labelledby="auth-title">
-   <div class="auth-info"><div class="eyebrow muted">PRIVATE REPORT ACCESS</div><h2 id="auth-title">Connect your Cloudflare data</h2><p>Enter the private report access key configured as a Cloudflare Worker secret. Your key stays in memory only and disappears when this page closes or reloads.</p></div>
+   <div class="auth-info"><div class="eyebrow muted">仅管理员可查看</div>
+    <h2 id="auth-title">连接你的推广统计数据</h2>
+    <p>输入保存在 Cloudflare 的 REPORT_ACCESS_KEY 管理密钥。密钥仅在本次打开页面期间保留在浏览器内存，不会保存到网站代码、Cookie 或浏览器永久存储。</p></div>
    <form id="access-form" autocomplete="off" class="auth-form">
-     <label for="access-key">OWNER ACCESS KEY</label>
-     <input id="access-key" type="password" minlength="32" placeholder="Enter your private 32+ character key" spellcheck="false" autocomplete="off" required>
-     <button class="action primary" type="submit" id="connect-btn">Unlock live reports <span aria-hidden="true">→</span></button>
-     <button class="action outline" type="button" id="generate-key">Generate &amp; copy secure owner key</button>
-     <small class="helper" id="key-instruction">For first-time setup: generate a key, then paste it as the Cloudflare Worker secret REPORT_ACCESS_KEY before unlocking.</small>
+     <label for="access-key">管理员访问密钥</label>
+     <input id="access-key" type="password" minlength="32" placeholder="粘贴你在 Cloudflare 设置的管理密钥" spellcheck="false" autocomplete="off" required>
+     <button class="action primary" type="submit" id="connect-btn">解锁并读取真实数据 <span aria-hidden="true">→</span></button>
+     <button class="action outline" type="button" id="generate-key">首次使用：生成并复制安全密钥</button>
+     <small class="helper" id="key-instruction">只有首次设置时才需要生成密钥，并将它保存为 Cloudflare Secret：REPORT_ACCESS_KEY。已经配置过就直接输入原来的密钥，切勿生成新密钥替换。</small>
    </form>
  </section>
- <div id="status" class="notice" role="status" aria-live="polite">Private reporting is locked. GA4 and WhatsApp links continue operating independently.</div>
- <section id="reporting" aria-label="Campaign performance" hidden>
- <div class="toolbar">
-  <div class="time-controls" role="group" aria-label="Time interval">
-    <button class="time-btn" type="button" data-days="1" aria-pressed="false">24 hours</button>
-    <button class="time-btn active" type="button" data-days="7" aria-pressed="true">7 days</button>
-    <button class="time-btn" type="button" data-days="30" aria-pressed="false">30 days</button>
+ <div id="status" class="notice" role="status" aria-live="polite">后台已锁定。GA4 和 WhatsApp 链接不受影响。</div>
+ <section id="reporting" aria-label="推广统计报表" hidden>
+  <div class="toolbar">
+   <div class="time-controls" role="group" aria-label="选择统计周期">
+    <button class="time-btn" type="button" data-days="1" aria-pressed="false">最近24小时</button>
+    <button class="time-btn active" type="button" data-days="7" aria-pressed="true">最近7天</button>
+    <button class="time-btn" type="button" data-days="30" aria-pressed="false">最近30天</button>
+   </div>
+   <div class="right-tools"><span id="updated-at">等待获取数据</span>
+    <button class="action outline" id="refresh" type="button">↻ 刷新</button>
+    <button class="action outline" id="export" type="button">↓ 导出CSV</button>
+    <button class="action outline" id="lock" type="button">锁定后台</button>
+   </div>
   </div>
-  <div class="right-tools"><span id="updated-at">Awaiting data</span><button class="action outline" id="refresh" type="button">↻ Refresh</button><button class="action outline" id="export" type="button">↓ CSV</button><button class="action outline" id="lock" type="button">Lock</button></div>
- </div>
- <div class="metric-grid" aria-label="Key marketing metrics">
-  <div class="metric"><span>AGGREGATE PAGE REQUESTS</span><strong id="metric-views">—</strong><small>Page events, not unique visitors</small></div>
-  <div class="metric"><span>COMMUNITY REDIRECTS</span><strong id="metric-clicks">—</strong><small>Requests, not confirmed group joins</small></div>
-  <div class="metric"><span>REDIRECT / PAGE RATIO</span><strong id="metric-rate">—</strong><small>Event ratio, not person-level conversion</small></div>
-  <div class="metric"><span>VERIFIED JOIN COST</span><strong id="metric-cpa">—</strong><small>Uses owner-entered confirmed joins</small></div>
- </div>
- <div class="analysis-grid">
-  <section class="panel graph-panel"><div class="section-top"><div><div class="kicker">DAILY ACTIVITY</div><h2>Visits and redirect requests</h2></div><div class="legend"><span><i class="view-swatch"></i> Visits</span><span><i class="click-swatch"></i> Redirects</span></div></div><div class="chart" id="daily-chart" role="img" aria-label="Daily aggregate page views and community redirects"></div><div class="helper">Counts can include repeat page loads and repeated taps. Dates shown in UTC.</div></section>
-  <section class="panel geo-panel"><div class="section-top"><div><div class="kicker">AUDIENCE GEO</div><h2>Top traffic countries</h2></div></div><div id="country-list" class="country-list"></div><div class="helper">Approximate country of the Worker request; not verified residency.</div></section>
- </div>
- <section class="panel campaigns"><div class="section-top"><div><div class="kicker">CAMPAIGN PERFORMANCE</div><h2>Performance by promoter</h2><p class="section-sub">Cloudflare numbers load automatically. Ad cost, post impressions and actual WhatsApp joins are entered by you and saved only in this browser.</p></div></div>
-  <div class="table-toolbar"><label for="search" class="sr-only">Filter campaigns</label><input id="search" type="search" placeholder="Search promoter or campaign..." aria-label="Search campaigns"><a href="promotion-kit.html" class="action outline">+ New creator link</a></div>
-  <div class="table-scroll"><table><thead><tr><th>Campaign / Source</th><th>Page events</th><th>Redirects</th><th>Ratio</th><th>Spend ₹</th><th>Post views</th><th>Real joins</th><th>₹ / real join</th></tr></thead><tbody id="campaign-body"></tbody></table></div>
-  <p class="helper">A ratio greater than 100% is possible with repeat clicks or differing measurement coverage. Do not treat it as a people-based conversion rate.</p>
- </section>
- <section class="bottom-grid">
-  <div class="panel methodology"><div class="kicker">HOW TO INTERPRET</div><h2>Measure outcomes, not assumptions.</h2><p><b>Page requests:</b> aggregated client-side tracking requests that were eligible to be counted.</p><p><b>Community redirects:</b> visits to the Worker’s outbound invitation route.</p><p><b>Confirmed WhatsApp joins:</b> you enter this number separately from your community administrator records. It is never inferred from clicks.</p><p><b>Attribution:</b> UTM source and campaign. Reports only include what the independent Worker recorded; GA4 data is a separate sample and must not be added.</p></div>
-  <div class="panel actions-panel"><div class="kicker">CAMPAIGN TOOLS</div><h2>Ready for your next creator.</h2><p>Build source-specific promotional URLs for X, YouTube, Facebook and Instagram to measure performance by partnership.</p><a class="action primary block" href="promotion-kit.html">Create influencer link ↗</a><p class="helper">No personal data or access key is saved on our server by this dashboard.</p></div>
- </section>
+  <div class="notice accounting-note"><b>统计口径：</b>“估算访问会话”和“估算WS点击会话”采用同一浏览器标签页内的首次事件去重，<b>不等于真实独立人数</b>。访问次数与跳转次数可包含同一人重复操作；成功进入群组的人数需要单独核对。</div>
+  <div class="metric-grid" aria-label="核心统计指标">
+   <div class="metric"><span>网站访问会话（估算）</span><strong id="metric-sessions">—</strong><small>按浏览器标签页粗略去重，非独立人数</small></div>
+   <div class="metric"><span>WS点击会话（估算）</span><strong id="metric-click-sessions">—</strong><small>同一标签页首次跳转，不等于进群人数</small></div>
+   <div class="metric"><span>网站页面访问次数</span><strong id="metric-views">—</strong><small>包含重复浏览、刷新</small></div>
+   <div class="metric"><span>WhatsApp 链接跳转次数</span><strong id="metric-clicks">—</strong><small>包含重复点击，不代表成功进群</small></div>
+   <div class="metric"><span>跳转次数 ÷ 页面访问次数</span><strong id="metric-rate">—</strong><small>事件数量比率，非真实人数转化率</small></div>
+   <div class="metric"><span>每位确认进群者成本</span><strong id="metric-cpa">—</strong><small>根据手工登记的费用及实际进群人数计算</small></div>
+  </div>
+  <div class="analysis-grid">
+   <section class="panel graph-panel"><div class="section-top"><div><div class="kicker">访问趋势</div><h2>每日访问与跳转变化</h2></div>
+    <div class="legend"><span><i class="view-swatch"></i> 页面访问</span><span><i class="click-swatch"></i> WS跳转</span></div></div>
+    <div class="chart" id="daily-chart" role="img" aria-label="每日网站访问和社群跳转的汇总图"></div>
+    <div class="helper">显示汇总请求次数，不是独立人数。图表日期使用 UTC 时间。</div>
+   </section>
+   <section class="panel geo-panel"><div class="section-top"><div><div class="kicker">访客国家</div><h2>各国家／地区访问情况</h2></div></div>
+    <div id="country-list" class="country-list"></div><div class="helper">基于 Cloudflare 接收请求的近似地理信息，不代表真实居住地。</div>
+   </section>
+  </div>
+  <div class="analysis-grid device-area">
+    <section class="panel"><div class="section-top"><div><div class="kicker">手机及电脑设备</div><h2>设备类型、系统与型号</h2></div></div>
+     <div id="device-list" class="country-list"></div>
+     <h3 class="panel-subtitle">可识别的手机型号</h3>
+     <div id="model-list" class="country-list"></div>
+     <p class="helper">浏览器通常只能识别 iPhone、Android、Windows 等设备与系统。具体手机型号仅在用户同意分析且浏览器提供信息时展示；至少3次同型号访问才显示。无法识别不代表没有使用该设备。</p>
+    </section>
+    <section class="panel"><div class="section-top"><div><div class="kicker">邦省来源</div><h2>各地区访问分布</h2></div></div>
+     <div id="region-list" class="country-list"></div>
+     <p class="helper">地区按 Cloudflare 提供的国家及州／邦／省代码显示；不同国家的代码可能不同，不提供精确位置或个人信息。</p>
+    </section>
+  </div>
+  <section class="panel campaigns"><div class="section-top"><div><div class="kicker">博主推广数据</div><h2>各位推广博主效果对比</h2>
+    <p class="section-sub">Cloudflare 自动读取网页访问、WS跳转和估算会话。推广费用、X帖文曝光量和实际进群人数由你填写，仅保存在当前浏览器。</p></div></div>
+   <div class="table-toolbar"><label for="search" class="sr-only">搜索博主或活动</label>
+    <input id="search" type="search" placeholder="输入博主名称或推广活动..." aria-label="搜索博主或活动">
+    <a href="promotion-kit.html" class="action outline">+ 创建博主专属推广链接</a></div>
+   <div class="table-scroll"><table>
+    <thead><tr><th>推广活动 / 来源</th><th>访问会话<br>估算</th><th>WS点击会话<br>估算</th><th>网页访问次数</th><th>WS跳转次数</th><th>次数比率</th><th>费用 ₹</th><th>帖子曝光量</th><th>实际进群人数</th><th>每位进群成本 ₹</th></tr></thead>
+    <tbody id="campaign-body"></tbody></table></div>
+    <p class="helper">估算会话不是实际独立人数；过去已记录的历史事件无法补出此前没有采集的会话或具体手机型号。若次数比率超过100%，可能是重复点击或统计覆盖差异。</p>
+  </section>
+  <section class="bottom-grid">
+   <div class="panel methodology"><div class="kicker">数据说明</div><h2>分清访问、点击和真实进群。</h2>
+    <p><b>访问会话（估算）：</b>同一浏览器标签页、同一推广活动只记录一次首次页面会话。重复打开新标签页仍可能算作不同会话。</p>
+    <p><b>WS点击会话（估算）：</b>同一标签页、同一推广活动首次点击跳转记录一次。不是 WhatsApp 已入群人数。</p>
+    <p><b>页面访问和链接跳转：</b>是原始事件次数，可能包含同一用户重复浏览和点击。</p>
+    <p><b>实际成功进群：</b>需要依据 WhatsApp 群管理记录核实，无法仅靠网站跳转自动确认。</p>
+    <p><b>GA4：</b>仍独立运行，统计口径和隐私授权覆盖范围不同，不能将它的数字与这里简单相加。</p>
+   </div>
+   <div class="panel actions-panel"><div class="kicker">推广管理工具</div><h2>为每位博主建立专属链接。</h2>
+    <p>可为 X、YouTube、Facebook 和 Instagram 合作对象分别生成带来源标记的推广网址，方便归因。</p>
+    <a class="action primary block" href="promotion-kit.html">生成博主专属链接 ↗</a>
+    <p class="helper">密钥不存储在网站服务器。个人信息不会进入聚合统计数据。</p>
+   </div>
+  </section>
  </section>
 </main>
-<footer><div class="wrap footer-inner"><span>ANGEL RESEARCH · V3.2</span><span>Private reports · Source-aware analytics · No guaranteed investment outcomes</span></div></footer>
+<footer><div class="wrap footer-inner"><span>天使研究 · V3.2.1 中文版</span><span>仅管理员使用 · 汇总统计非独立人数 · 不承诺投资回报</span></div></footer>
 <script src="conversion-config.js" defer></script>
 <script src="analytics-dashboard.js" defer></script>
 </body></html>
