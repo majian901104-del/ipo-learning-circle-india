@@ -9,3 +9,42 @@
 @media(max-width:880px){.wrap{width:calc(100% - 32px)}.intro{padding:35px 0 25px;display:block}.intro-side{margin-top:20px}.auth-panel{display:block;padding:22px}.auth-form{margin-top:20px}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.analysis-grid,.bottom-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start;flex-direction:column}.right-tools{flex-wrap:wrap}.panel{padding:22px}.topnav{display:none}}
 @media(max-width:580px){.topbar-inner{min-height:68px}.brand-mark{width:37px;height:37px}.brand strong{font-size:14px}.brand small{font-size:8px}.intro h1{font-size:39px}.metric-grid{gap:9px}.metric{padding:18px 15px}.metric strong{font-size:31px}.metric span{font-size:9px}.metric small{font-size:10px}.panel h2{font-size:23px}.section-top{display:block}.legend{margin-top:9px}.time-btn{padding:8px 11px}.right-tools>span{width:100%}.chart{gap:4px}.day-bar .date{font-size:9px}.table-toolbar{flex-direction:column;align-items:stretch}.table-toolbar input{max-width:none}.footer-inner{display:block}.footer-inner span{display:block;margin:4px 0}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* 中文报表：保持专业金融后台风格，并提高文字清晰度 */
+body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif;font-size:15px}
+.intro h1,.panel h2,.auth-info h2{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;font-weight:650;letter-spacing:-.035em}
+.intro h1 em{font-style:normal}
+.metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.metric strong{font-family:Arial,"Microsoft YaHei",sans-serif;font-size:38px;font-weight:750}
+.metric span{font-size:12px;letter-spacing:0;font-weight:750;color:#cfe0e9}
+.metric small{font-size:12px}
+.brand small{font-size:11px;letter-spacing:.06em}
+.panel .kicker,.eyebrow{letter-spacing:.04em}
+.panel-subtitle{font-weight:700;font-size:15px;color:#224658;margin:22px 0 11px}
+.country-name{width:165px;max-width:48%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.country-track{min-width:30px}
+.accounting-note{margin-bottom:17px;background:#f6f3e9}
+.table-scroll table{min-width:1340px}
+thead th{font-size:11px;letter-spacing:0;line-height:1.5}
+.table-scroll td{font-size:13px}
+.device-area{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:0}
+.device-area .country-item{margin-bottom:16px}
+.topbar .topnav{flex-shrink:0}
+@media(max-width:900px){
+ .metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .device-area{grid-template-columns:1fr}
+ .country-name{width:145px}
+}
+@media(max-width:560px){
+ .wrap{width:calc(100% - 24px)}
+ .intro h1{font-size:35px}
+ .intro{padding-top:29px}
+ .metric-grid{gap:9px}
+ .metric{padding:18px 12px}
+ .metric strong{font-size:27px}
+ .metric span{font-size:11px;min-height:31px}
+ .metric small{font-size:10px}
+ .right-tools .action{flex:1}
+ .country-name{width:130px}
+ .auth-info h2,.panel h2{font-size:21px}
+}
