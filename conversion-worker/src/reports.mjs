@@ -112,18 +112,18 @@ export async function handleReport(request,env){
   const days=Number(dayString);
   const start=new Date(Date.now()-days*86400000).toISOString();
   const params={start};
-  const grouped=\`SELECT blob3 AS campaign, blob4 AS source, blob1 AS event, COUNT(*) AS total
-    FROM \${DATASET}
+  const grouped=`SELECT blob3 AS campaign, blob4 AS source, blob1 AS event, COUNT(*) AS total
+    FROM ${DATASET}
     WHERE timestamp >= $start
-    GROUP BY blob3, blob4, blob1 ORDER BY total DESC LIMIT 500\`;
-  const timeseries=\`SELECT toDate(timestamp) AS day, blob1 AS event, COUNT(*) AS total
-    FROM \${DATASET}
+    GROUP BY blob3, blob4, blob1 ORDER BY total DESC LIMIT 500`;
+  const timeseries=`SELECT toDate(timestamp) AS day, blob1 AS event, COUNT(*) AS total
+    FROM ${DATASET}
     WHERE timestamp >= $start
-    GROUP BY day, blob1 ORDER BY day ASC LIMIT 90\`;
-  const byCountry=\`SELECT blob6 AS country, blob1 AS event, COUNT(*) AS total
-    FROM \${DATASET}
+    GROUP BY day, blob1 ORDER BY day ASC LIMIT 90`;
+  const byCountry=`SELECT blob6 AS country, blob1 AS event, COUNT(*) AS total
+    FROM ${DATASET}
     WHERE timestamp >= $start
-    GROUP BY blob6, blob1 ORDER BY total DESC LIMIT 100\`;
+    GROUP BY blob6, blob1 ORDER BY total DESC LIMIT 100`;
   try{
     const responses=await Promise.all([
       env.ANALYTICS_SQL.query({query:grouped,params}),
