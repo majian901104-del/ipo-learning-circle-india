@@ -1,7 +1,7 @@
 /* Angel Research Conversion Worker V3.1.
  * Route /collect: anonymous aggregate page-view counter.
  * Route /join: privacy-conscious community redirect + aggregate count.
- * NO cookies, IDs, IP, user agent, full URL, referrer, device fingerprints
+ * NO cookies, person IDs, IP, raw user agent, full URL, referrer, device fingerprints
  * or form field values are written to the analytics dataset.
  * This is an optional component; it is NOT deployed by GitHub Pages.
  *
@@ -39,7 +39,11 @@ function record(env,request,kind,fields){
         scalar(fields.campaign,48),
         scalar(fields.source,32),
         scalar(fields.medium,32),
-        scalar(request.cf?.country||'unknown',3)
+        scalar(request.cf?.country||'unknown',3),
+        scalar(fields.device||'unknown',12),
+        scalar(fields.os||'unknown',14),
+        scalar(fields.model||'unknown',36),
+        scalar(request.cf?.regionCode||'unknown',12)
       ],
       doubles:[1],
       indexes:['v31']
@@ -82,7 +86,13 @@ export default {
     if(!body||body.event!=='page_view'||typeof body!=='object')
       return reply(null,400,cors(origin));
     record(env,request,'page_view',{
-      path:body.path,campaign:body.campaign,source:body.source,medium:body.medium
+      path:body.path,campaign:body.campaign,source:body.source,medium:body.medium,
+      device:body.device,os:body.os,model:body.model
+    });
+    // Aggregate tab-based session estimates; never send or store a visitor ID.
+    if(body.firstSession===true)record(env,request,'page_session',{
+      path:body.path,campaign:body.campaign,source:body.source,medium:body.medium,
+      device:body.device,os:body.os,model:body.model
     });
     return reply(null,204,cors(origin));
   }
@@ -100,7 +110,13 @@ export default {
     if(!mode||mode==='navigate'){
       record(env,request,'join_click',{
         path:'/join',campaign:url.searchParams.get('c'),
-        source:url.searchParams.get('s'),medium:url.searchParams.get('m')
+        source:url.searchParams.get('s'),medium:url.searchParams.get('m'),
+        device:url.searchParams.get('d'),os:url.searchParams.get('o'),model:url.searchParams.get('model')
+      });
+      if(url.searchParams.get('u')==='1')record(env,request,'join_session',{
+        path:'/join',campaign:url.searchParams.get('c'),source:url.searchParams.get('s'),
+        medium:url.searchParams.get('m'),device:url.searchParams.get('d'),
+        os:url.searchParams.get('o'),model:url.searchParams.get('model')
       });
     }
     return reply(null,302,{
