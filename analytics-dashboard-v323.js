@@ -56,7 +56,7 @@ function setView(name,options){
  }
  closeMenu(false);
  if(options?.scroll!==false){
-  w.scrollTo({top:0,behavior:'instant'});
+  w.scrollTo({top:0,behavior:'auto'});
  }
 }
 function init(){
