@@ -48,3 +48,49 @@ thead th{font-size:11px;letter-spacing:0;line-height:1.5}
  .country-name{width:130px}
  .auth-info h2,.panel h2{font-size:21px}
 }
+
+/* V3.2.2：India-focused analytics and clearly separated test activity */
+.view-options{display:flex;align-items:center;justify-content:space-between;gap:14px;
+ margin:0 0 14px;padding:12px 15px;border:1px solid #cfdde1;background:#fff;flex-wrap:wrap}
+.view-options small{color:#697f8b;line-height:1.6;font-size:11px}
+.view-options code{font-size:11px;color:#345b70;background:#e9f0f2;padding:2px 4px}
+.toggle{display:flex;align-items:center;gap:10px;color:#12384d;font-size:13px;font-weight:800;cursor:pointer}
+.toggle input{width:19px;height:19px;accent-color:#138068;cursor:pointer}
+.india-focus{margin:0 0 18px;border-top:3px solid #168466;background:linear-gradient(125deg,#fff 75%,#f4faf7)}
+.india-label{font-size:11px;font-weight:650;color:#347361;background:#ebf6f1;padding:7px 10px;border-radius:3px}
+.india-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:17px}
+.india-summary>div{background:#f1f7f5;border:1px solid #dcebe5;padding:18px 20px}
+.india-summary small{display:block;font-size:12px;font-weight:700;color:#4e6a68}
+.india-summary strong{display:block;font-size:29px;font-weight:800;color:#0c664f;margin:5px 0}
+.indian-regions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;align-items:start}
+.indian-regions .country-name{width:240px;max-width:57%}
+.device-quality{display:flex;align-items:center;justify-content:space-between;gap:15px;
+ background:#eef4f7;padding:12px 15px;margin-top:12px;color:#385d6c;font-size:12px;font-weight:750}
+.device-quality strong{font-size:22px;color:#19556c}
+.rank-list{margin-top:17px;border-top:1px solid #dce7e9}
+.rank-row{display:flex;align-items:center;gap:18px;padding:14px 5px;border-bottom:1px solid #e3ebed}
+.rank-no{font-size:19px;font-weight:800;color:#b29b75;min-width:36px}
+.rank-info{flex:1;min-width:0;display:flex;flex-direction:column}
+.rank-info strong{font-size:15px;overflow-wrap:anywhere}
+.rank-info small{font-size:12px;color:#697d87;line-height:1.6}
+.rank-cost{display:flex;flex-direction:column;align-items:flex-end;min-width:135px}
+.rank-cost b{font-size:18px;color:#12725f}
+.rank-cost small{font-size:11px;color:#73858c}
+.table-scroll{max-width:100%;border:1px solid #e2e9eb}
+.table-scroll table{min-width:1850px}
+.table-scroll th:first-child,.table-scroll td:first-child{position:sticky;left:0;background:#fff;z-index:1;
+box-shadow:1px 0 #e0e8e9;min-width:145px}
+.table-scroll thead th:first-child{background:#f1f5f5;z-index:2}
+.table-scroll tr:hover td:first-child{background:#fbfcfc}
+.table-scroll td input{width:100px}
+@media(max-width:850px){.indian-regions{grid-template-columns:1fr}.india-summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:570px){
+ .view-options small{width:100%}
+ .india-summary{grid-template-columns:1fr;gap:8px}
+ .india-summary>div{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+ .india-summary strong{font-size:24px;margin:0}
+ .india-label{display:block;margin:8px 0}
+ .rank-info small{font-size:11px}
+ .rank-cost{min-width:112px}
+ .rank-cost b{font-size:15px}
+}
