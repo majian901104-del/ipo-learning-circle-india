@@ -6,6 +6,7 @@
 <footer class="ipo-page-footer">Last editorial schedule check: 13 Oct 2026 IST. IPOs involve market risk. No returns or allotments are guaranteed. <a href="disclosures.html">Sources</a> · <a href="privacy.html">Privacy</a></footer>
 <script src="ipo-market-data.js" defer></script><script defer>
 (function(){'use strict';
+function init(){
 var m=window.AngelIPOData,issue=new URLSearchParams(location.search).get('issue');
 var root=document.getElementById('issuer-detail');if(!m){return}
 var v=m.issues.find(function(x){return x.id===issue});
@@ -23,5 +24,7 @@ var source=document.createElement('section');source.className='issuer-source-box
  ['NSE IPO directory',m.sources.exchange]
 ].forEach(function(item){var link=document.createElement('a');link.href=item[1];link.target='_blank';link.rel='noopener noreferrer';link.textContent=item[0]+' ↗';source.appendChild(link)});root.appendChild(source);
 document.title=v.name+' IPO · Dated Issuer Profile | Angel Research';
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script></body></html>
