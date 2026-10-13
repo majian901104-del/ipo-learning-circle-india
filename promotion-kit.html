@@ -20,7 +20,7 @@ body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}.hero h1,.pane
 </section>
 <section class="panel"><h2>2. 推广成本与转化率计算</h2><p>发布后填写已核实的数据。此处是手动计算器，不会自动读取 GA4 或 Cloudflare，真实数据请到中文管理后台查看。</p>
 <div class="grid">
-<div class="field"><label for="spend">推广费用（印度卢比）</label><input id="spend" type="number" min="0" step="1" value="15000" inputmode="numeric"></div>
+<div class="field"><label for="spend">推广费用（印度卢比）</label><input id="spend" type="number" min="0" step="1" placeholder="请填写真实支出" inputmode="numeric"></div>
 <div class="field"><label for="views">博主帖子曝光量</label><input id="views" type="number" min="0" step="1" placeholder="填写真实曝光次数" inputmode="numeric"></div>
 <div class="field"><label for="site-visits">核实的网站访问次数</label><input id="site-visits" type="number" min="0" step="1" placeholder="填写访问事件数量" inputmode="numeric"></div>
 <div class="field"><label for="join-clicks">WhatsApp 链接跳转次数</label><input id="join-clicks" type="number" min="0" step="1" placeholder="填写跳转事件数量" inputmode="numeric"></div>
@@ -62,9 +62,9 @@ function cost(v){return Number.isFinite(v)?new Intl.NumberFormat('en-IN',{style:
 function percent(a,b){return a!==null&&b!==null&&b>0?(100*a/b).toFixed(2)+'%':'—'}
 function calc(){
  let spend=n('spend'),views=n('views'),visits=n('site-visits'),clicks=n('join-clicks'),joins=n('actual-joins');
- $('cpv').textContent=visits>0?cost(spend/visits):'—';
- $('cpc').textContent=clicks>0?cost(spend/clicks):'—';
- $('cpa').textContent=joins>0?cost(spend/joins):'—';
+ $('cpv').textContent=spend!==null&&visits>0?cost(spend/visits):'—';
+ $('cpc').textContent=spend!==null&&clicks>0?cost(spend/clicks):'—';
+ $('cpa').textContent=spend!==null&&joins>0?cost(spend/joins):'—';
  $('visit-rate').textContent=percent(visits,views);
  $('click-rate').textContent=percent(clicks,visits);
  $('join-rate').textContent=percent(joins,clicks);
