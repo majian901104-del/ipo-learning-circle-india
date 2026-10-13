@@ -31,6 +31,8 @@ jobs:
           node --check lead-form.js
           node --check conversion-config.js
           node --check conversion-tracker.js
+          node --check analytics-dashboard.js
+          node --check conversion-worker/src/reports.mjs
           node --check conversion-worker/src/index.mjs
           node --test conversion-worker/test/conversion.test.mjs
           node build-ga4.cjs
