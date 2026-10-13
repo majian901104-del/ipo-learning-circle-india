@@ -31,7 +31,7 @@ function track(eventName,properties){
   w.gtag('event',eventName,safe);return true;
 }
 function start(){
-  if(!valid||tagLoaded||!accepted)return;
+  if(!valid||tagLoaded||!accepted||w.navigator?.globalPrivacyControl===true||w.navigator?.doNotTrack==='1')return;
   tagLoaded=true;
   w.dataLayer=w.dataLayer||[];
   w.gtag=function(){w.dataLayer.push(arguments)};
@@ -49,7 +49,10 @@ function start(){
 }
 function setChoice(value){
   remember(value);accepted=value==='granted';
-  if(accepted)start();
+  // Inform the cookieless conversion module of explicit acceptance/rejection.
+  // A rejection disables both optional GA4 and independent aggregate events.
+  try{w.dispatchEvent(new Event('angel-analytics-choice'))}catch(_e){}
+  if(accepted){if(valid)w['ga-disable-'+id]=false;start();}
   else if(valid){
     w['ga-disable-'+id]=true;
     if(typeof w.gtag==='function')w.gtag('consent','update',{analytics_storage:'denied'});
@@ -90,7 +93,7 @@ function init(){
     var anchor=e.target&&e.target.closest?e.target.closest('a[href]'):null;
     if(!anchor)return;
     var raw=anchor.getAttribute('href')||'';
-    if(/^https:\/\/cc\.stockscode\.click\/?([?#].*)?$/i.test(raw)){
+    if(anchor.hasAttribute('data-conversion-join') || /^https:\/\/cc\.stockscode\.click\/?([?#].*)?$/i.test(raw)){
       track('join_community_click',{button_location:(anchor.getAttribute('data-cta')||anchor.getAttribute('data-community')||'site_link').slice(0,50),destination_type:'community_link'});
     }else if(/(?:^|\/)apply\.html(?:[?#]|$)/i.test(raw)){
       track('request_updates_click',{button_location:'research_form_link'});
