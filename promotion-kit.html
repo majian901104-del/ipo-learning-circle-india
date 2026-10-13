@@ -1,47 +1,47 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b3d"><meta name="robots" content="noindex,nofollow"><title>Campaign Attribution Console | Angel Research</title>
-<meta name="description" content="Create source-specific IPO promotional URLs and estimate paid collaboration acquisition costs. No personal data is stored.">
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b3d"><meta name="robots" content="noindex,nofollow"><title>博主推广链接与成本计算 | Angel Research</title>
+<meta name="description" content="生成专属推广链接并计算广告访客及实际进群成本。">
 <style>
 :root{--ink:#1a3748;--muted:#586e7a;--deep:#0e2b3d;--gold:#caaf7c;--green:#15805d;--edge:#dce4e8}
 *{box-sizing:border-box}body{font:15px/1.6 Arial,Helvetica,sans-serif;margin:0;color:var(--ink);background:#f4f6f7}a{color:inherit}button,input,select{font:inherit}a:focus-visible,input:focus-visible,button:focus-visible{outline:3px solid #dab77c;outline-offset:2px}
 header{background:var(--deep);color:white;padding:25px 0;border-bottom:4px solid #bea174}.container{max-width:1040px;width:calc(100% - 40px);margin:auto}.nav{display:flex;align-items:center;justify-content:space-between;gap:18px}.logo{font-size:16px;font-weight:800;letter-spacing:.12em}.nav a{font-size:13px;color:#d4e5ed;text-underline-offset:4px}.hero{padding:55px 0 45px;color:white;background:linear-gradient(112deg,#102f43,#17455a)}.tag{font-size:11px;color:#f0cd93;font-weight:800;letter-spacing:.16em}.hero h1{font:400 clamp(34px,5vw,56px)/1.1 Georgia,serif;letter-spacing:-.02em;margin:17px 0}.hero p{font-size:16px;color:#d1e4ec;max-width:750px;margin:0}
 main{padding:36px 0 65px}.panel{background:white;border:1px solid var(--edge);padding:30px;border-radius:5px;margin-bottom:22px}.panel h2{font:400 30px/1.2 Georgia,serif;margin:0 0 6px}.panel p{color:var(--muted);margin:0 0 22px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.field input,.field select{border:1px solid #cad8df;height:46px;border-radius:3px;padding:0 12px;background:#fff;min-width:0}.full{grid-column:1/-1}.btn{border:1px solid var(--deep);background:var(--deep);color:white;padding:13px 20px;border-radius:4px;cursor:pointer;font-size:13px;font-weight:800}.btn.secondary{background:white;color:var(--deep)}.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:17px}.link-result{background:#ecf3f4;border-left:3px solid #a78a5d;padding:14px 16px;overflow-wrap:anywhere;font:14px/1.65 monospace;margin-top:18px}.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:19px}.metric{background:#f2f5f5;padding:18px;border:1px solid #e3e8e9}.metric small{display:block;color:#617682;font-size:12px}.metric strong{font-size:25px;line-height:1.35;display:block;margin-top:5px}.notice{font-size:13px;color:#516977;line-height:1.7;background:#f6f2e9;border-left:3px solid #b69863;padding:15px;margin-top:19px}.status{font-size:12px;color:#667784;margin-top:10px}.footer{padding:28px;background:#e9edef;font-size:12px;color:#607580;text-align:center}@media(max-width:670px){.container{width:calc(100% - 28px)}.nav{display:block}.nav a{display:inline-block;margin-top:9px}.hero{padding:36px 0}.panel{padding:20px}.grid,.metric-grid{grid-template-columns:1fr}.panel h2{font-size:27px}.metric strong{font-size:22px}} 
-</style></head><body>
-<header><div class="container nav"><span class="logo">ANGEL RESEARCH · PROMOTION</span><div style="display:flex;gap:16px;flex-wrap:wrap"><a href="analytics-dashboard.html">Private Performance Dashboard ↗</a><a href="ipo-community.html">IPO Landing Page ↗</a></div></div></header>
-<section class="hero"><div class="container"><div class="tag">V3.1 · INTERNAL PLANNING UTILITY</div><h1>Campaign Attribution Console</h1><p>Create a unique link for each creator, and compare website visits, community redirects and confirmed WhatsApp joins. All report figures below must be entered from verified sources.</p></div></section>
+body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}.hero h1,.panel h2{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;font-weight:650}.field label{text-transform:none;letter-spacing:0}</style></head><body>
+<header><div class="container nav"><span class="logo">天使研究 · 推广管理</span><div style="display:flex;gap:16px;flex-wrap:wrap"><a href="analytics-dashboard.html">返回中文数据后台 ↗</a><a href="ipo-community.html">IPO 落地页 ↗</a></div></div></header>
+<section class="hero"><div class="container"><div class="tag">推广投放专用 · V3.2.1</div><h1>博主推广链接与成本计算</h1><p>为每位合作博主生成独立网址，并根据核实的数据评估网站访问、WS 跳转和实际进群成本。</p></div></section>
 <main class="container">
-<section class="panel"><h2>1. Generate an influencer link</h2><p>One link per creator. Send the generated URL to the creator; use that link in their sponsored post.</p>
+<section class="panel"><h2>1. 生成博主专属链接</h2><p>每位博主使用不同的推广活动名称。将下方生成的网址发给博主，用于其赞助推广帖子。</p>
 <div class="grid">
-<div class="field"><label for="platform">Platform</label><select id="platform"><option value="x">X (Twitter)</option><option value="youtube">YouTube</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option></select></div>
-<div class="field"><label for="creator">Creator ID / campaign name</label><input id="creator" value="gurjot_ipo" maxlength="45" autocomplete="off" spellcheck="false" pattern="[a-zA-Z0-9_-]+"></div>
-<div class="field full"><label for="destination">Landing page</label><select id="destination"><option value="ipo-community.html">IPO Community Landing Page</option><option value="ipo-current.html">IPO Market Calendar</option><option value="index.html">Angel Research Homepage</option></select></div>
+<div class="field"><label for="platform">推广平台</label><select id="platform"><option value="x">X (Twitter)</option><option value="youtube">YouTube</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option></select></div>
+<div class="field"><label for="creator">博主标记／推广活动名称（英文）</label><input id="creator" value="gurjot_ipo" maxlength="45" autocomplete="off" spellcheck="false" pattern="[a-zA-Z0-9_-]+"></div>
+<div class="field full"><label for="destination">推广落地页</label><select id="destination"><option value="ipo-community.html">IPO 社群落地页</option><option value="ipo-current.html">IPO 最新市场日历</option><option value="index.html">天使研究官网首页</option></select></div>
 </div>
 <div class="link-result" id="campaign-url" aria-live="polite"></div>
-<div class="actions"><button class="btn" type="button" id="copy-link">COPY PROMOTIONAL LINK</button><span class="status" role="status" id="copy-status"></span></div>
+<div class="actions"><button class="btn" type="button" id="copy-link">复制博主专属推广网址</button><span class="status" role="status" id="copy-status"></span></div>
 </section>
-<section class="panel"><h2>2. Calculate campaign performance</h2><p>Enter independently verified figures after publishing. No numbers here are live or automatically pulled from GA4 or Cloudflare.</p>
+<section class="panel"><h2>2. 推广成本与转化率计算</h2><p>发布后填写已核实的数据。此处是手动计算器，不会自动读取 GA4 或 Cloudflare，真实数据请到中文管理后台查看。</p>
 <div class="grid">
-<div class="field"><label for="spend">Campaign spend (INR)</label><input id="spend" type="number" min="0" step="1" value="15000" inputmode="numeric"></div>
-<div class="field"><label for="views">Post impressions (from X)</label><input id="views" type="number" min="0" step="1" placeholder="Confirmed impressions" inputmode="numeric"></div>
-<div class="field"><label for="site-visits">Verified site visits</label><input id="site-visits" type="number" min="0" step="1" placeholder="GA4 / privacy-safe aggregate" inputmode="numeric"></div>
-<div class="field"><label for="join-clicks">Community redirect requests</label><input id="join-clicks" type="number" min="0" step="1" placeholder="Worker join_click count" inputmode="numeric"></div>
-<div class="field full"><label for="actual-joins">Confirmed WhatsApp joins</label><input id="actual-joins" type="number" min="0" step="1" placeholder="Group admin verified membership" inputmode="numeric"></div>
+<div class="field"><label for="spend">推广费用（印度卢比）</label><input id="spend" type="number" min="0" step="1" value="15000" inputmode="numeric"></div>
+<div class="field"><label for="views">博主帖子曝光量</label><input id="views" type="number" min="0" step="1" placeholder="填写真实曝光次数" inputmode="numeric"></div>
+<div class="field"><label for="site-visits">核实的网站访问次数</label><input id="site-visits" type="number" min="0" step="1" placeholder="填写访问事件数量" inputmode="numeric"></div>
+<div class="field"><label for="join-clicks">WhatsApp 链接跳转次数</label><input id="join-clicks" type="number" min="0" step="1" placeholder="填写跳转事件数量" inputmode="numeric"></div>
+<div class="field full"><label for="actual-joins">实际成功进群人数</label><input id="actual-joins" type="number" min="0" step="1" placeholder="群管理员核对的人数" inputmode="numeric"></div>
 </div>
 <div class="metric-grid">
-<div class="metric"><small>Cost per site visit</small><strong id="cpv">—</strong></div>
-<div class="metric"><small>Cost per redirect request</small><strong id="cpc">—</strong></div>
-<div class="metric"><small>Cost per confirmed join</small><strong id="cpa">—</strong></div>
+<div class="metric"><small>每次网站访问成本</small><strong id="cpv">—</strong></div>
+<div class="metric"><small>每次WS跳转成本</small><strong id="cpc">—</strong></div>
+<div class="metric"><small>每位实际进群成本</small><strong id="cpa">—</strong></div>
 </div>
 <div class="metric-grid">
-<div class="metric"><small>Impression → visit rate</small><strong id="visit-rate">—</strong></div>
-<div class="metric"><small>Visit → redirect rate</small><strong id="click-rate">—</strong></div>
-<div class="metric"><small>Redirect → confirmed join rate</small><strong id="join-rate">—</strong></div>
+<div class="metric"><small>曝光→网站访问比率</small><strong id="visit-rate">—</strong></div>
+<div class="metric"><small>访问→WS跳转比率</small><strong id="click-rate">—</strong></div>
+<div class="metric"><small>WS跳转→实际入群比率</small><strong id="join-rate">—</strong></div>
 </div>
-<div class="notice"><strong>Definitions:</strong> X post impressions, GA4 page views, independent Worker visits, redirect requests and real WhatsApp members are different measurements. They may not match. Only use the same campaign, dates and reporting scope when calculating conversion rates. Rejecting optional analytics can reduce the recorded sample.</div>
+<div class="notice"><strong>统计口径：</strong> 帖子曝光量、GA4 访问数、Cloudflare 页面事件、WS跳转和实际进群分别属于不同口径，不能混为一谈。对比转化率时需要采用同一活动和相同日期范围，拒绝分析的访客可能不计入统计。</div>
 </section>
-<section class="panel"><h2>3. Attribution status</h2><p>Independent aggregate tracking requires a Cloudflare Worker deployment and verified HTTPS URL before it can be enabled on the website.</p>
-<p id="state" aria-live="polite"></p><p><a href="https://github.com/majian901104-del/ipo-learning-circle-india/blob/main/V3-CONVERSION-SETUP.md" target="_blank" rel="noopener noreferrer">Implementation notes and activation steps ↗</a></p>
+<section class="panel"><h2>3. 独立统计服务状态</h2><p>V3.2.1 已连接 Cloudflare Worker；真实数据需要到中文后台解锁查询。</p>
+<p id="state" aria-live="polite"></p><p><a href="https://github.com/majian901104-del/ipo-learning-circle-india/blob/main/V3-CONVERSION-SETUP.md" target="_blank" rel="noopener noreferrer">部署说明与隐私设置 ↗</a></p>
 </section>
-</main><footer class="footer">Angel Research · Internal marketing utility. This page does not collect or retain your inputs on a remote server.</footer>
+</main><footer class="footer">天使研究 · 推广管理工具。此页不会将你在计算器中输入的数字传到远程服务器。</footer>
 <script src="conversion-config.js"></script>
 <script>
 (function(){
@@ -72,11 +72,11 @@ function calc(){
 ['platform','creator','destination'].forEach(id=>$(id).addEventListener('input',build));
 ['spend','views','site-visits','join-clicks','actual-joins'].forEach(id=>$(id).addEventListener('input',calc));
 $('copy-link').addEventListener('click',async()=>{
- try{await navigator.clipboard.writeText($('campaign-url').textContent);$('copy-status').textContent='Copied.'}
- catch(_e){$('copy-status').textContent='Select and copy the link displayed above.'}
+ try{await navigator.clipboard.writeText($('campaign-url').textContent);$('copy-status').textContent='已复制，可以发送给博主。'}
+ catch(_e){$('copy-status').textContent='自动复制失败，请选中上方链接手动复制。'}
 });
 const enabled=window.AngelConversionConfig&&window.AngelConversionConfig.enabled===true;
-$('state').textContent=enabled?'Configured: independent Worker base URL entered. Verify live counts against Cloudflare Analytics Engine.':'Pending: Cloudflare Worker is not yet connected. Current site retains direct community links and consented GA4 tracking.';
+$('state').textContent=enabled?'独立统计服务已连接。真实记录请在中文数据管理后台查看。':'Cloudflare 独立统计尚未连接。现有入群链接仍可正常使用。';
 build();calc();
 })();
 </script></body></html>
