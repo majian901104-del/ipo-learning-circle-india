@@ -6,7 +6,7 @@
 (function(w,d){
 'use strict';
 const $=id=>d.getElementById(id);
-const fmt=n=>new Intl.NumberFormat('en-IN',{maximumFractionDigits:0}).format(Math.max(0,Math.round(Number(n)||0)));
+const fmt=n=>new Intl.NumberFormat('zh-CN',{maximumFractionDigits:0}).format(Math.max(0,Math.round(Number(n)||0)));
 const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n):'—';
 const pct=(num,den)=>den>0?(100*num/den).toFixed(1)+'%':'—';
 const keyFor=(item)=>String(item.source||'direct')+'|'+String(item.campaign||'direct');
@@ -23,8 +23,8 @@ function setNotice(msg,kind=''){
 }
 function locked(){
  report=null;accessKey='';$('access-key').value='';$('auth-panel').hidden=false;$('reporting').hidden=true;
- $('source-status').className='source-status';$('source-status').lastChild.textContent=' Awaiting owner access';
- setNotice('Private reporting is locked. Enter your Cloudflare Worker report key to view aggregated campaigns.');
+ $('source-status').className='source-status';$('source-status').lastChild.textContent=' 尚未解锁管理权限';
+ setNotice('后台已锁定。请输入 Cloudflare 管理密钥才能读取统计数据。');
 }
 function loadNotes(){
  try{
@@ -34,7 +34,7 @@ function loadNotes(){
 }
 function saveNotes(){
  try{w.localStorage.setItem(LOCAL_KEY,JSON.stringify(notes))}catch(_e){
-   setNotice('Your browser could not save the manual campaign figures. The Cloudflare counts are unaffected.','error');
+   setNotice('当前浏览器无法保存手工录入的推广费用或进群人数，Cloudflare 原始统计不受影响。','error');
  }
 }
 function noteValue(item,field){
@@ -50,7 +50,7 @@ function saveField(item,field,text){
  if(text.trim()==='')delete rec[field];
  else{
    const x=Number(text);
-   if(!Number.isFinite(x)||x<0){setNotice('Please enter a positive number, or clear the field.','error');return false}
+   if(!Number.isFinite(x)||x<0){setNotice('请输入非负数，或清空输入框。','error');return false}
    rec[field]=Math.floor(x);
  }
  notes[k]=rec;
@@ -67,7 +67,7 @@ function editCell(row,item,field){
  const cell=d.createElement('td');
  const input=d.createElement('input');
  input.type='number';input.min='0';input.step='1';input.inputMode='numeric';
- input.setAttribute('aria-label',field+' for '+item.campaign);
+ input.setAttribute('aria-label',({spend:'推广费用',impressions:'帖子曝光量',joins:'真实进群人数'}[field]||field)+'：'+item.campaign);
  input.placeholder='—';
  input.value=noteHas(item,field)?String(noteValue(item,field)):'';
  input.addEventListener('change',()=>{saveField(item,field,input.value)});
@@ -80,13 +80,14 @@ function renderTable(){
   (c.campaign+' '+c.source).toLowerCase().includes(filter)));
  if(!rows.length){
    const row=d.createElement('tr'),cell=d.createElement('td');
-   cell.colSpan=8;cell.className='empty-row';cell.textContent='No matching campaign events in the selected time window.';
+   cell.colSpan=10;cell.className='empty-row';cell.textContent='选定时间内暂无符合条件的推广活动数据。';
    row.appendChild(cell);body.appendChild(row);return;
  }
  rows.forEach(c=>{
    const row=d.createElement('tr');
-   const name=td(row,c.campaign||'direct');
-   const src=d.createElement('span');src.className='source';src.textContent='Source: '+(c.source||'direct');name.appendChild(src);
+   const name=td(row,c.campaign==='direct'?'直接访问':(c.campaign||'直接访问'));
+   const src=d.createElement('span');src.className='source';src.textContent='来源：'+({direct:'直接访问',x:'X 平台',youtube:'YouTube',facebook:'Facebook',instagram:'Instagram'}[c.source]||c.source||'直接访问');name.appendChild(src);
+   td(row,fmt(c.visitorSessions||0));td(row,fmt(c.clickSessions||0));
    td(row,fmt(c.views));td(row,fmt(c.redirects));td(row,pct(c.redirects,c.views));
    editCell(row,c,'spend');editCell(row,c,'impressions');editCell(row,c,'joins');
    const joins=noteValue(c,'joins'),spent=noteValue(c,'spend');
@@ -97,6 +98,8 @@ function renderTable(){
 function renderTotals(){
  if(!report)return;
  const t=report.totals||{};
+ $('metric-sessions').textContent=t.visitorSessions>0?fmt(t.visitorSessions):'—';
+ $('metric-click-sessions').textContent=t.clickSessions>0?fmt(t.clickSessions):'—';
  $('metric-views').textContent=fmt(t.views);
  $('metric-clicks').textContent=fmt(t.redirects);
  $('metric-rate').textContent=pct(t.redirects,t.views);
@@ -110,14 +113,14 @@ function renderTotals(){
 function renderTrend(){
  const el=$('daily-chart');el.textContent='';
  const rows=report?.daily||[];
- if(!rows.length){const m=d.createElement('p');m.className='chart-empty';m.textContent='No event history is available in this time range.';el.appendChild(m);return}
+ if(!rows.length){const m=d.createElement('p');m.className='chart-empty';m.textContent='该时间段暂无访问或跳转记录。';el.appendChild(m);return}
  const max=Math.max(1,...rows.flatMap(v=>[Number(v.views)||0,Number(v.redirects)||0]));
  for(const item of rows){
   const x=d.createElement('div');x.className='day-bar';
   for(const [field,cls] of [['views','views'],['redirects','clicks']]){
     const col=d.createElement('div');col.className='col '+cls;
     col.style.height=Math.max(0,(Number(item[field])||0)/max*164)+'px';
-    col.title=item.day+' · '+field+': '+fmt(item[field]);
+    col.title=item.day+' · '+(field==='views'?'访问次数':'WS跳转次数')+'：'+fmt(item[field]);
     x.appendChild(col);
   }
   const label=d.createElement('span');label.className='date';
@@ -126,48 +129,69 @@ function renderTrend(){
   x.appendChild(label);el.appendChild(x);
  }
 }
-function renderCountries(){
- const el=$('country-list');el.textContent='';
- const rows=(report?.countries||[]).slice(0,6);
- const max=rows.length?Math.max(1,...rows.map(x=>Number(x.views)||0)):1;
- if(!rows.length){el.textContent='No country breakdown has been recorded yet.';return}
- for(const item of rows){
+const countryNames={
+ IN:'印度',MY:'马来西亚',CA:'加拿大',US:'美国',SG:'新加坡',
+ GB:'英国',AU:'澳大利亚',AE:'阿联酋',CN:'中国',HK:'中国香港',
+ DE:'德国',JP:'日本',PK:'巴基斯坦',BD:'孟加拉国',LK:'斯里兰卡',
+ NP:'尼泊尔',ID:'印度尼西亚',TH:'泰国',PH:'菲律宾',VN:'越南'
+};
+const countryName=code=>countryNames[String(code||'').toUpperCase()]||String(code||'未知');
+const osNames={ios:'iOS / iPhone',android:'Android',windows:'Windows',macos:'macOS',
+ linux:'Linux',other:'其他系统',unknown:'系统未知'};
+const deviceNames={mobile:'手机',tablet:'平板',desktop:'电脑',unknown:'未知设备'};
+function barList(id,rows,labelText,valueText,maxItems){
+ const el=$(id);el.textContent='';
+ const data=(rows||[]).slice(0,maxItems||8);
+ if(!data.length){const msg=d.createElement('p');msg.className='chart-empty';
+   msg.textContent='暂无可用数据（旧记录可能未采集此字段）';el.appendChild(msg);return}
+ const max=Math.max(1,...data.map(x=>Number(x.views)||0));
+ for(const item of data){
    const div=d.createElement('div');div.className='country-item';
-   const label=d.createElement('div');label.className='country-name';label.textContent=String(item.country||'??');
+   const label=d.createElement('div');label.className='country-name';
+   label.textContent=labelText(item);label.title=label.textContent;
    const track=d.createElement('div');track.className='country-track';
-   const bar=d.createElement('span');bar.style.width=Math.min(100,(Number(item.views)||0)/max*100)+'%';
-   track.appendChild(bar);
+   const bar=d.createElement('span');bar.style.width=Math.min(100,(Number(item.views)||0)/max*100)+'%';track.appendChild(bar);
    const val=d.createElement('div');val.className='country-count';val.textContent=fmt(item.views);
    div.appendChild(label);div.appendChild(track);div.appendChild(val);el.appendChild(div);
  }
 }
+function renderCountries(){
+ barList('country-list',report?.countries,x=>countryName(x.country)+' ('+x.country+')',null,9);
+}
+function renderDevices(){
+ barList('device-list',report?.devices,x=>(deviceNames[x.device]||'其他设备')+' · '+(osNames[x.os]||x.os||'未知系统'),null,10);
+ barList('model-list',report?.models,x=>(x.model||'未知').replaceAll('_',' ')+' · '+(osNames[x.os]||x.os),null,7);
+}
+function renderRegions(){
+ barList('region-list',report?.regions,x=>countryName(x.country)+' · '+(x.region==='UNKNOWN'?'未知邦／省':x.region),null,11);
+}
 function render(){
- renderTotals();renderTable();renderTrend();renderCountries();
- $('updated-at').textContent='Last fetched: '+new Date(report.asOf||Date.now()).toLocaleTimeString();
+ renderTotals();renderTable();renderTrend();renderCountries();renderDevices();renderRegions();
+ $('updated-at').textContent='最后更新：'+new Date(report.asOf||Date.now()).toLocaleTimeString('zh-CN',{hour12:false});
  $('source-status').className='source-status ready';
- $('source-status').lastChild.textContent=' Private report connected';
+ $('source-status').lastChild.textContent=' 已连接真实统计数据';
  $('auth-panel').hidden=true;$('reporting').hidden=false;
 }
 async function fetchReport(){
  if(loading||!accessKey)return;
- if(!worker){setNotice('Worker URL is not configured. Contact the site administrator.','error');return}
+ if(!worker){setNotice('统计服务地址尚未配置，请检查网站连接设置。','error');return}
  loading=true;$('connect-btn').disabled=true;$('refresh').disabled=true;
- setNotice('Reading source-labelled Cloudflare aggregates…');
+ setNotice('正在读取 Cloudflare 真实统计数据，请稍候…');
  try{
    const response=await w.fetch(worker+'/report?days='+days,{
      method:'GET',mode:'cors',credentials:'omit',cache:'no-store',
      headers:{'Authorization':'Bearer '+accessKey,'Accept':'application/json'}
    });
    let data;
-   try{data=await response.json()}catch(_e){throw new Error('Worker returned an unreadable response')}
-   if(response.status===401){locked();setNotice('Access key incorrect. Please check the Cloudflare REPORT_ACCESS_KEY secret and try again.','error');return}
-   if(response.status===503){setNotice('The Cloudflare report is not configured. Add REPORT_ACCESS_KEY as a Worker secret.','error');return}
+   try{data=await response.json()}catch(_e){throw new Error('统计服务响应格式错误')}
+   if(response.status===401){locked();setNotice('管理密钥不正确，请确认与 Cloudflare REPORT_ACCESS_KEY Secret 相同。','error');return}
+   if(response.status===503){setNotice('Cloudflare 报表服务尚未配置，请检查 REPORT_ACCESS_KEY 与 ANALYTICS_SQL 绑定。','error');return}
    if(!response.ok||data.ok!==true||!Array.isArray(data.campaigns)){
-     throw new Error(data.message||'Unable to retrieve Cloudflare Analytics Engine data');
+     throw new Error(data.message||'无法获取 Cloudflare 统计数据');
    }
    report=data;render();
-   setNotice('Secure aggregate report connected. Counts are approximate request events, not individual people or confirmed WhatsApp joins.','ok');
- }catch(error){setNotice('Could not load the private report: '+String(error?.message||'Network error').slice(0,200),'error')}
+   setNotice('已成功连接 Cloudflare。页面和跳转次数为事件统计，会话人数为估算，不能当成真实独立人数或实际进群人数。','ok');
+ }catch(error){setNotice('读取私有报表失败：'+String(error?.message||'网络错误').slice(0,200),'error')}
  finally{loading=false;$('connect-btn').disabled=false;$('refresh').disabled=false}
 }
 function csvField(value){
@@ -177,16 +201,16 @@ function csvField(value){
 }
 function exportCsv(){
  if(!report)return;
- const header=['Campaign','Source','Page events','Redirect requests','Event ratio','INR spend (manual)','Post impressions (manual)','Real joins (manual)','INR per confirmed join'];
+ const header=['推广活动','流量来源','访问会话估算','WS点击会话估算','网页访问次数','WS跳转次数','次数比率','推广费用INR(手工)','帖子曝光量(手工)','实际进群人数(手工)','每位进群成本INR'];
  const rows=report.campaigns.filter(c=>(c.campaign+' '+c.source).toLowerCase().includes(filter)).map(c=>{
   const joins=noteValue(c,'joins'),spent=noteValue(c,'spend');
-  return[c.campaign,c.source,c.views,c.redirects,pct(c.redirects,c.views),noteHas(c,'spend')?spent:'',
+  return[c.campaign,c.source,c.visitorSessions||0,c.clickSessions||0,c.views,c.redirects,pct(c.redirects,c.views),noteHas(c,'spend')?spent:'',
    noteHas(c,'impressions')?noteValue(c,'impressions'):'',noteHas(c,'joins')?joins:'',
    joins>0&&noteHas(c,'spend')?(spent/joins).toFixed(2):''];
  });
  const csv='\uFEFF'+[header,...rows].map(row=>row.map(csvField).join(',')).join('\r\n');
  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
- const a=d.createElement('a');a.href=url;a.download='angel-research-campaigns-'+days+'d.csv';
+ const a=d.createElement('a');a.href=url;a.download='AngelResearch_推广数据_'+days+'天.csv';
  d.body.appendChild(a);a.click();a.remove();w.setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 function init(){
@@ -199,15 +223,15 @@ function init(){
    $('access-key').value=generated;
    try{
      await w.navigator.clipboard.writeText(generated);
-     setNotice('Secure key generated and copied. Paste it into the Cloudflare Worker secret REPORT_ACCESS_KEY. Do not share it in chat, files or screenshots.','ok');
+     setNotice('安全密钥已在浏览器生成并复制。首次配置时将它保存为 Cloudflare 的 REPORT_ACCESS_KEY Secret。不要在聊天、截图或公开文件中分享。','ok');
    }catch(_e){
-     setNotice('A secure key was generated in the password field, but clipboard access was blocked. Use the browser copy control to copy it privately.','error');
+     setNotice('已生成安全密钥，但浏览器阻止了自动复制。请私下从输入框复制，勿截图公开。','error');
    }
  });
  $('access-form').addEventListener('submit',event=>{
   event.preventDefault();
   const v=$('access-key').value;
-  if(v.length<32){setNotice('Enter your owner access key (32 characters or longer).','error');return}
+  if(v.length<32){setNotice('请输入长度至少32位的管理员访问密钥。','error');return}
   accessKey=v;$('access-key').value='';fetchReport();
  });
  d.querySelectorAll('[data-days]').forEach(b=>b.addEventListener('click',()=>{
