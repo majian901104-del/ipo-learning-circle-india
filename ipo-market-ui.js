@@ -16,7 +16,7 @@ function item(v){
 function render(el){
  var type=el.getAttribute('data-ipo-mode')||'compact';
  var data=sortItems(m.issues);
- if(type==='compact') data=data.filter(function(v){return today<=v.close}).slice(0,4);
+ if(type==='compact') data=data.filter(function(v){return v.segment==='Mainboard'&&today<=v.close}).slice(0,6);
  var header='<div class="ipo-board-head"><div><div class="ipo-kicker">INDIA PRIMARY MARKETS · EDITORIAL UPDATE</div><h2>'+(type==='compact'?'Latest IPO schedules':'IPO issue calendar &amp; company profiles')+'</h2><p>Last checked: <strong>'+esc(m.verifiedDate)+'</strong> · This schedule is not a real-time data feed.</p></div>'+(type==='compact'?'<a class="ipo-full-link" href="ipo-current.html">EXPLORE ALL IPOs ↗</a>':'')+'</div>';
  var caut= '<p class="ipo-caution" role="note"><strong>Important:</strong> Open/closed labels describe the calendar window only; they do not confirm real-time subscription activity. All terms should be reconfirmed with official exchange or issuer filings.</p>';
  if(type==='full'){
