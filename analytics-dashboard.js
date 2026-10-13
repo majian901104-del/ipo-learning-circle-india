@@ -11,7 +11,7 @@ const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-IN',{style:'currency
 const pct=(num,den)=>den>0?(100*num/den).toFixed(1)+'%':'—';
 const keyFor=(item)=>String(item.source||'direct')+'|'+String(item.campaign||'direct');
 const LOCAL_KEY='angel_research_campaign_manual_v32';
-let accessKey='',report=null,days=7,filter='',loading=false,notes={};
+let accessKey='',report=null,days=7,filter='',loading=false,notes={},excludeTest=true;
 let worker='';
 try{
  const config=w.AngelConversionConfig||{};
@@ -55,7 +55,7 @@ function saveField(item,field,text){
  }
  notes[k]=rec;
  saveNotes();
- renderTotals();renderTable();
+ renderTotals();renderTable();renderCostRank();
  return true;
 }
 function td(row,value,className){
@@ -80,7 +80,7 @@ function renderTable(){
   (c.campaign+' '+c.source).toLowerCase().includes(filter)));
  if(!rows.length){
    const row=d.createElement('tr'),cell=d.createElement('td');
-   cell.colSpan=10;cell.className='empty-row';cell.textContent='选定时间内暂无符合条件的推广活动数据。';
+   cell.colSpan=14;cell.className='empty-row';cell.textContent='选定时间内暂无符合条件的推广活动数据。';
    row.appendChild(cell);body.appendChild(row);return;
  }
  rows.forEach(c=>{
@@ -89,8 +89,10 @@ function renderTable(){
    const src=d.createElement('span');src.className='source';src.textContent='来源：'+({direct:'直接访问',x:'X 平台',youtube:'YouTube',facebook:'Facebook',instagram:'Instagram'}[c.source]||c.source||'直接访问');name.appendChild(src);
    td(row,fmt(c.visitorSessions||0));td(row,fmt(c.clickSessions||0));
    td(row,fmt(c.views));td(row,fmt(c.redirects));td(row,pct(c.redirects,c.views));
+   td(row,fmt(c.indiaViews||0));td(row,pct(c.indiaViews||0,c.views));td(row,fmt(c.indiaRedirects||0));
    editCell(row,c,'spend');editCell(row,c,'impressions');editCell(row,c,'joins');
    const joins=noteValue(c,'joins'),spent=noteValue(c,'spend');
+   td(row,noteHas(c,'spend')&&c.redirects>0?money(spent/c.redirects):'—');
    td(row,joins>0&&noteHas(c,'spend')?money(spent/joins):'—');
    body.appendChild(row);
  });
@@ -103,12 +105,13 @@ function renderTotals(){
  $('metric-views').textContent=fmt(t.views);
  $('metric-clicks').textContent=fmt(t.redirects);
  $('metric-rate').textContent=pct(t.redirects,t.views);
- let totalSpend=0,totalJoined=0,spendSet=false;
+ let matchedSpend=0,matchedJoins=0;
  for(const c of report.campaigns){
-   if(noteHas(c,'spend')){totalSpend+=noteValue(c,'spend');spendSet=true}
-   if(noteHas(c,'joins'))totalJoined+=noteValue(c,'joins');
+   if(noteHas(c,'spend')&&noteHas(c,'joins')&&noteValue(c,'joins')>0){
+     matchedSpend+=noteValue(c,'spend');matchedJoins+=noteValue(c,'joins');
+   }
  }
- $('metric-cpa').textContent=spendSet&&totalJoined>0?money(totalSpend/totalJoined):'—';
+ $('metric-cpa').textContent=matchedJoins>0?money(matchedSpend/matchedJoins):'—';
 }
 function renderTrend(){
  const el=$('daily-chart');el.textContent='';
@@ -172,8 +175,53 @@ function renderDevices(){
 function renderRegions(){
  barList('region-list',report?.regions,x=>regionDisplay(x),null,11);
 }
+function renderIndia(){
+ const countries=report?.countries||[];
+ const india=(report?.campaigns||[]).reduce((a,c)=>({
+  views:a.views+(Number(c.indiaViews)||0),
+  redirects:a.redirects+(Number(c.indiaRedirects)||0)
+ }),{views:0,redirects:0});
+ const allViews=Number(report?.totals?.views)||0;
+ $('india-views').textContent=fmt(india.views);
+ $('india-clicks').textContent=fmt(india.redirects);
+ $('india-share').textContent=pct(india.views,allViews);
+ const regional=(report?.regions||[]).filter(r=>String(r.country).toUpperCase()==='IN'&&
+  !['UNKNOWN','UNK',''].includes(String(r.region||'').toUpperCase()));
+ barList('india-region-list',regional,r=>regionDisplay(r),null,10);
+ // Ensure the overall country share is never mistaken for individual residents.
+ const typed=(report?.devices||[]).reduce((a,v)=>a+(String(v.device||'unknown')!=='unknown'?(Number(v.views)||0):0),0);
+ $('device-coverage').textContent=allViews>0?pct(typed,allViews):'—';
+}
+function renderCostRank(){
+ const host=$('cost-rank-list');host.textContent='';
+ const candidates=(report?.campaigns||[]).filter(c=>c.redirects>0&&noteHas(c,'spend')&&
+   (c.campaign+' '+c.source).toLowerCase().includes(filter))
+   .map(c=>({campaign:c.campaign,source:c.source,clicks:c.redirects,views:c.views,
+     spend:noteValue(c,'spend'),cost:noteValue(c,'spend')/c.redirects,
+     joins:noteHas(c,'joins')?noteValue(c,'joins'):null}))
+   .sort((a,b)=>a.cost-b.cost).slice(0,7);
+ if(!candidates.length){
+   const msg=d.createElement('p');msg.className='chart-empty';
+   msg.textContent='暂无可比较的付费活动。请先在博主表格填写推广费用，并确保该活动已有WS跳转记录。';
+   host.appendChild(msg);return;
+ }
+ candidates.forEach((x,i)=>{
+  const line=d.createElement('div');line.className='rank-row';
+  const num=d.createElement('span');num.className='rank-no';num.textContent=String(i+1).padStart(2,'0');
+  const info=d.createElement('div');info.className='rank-info';
+  const name=d.createElement('strong');name.textContent=x.campaign;
+  const sub=d.createElement('small');sub.textContent='来源 '+x.source+' · 跳转 '+fmt(x.clicks)+' 次 · 总费用 '+money(x.spend)+
+    (x.joins!==null?' · 已核实进群 '+fmt(x.joins)+' 人':' · 实际进群未登记');
+  info.appendChild(name);info.appendChild(sub);
+  const result=d.createElement('div');result.className='rank-cost';
+  const amount=d.createElement('b');amount.textContent=money(x.cost);
+  const detail=d.createElement('small');detail.textContent='每次WS跳转';
+  result.appendChild(amount);result.appendChild(detail);
+  line.appendChild(num);line.appendChild(info);line.appendChild(result);host.appendChild(line);
+ });
+}
 function render(){
- renderTotals();renderTable();renderTrend();renderCountries();renderDevices();renderRegions();
+ renderTotals();renderTable();renderTrend();renderCountries();renderDevices();renderRegions();renderIndia();renderCostRank();
  $('updated-at').textContent='最后更新：'+new Date(report.asOf||Date.now()).toLocaleTimeString('zh-CN',{hour12:false});
  $('source-status').className='source-status ready';
  $('source-status').lastChild.textContent=' 已连接真实统计数据';
@@ -185,7 +233,7 @@ async function fetchReport(){
  loading=true;$('connect-btn').disabled=true;$('refresh').disabled=true;
  setNotice('正在读取 Cloudflare 真实统计数据，请稍候…');
  try{
-   const response=await w.fetch(worker+'/report?days='+days,{
+   const response=await w.fetch(worker+'/report?days='+days+'&exclude_test='+(excludeTest?'1':'0'),{
      method:'GET',mode:'cors',credentials:'omit',cache:'no-store',
      headers:{'Authorization':'Bearer '+accessKey,'Accept':'application/json'}
    });
@@ -197,7 +245,7 @@ async function fetchReport(){
      throw new Error(data.message||'无法获取 Cloudflare 统计数据');
    }
    report=data;render();
-   setNotice('已成功连接 Cloudflare。页面和跳转次数为事件统计，会话人数为估算，不能当成真实独立人数或实际进群人数。','ok');
+   setNotice('已连接真实数据；'+(excludeTest?'已排除测试活动。':'当前包含测试活动。')+' 访问／跳转均为事件次数，估算会话不代表独立人数。','ok');
  }catch(error){setNotice('读取私有报表失败：'+String(error?.message||'网络错误').slice(0,200),'error')}
  finally{loading=false;$('connect-btn').disabled=false;$('refresh').disabled=false}
 }
@@ -208,21 +256,25 @@ function csvField(value){
 }
 function exportCsv(){
  if(!report)return;
- const header=['推广活动','流量来源','访问会话估算','WS点击会话估算','网页访问次数','WS跳转次数','次数比率','推广费用INR(手工)','帖子曝光量(手工)','实际进群人数(手工)','每位进群成本INR'];
+ const header=['推广活动','流量来源','访问会话估算','WS点击会话估算','网页访问次数','WS跳转次数','次数比率','印度访问次数','印度访问占比','印度WS跳转次数','推广费用INR(手工)','帖子曝光量(手工)','实际进群人数(手工)','每次WS跳转成本INR','每位真实进群成本INR'];
  const rows=report.campaigns.filter(c=>(c.campaign+' '+c.source).toLowerCase().includes(filter)).map(c=>{
   const joins=noteValue(c,'joins'),spent=noteValue(c,'spend');
-  return[c.campaign,c.source,c.visitorSessions||0,c.clickSessions||0,c.views,c.redirects,pct(c.redirects,c.views),noteHas(c,'spend')?spent:'',
-   noteHas(c,'impressions')?noteValue(c,'impressions'):'',noteHas(c,'joins')?joins:'',
+  return[c.campaign,c.source,c.visitorSessions||0,c.clickSessions||0,c.views,c.redirects,
+   pct(c.redirects,c.views),c.indiaViews||0,pct(c.indiaViews||0,c.views),c.indiaRedirects||0,
+   noteHas(c,'spend')?spent:'',
+   noteHas(c,'impressions')?noteValue(c,'impressions'):'',
+   noteHas(c,'joins')?joins:'',
+   c.redirects>0&&noteHas(c,'spend')?(spent/c.redirects).toFixed(2):'',
    joins>0&&noteHas(c,'spend')?(spent/joins).toFixed(2):''];
  });
  const csv='\uFEFF'+[header,...rows].map(row=>row.map(csvField).join(',')).join('\r\n');
  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
- const a=d.createElement('a');a.href=url;a.download='AngelResearch_推广数据_'+days+'天.csv';
+ const a=d.createElement('a');a.href=url;a.download='AngelResearch_推广数据_'+days+'天'+(excludeTest?'_排除测试':'_含测试')+'.csv';
  d.body.appendChild(a);a.click();a.remove();w.setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 function init(){
  loadNotes();
- if(!worker)setNotice('The Worker URL is unavailable. Check conversion-config.js.','error');
+ if(!worker)setNotice('Cloudflare 统计服务地址不可用，请检查网站配置。','error');
  $('generate-key').addEventListener('click',async()=>{
    const bytes=new Uint8Array(32);
    w.crypto.getRandomValues(bytes);
@@ -249,10 +301,15 @@ function init(){
    });
    if(accessKey)fetchReport();
  }));
+ $('exclude-tests').addEventListener('change',event=>{
+   if(loading){event.target.checked=excludeTest;return}
+   excludeTest=event.target.checked;
+   if(accessKey)fetchReport();
+ });
  $('refresh').addEventListener('click',fetchReport);
  $('lock').addEventListener('click',locked);
  $('export').addEventListener('click',exportCsv);
- $('search').addEventListener('input',event=>{filter=event.target.value.trim().toLowerCase();renderTable()});
+ $('search').addEventListener('input',event=>{filter=event.target.value.trim().toLowerCase();renderTable();renderCostRank()});
 }
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })(window,document);
