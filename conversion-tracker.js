@@ -39,45 +39,92 @@ var qp=new URLSearchParams(w.location.search);
 var campaign=safe(qp.get('utm_campaign')||'direct',48);
 var source=safe(qp.get('utm_source')||'direct',32);
 var medium=safe(qp.get('utm_medium')||'unspecified',32);
-function eventPayload(type){
+function sessionFlag(name){
+  // Tab-lifetime booleans only: no visitor ID, fingerprint, cookie or server-side key.
+  // More than one tab/browser can belong to one person, so counts are estimates.
+  try{
+    var key='angel_anon_session_v321_'+name+'_'+source+'_'+campaign;
+    if(w.sessionStorage.getItem(key)==='1')return false;
+    w.sessionStorage.setItem(key,'1');
+    return true;
+  }catch(_e){return false}
+}
+function deviceInfo(){
+  // Generic classification; never send a complete User-Agent string.
+  var ua=w.navigator?.userAgent||'';
+  var isTablet=/iPad|Tablet|Android(?!.*Mobile)/i.test(ua);
+  var isMobile=/iPhone|iPod|Android.*Mobile|Mobile/i.test(ua)||w.navigator?.userAgentData?.mobile===true;
+  var dev=isTablet?'tablet':(isMobile?'mobile':'desktop');
+  var os=/iPhone|iPad|iPod/i.test(ua)?'ios':/Android/i.test(ua)?'android':
+    /Windows/i.test(ua)?'windows':/Mac OS/i.test(ua)?'macos':
+    /Linux/i.test(ua)?'linux':'other';
+  return {device:dev,os:os,model:'unknown'};
+}
+var device=deviceInfo();
+var setupPending=false;
+function allowModel(){
+  try{return w.localStorage.getItem(consentKey)==='granted'}catch(_e){return false}
+}
+function loadModel(){
+  if(!allowModel()||rejected()||!w.navigator?.userAgentData?.getHighEntropyValues)return Promise.resolve();
+  // Browsers often do not expose a specific device model, especially Safari/iOS.
+  return w.navigator.userAgentData.getHighEntropyValues(['model']).then(function(v){
+    if(typeof v.model==='string'&&v.model.length>1){
+      device.model=v.model.toLowerCase().replace(/[^a-z0-9._ -]/g,'').trim().slice(0,36)||'unknown';
+    }
+  }).catch(function(){});
+}
+function eventPayload(type,firstSession){
   return JSON.stringify({
-    event:type,path:path(),campaign:campaign,source:source,medium:medium
+    event:type,path:path(),campaign:campaign,source:source,medium:medium,
+    firstSession:firstSession,device:device.device,os:device.os,model:device.model
   });
 }
 function ping(){
   if(!allowed())return;
-  // Use only aggregate dimensions. Never include the user's full URL, query, IP, UA,
-  // referrer path, personal information, or a persistent identifier.
+  var first=sessionFlag('visit');
   try{
-    var uri=backend+'/collect',data=eventPayload('page_view');
+    var uri=backend+'/collect',data=eventPayload('page_view',first);
     if(w.navigator&&typeof w.navigator.sendBeacon==='function'){
       var blob=new Blob([data],{type:'text/plain'});
       if(w.navigator.sendBeacon(uri,blob))return;
     }
-    w.fetch(uri,{method:'POST',mode:'cors',credentials:'omit',headers:{'Content-Type':'text/plain'},body:data,keepalive:true}).catch(function(){});
+    w.fetch(uri,{method:'POST',mode:'cors',credentials:'omit',
+      headers:{'Content-Type':'text/plain'},body:data,keepalive:true}).catch(function(){});
   }catch(_err){}
 }
-function instrument(){
-  d.querySelectorAll('a[href]').forEach(function(a){
+function rewriteLinks(){
+  d.querySelectorAll('a[href],a[data-conversion-join]').forEach(function(a){
     var original=a.getAttribute('href')||'';
-    if(!/^https:\/\/cc\.stockscode\.click\/?([?#].*)?$/i.test(original))return;
+    if(!a.hasAttribute('data-conversion-join')&&!/^https:\/\/cc\.stockscode\.click\/?([?#].*)?$/i.test(original))return;
     a.setAttribute('data-conversion-join','true');
-    // Links are changed only when a published independent redirect service exists.
-    // Exiting to WhatsApp is always allowed if the user opts out.
-    if(!allowed())return;
+    if(!allowed()){
+      a.href=cfg.destination||'https://cc.stockscode.click';
+      return;
+    }
     var u=new URL(backend+'/join');
-    u.searchParams.set('c',campaign);
-    u.searchParams.set('s',source);
-    u.searchParams.set('m',medium);
-    a.href=u.href;
-    a.target='_blank';
-    a.rel='noopener noreferrer';
+    u.searchParams.set('c',campaign);u.searchParams.set('s',source);u.searchParams.set('m',medium);
+    u.searchParams.set('d',device.device);u.searchParams.set('o',device.os);u.searchParams.set('model',device.model);
+    a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';
   });
+}
+function instrument(){
+  rewriteLinks();
+  d.addEventListener('click',function(e){
+    var a=e.target?.closest?.('a[data-conversion-join]');
+    if(!a||!allowed())return;
+    var link=new URL(a.href);
+    if(link.origin!==backend||link.pathname!=='/join')return;
+    // One redirect-session event per source/campaign per browser tab.
+    link.searchParams.set('u',sessionFlag('join')?'1':'0');
+    a.href=link.href;
+  },true);
 }
 function setup(){
   if(!backend)return;
-  instrument();
-  ping();
+  if(setupPending)return;
+  setupPending=true;
+  loadModel().then(function(){instrument();ping();setupPending=false}).catch(function(){instrument();ping();setupPending=false});
 }
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',setup,{once:true});
 else setup();
@@ -86,7 +133,7 @@ w.addEventListener('angel-analytics-choice',function(){
   d.querySelectorAll('a[data-conversion-join]').forEach(function(a){
     a.href=cfg.destination||'https://cc.stockscode.click';
   });
-  instrument();
+  rewriteLinks();
 });
 w.AngelConversion={isConfigured:!!backend,eligible:allowed,visitRecorded:function(){return !!backend&&allowed()}};
 })(window,document);
