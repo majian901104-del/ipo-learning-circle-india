@@ -23,6 +23,7 @@ function render(data){
  $('link-initialize').hidden=!!state?.active_url;
  const badge=$('link-primary-badge');if(badge)badge.textContent=state?.active_url?'主群已配置':'等待配置';
  const standbyBadge=$('link-standby-badge');if(standbyBadge)standbyBadge.textContent=state?.standby_url?'备用已配置':'暂无备用';
+ const ipDedup=$('link-ip-dedup-status');if(ipDedup)ipDedup.textContent=data.runtime?.ipDedupEnabled?'同 IP 重复访问已限制 · '+data.runtime.ipDedupWindowHours+' 小时':'同 IP 去重尚未启用';
  const protectedMode=$('link-mode');if(protectedMode)protectedMode.textContent=data.runtime?.protectedMode?'安全访问限制已开启':'安全访问限制未开启 · 目前仍使用旧跳转模式';
  const routeNote=$('link-routing-note');if(routeNote)routeNote.textContent=data.runtime?.protectedMode?'正式群动态路由模式已开启。最终跳转仍需要一次性验证凭证。':'当前只保存 D1 主备群配置；正式访客暂时仍走原 /join 路由，后台切换群地址不会立即接管旧广告链接。';
  $('link-switch').disabled=!state?.standby_url;

@@ -1,5 +1,6 @@
 /* V3.3 Cloudflare protected group routing. Requires D1 LINK_DB, LINK_ADMIN_KEY,
    and LINK_MODE_ENABLED=true. Referral headers are signals, not identity proof. */
+import {dedupEnabled,dedupHours,reserveUniqueIp,duplicateIpPage} from './ip-dedup.mjs';
 const HOME='https://angelresearchindia.com';
 const ORIGINS=new Set([HOME,'https://www.angelresearchindia.com','https://majian901104-del.github.io']);
 const PLATFORMS={x:['x.com','twitter.com','t.co'],facebook:['facebook.com','fb.com','fb.me'],
@@ -89,6 +90,15 @@ async function protectedJoin(req,env,record){
  const grant=await env.LINK_DB.prepare('UPDATE link_grants SET used_at=? WHERE token_hash=? AND used_at IS NULL AND expires_at>? RETURNING source,campaign')
  .bind(now,await digest(token),now).first();
  if(!grant)return fail('expired_or_used',404);
+ if(dedupEnabled(env)){
+  let gate;
+  try{gate=await reserveUniqueIp(req,env)}catch(_e){gate={unavailable:true}}
+  if(gate.unavailable)return fail('duplicate_guard_unavailable',503);
+  if(!gate.allowed){
+   if(record)record(env,req,'join_duplicate_blocked',{path:'/join',source:grant.source,campaign:grant.campaign,medium:'social'});
+   return duplicateIpPage(gate.windowHours);
+  }
+ }
  if(req.headers.get('DNT')!=='1'&&req.headers.get('Sec-GPC')!=='1'&&record)
   record(env,req,'join_click',{path:'/join',source:grant.source,campaign:grant.campaign,medium:'social'});
  return redirect(state.active_url);
@@ -104,7 +114,7 @@ async function protectedAdmin(req,env){
  const path=new URL(req.url).pathname;
  if(path==='/admin/links'&&req.method==='GET'){
   const history=(await env.LINK_DB.prepare('SELECT id,action,old_url,new_url,at FROM link_audit ORDER BY id DESC LIMIT 20').all()).results||[];
-  return json({ok:true,state:await current(env),history,runtime:{protectedMode:env.LINK_MODE_ENABLED==='true'}},200,origin);
+  return json({ok:true,state:await current(env),history,runtime:{protectedMode:env.LINK_MODE_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env)}},200,origin);
  }
  if(['/admin/links/primary','/admin/links/standby'].includes(path)&&req.method==='PUT'){
   let b;try{b=await smallBody(req)}catch(_e){return fail('bad_input',400,origin)}

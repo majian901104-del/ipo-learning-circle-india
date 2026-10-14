@@ -1,0 +1,31 @@
+name: V3.4.1 IP Dedup QA
+on:
+  push:
+    branches: [feature/v3-4-1-ip-dedup]
+  pull_request:
+    paths:
+      - 'conversion-worker/**'
+      - 'analytics-dashboard.html'
+      - 'link-management.js'
+      - 'ops-health-v34.js'
+      - 'analytics-v34.css'
+      - 'tests/**'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Worker and V3.4.1 regression tests
+        run: |
+          node --check conversion-worker/src/ip-dedup.mjs
+          node --check conversion-worker/src/index.mjs
+          node --check conversion-worker/src/link-management.mjs
+          node --check link-management.js
+          node --check ops-health-v34.js
+          node --test conversion-worker/test/conversion.test.mjs
+          node --test conversion-worker/test/ip-dedup.test.mjs
+          node --test tests/admin-dashboard-v323.test.cjs
+          node --test tests/v34-release.test.cjs

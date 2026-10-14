@@ -11,6 +11,7 @@
 'use strict';
 import {handleReport} from './reports.mjs';
 import {handleLinkRoute} from './link-management.mjs';
+import {dedupEnabled,dedupHours,reserveUniqueIp,duplicateIpPage} from './ip-dedup.mjs';
 const DEFAULT_JOIN='https://cc.stockscode.click';
 const ALLOW_ORIGINS=new Set([
  'https://angelresearchindia.com',
@@ -62,7 +63,12 @@ function reply(body,status,headers){
 }
 export default {
  async scheduled(_event,env){
-  if(env.LINK_DB)await env.LINK_DB.prepare('DELETE FROM link_grants WHERE expires_at < ?').bind(Math.floor(Date.now()/1000)-86400).run();
+  if(env.LINK_DB){
+   await env.LINK_DB.prepare('DELETE FROM link_grants WHERE expires_at < ?').bind(Math.floor(Date.now()/1000)-86400).run();
+   // Delete expired IP pseudonyms every day, even if the enforcement flag was turned off.
+   // The table may not exist before the migration is applied.
+   try{await env.LINK_DB.prepare('DELETE FROM link_ip_limits WHERE expires_at <= ?').bind(Math.floor(Date.now()/1000)).run()}catch(_e){}
+  }
  },
  async fetch(request,env){
   const url=new URL(request.url);
@@ -71,7 +77,7 @@ export default {
   if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
-    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':'legacy'}),
+    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':'legacy',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env)}),
       200,{'Content-Type':'application/json',...cors(origin)});
   }
   if(url.pathname==='/collect'){
@@ -112,6 +118,17 @@ export default {
         {'Cache-Control':'no-store','Content-Type':'text/plain'});
     }
     const mode=request.headers.get('Sec-Fetch-Mode');
+    // Do not consume an IP slot for automated subresource requests.
+    if(dedupEnabled(env)&&mode&&mode!=='navigate')return reply(null,403,{'Cache-Control':'no-store'});
+    if(dedupEnabled(env)){
+     let gate;
+     try{gate=await reserveUniqueIp(request,env)}catch(_e){gate={unavailable:true}}
+     if(gate.unavailable)return reply('Invitation service temporarily unavailable',503,{'Cache-Control':'no-store','Content-Type':'text/plain'});
+     if(!gate.allowed){
+      record(env,request,'join_duplicate_blocked',{path:'/join',campaign:url.searchParams.get('c'),source:url.searchParams.get('s'),medium:'social'});
+      return duplicateIpPage(gate.windowHours);
+     }
+    }
     // Avoid counting non-navigation fetch/prefetch requests.
     if(!mode||mode==='navigate'){
       record(env,request,'join_click',{
