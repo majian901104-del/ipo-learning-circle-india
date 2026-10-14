@@ -54,6 +54,19 @@ async function allowedDestination(value,env){
  return official(u.href);
 }
 async function current(env){return env.LINK_DB.prepare('SELECT active_url,standby_url,version,changed_at FROM link_state WHERE id=1').first()}
+export async function dynamicPrimaryUrl(env){
+ if(!env.LINK_DB)throw Error('database_missing');
+ const state=await current(env);
+ const value=state?.active_url||'';
+ if(!value)return null;
+ // Database entries were checked at save time. Never trust a query-string
+ // destination and never fall back to the old hard-coded target.
+ if(official(value))return value;
+ let u;try{u=new URL(value)}catch(_e){return null}
+ const allow=String(env.SHORTLINK_ALLOWLIST||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+ if(u.protocol!=='https:'||u.username||u.password||u.port||u.hash||!allow.includes(u.hostname.toLowerCase()))return null;
+ return u.href;
+}
 async function smallBody(req){
  const s=await req.text();if(s.length>2048)throw Error('large');
  const b=JSON.parse(s);if(!b||Array.isArray(b)||typeof b!=='object')throw Error('object');
@@ -107,7 +120,7 @@ async function protectedAdmin(req,env){
  const path=new URL(req.url).pathname;
  if(path==='/admin/links'&&req.method==='GET'){
   const history=(await env.LINK_DB.prepare('SELECT id,action,old_url,new_url,at FROM link_audit ORDER BY id DESC LIMIT 20').all()).results||[];
-  return json({ok:true,state:await current(env),history,runtime:{protectedMode:env.LINK_MODE_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}},200,origin);
+  return json({ok:true,state:await current(env),history,runtime:{protectedMode:env.LINK_MODE_ENABLED==='true',dynamicPrimaryEnabled:env.LINK_MODE_ENABLED!=='true'&&env.LINK_DYNAMIC_TARGET_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}},200,origin);
  }
  if(['/admin/links/primary','/admin/links/standby'].includes(path)&&req.method==='PUT'){
   let b;try{b=await smallBody(req)}catch(_e){return fail('bad_input',400,origin)}
@@ -116,15 +129,15 @@ async function protectedAdmin(req,env){
   if(!s)return fail('schema_missing',503,origin);
   if(!Number.isInteger(b.version)||s.version!==b.version)return fail('version_conflict',409,origin);
   const primary=path.endsWith('primary');
-  if(primary&&s.active_url)return fail('primary_already_set',409,origin);
+  if(primary&&s.active_url===b.url)return fail('primary_unchanged',409,origin);
   const sql=primary?
-  'UPDATE link_state SET active_url=?,version=version+1,changed_at=? WHERE id=1 AND version=? AND active_url IS NULL':
+  'UPDATE link_state SET active_url=?,version=version+1,changed_at=? WHERE id=1 AND version=?':
   'UPDATE link_state SET standby_url=?,version=version+1,changed_at=? WHERE id=1 AND version=?';
   const at=new Date().toISOString();
   const updated=await env.LINK_DB.prepare(sql).bind(b.url,at,s.version).run();
   if(updated.meta?.changes!==1)return fail('version_conflict',409,origin);
   await env.LINK_DB.prepare('INSERT INTO link_audit(action,old_url,new_url,at) VALUES(?,?,?,?)')
-   .bind(primary?'set_primary':'set_standby',primary?null:s.standby_url,b.url,at).run();
+   .bind(primary?(s.active_url?'replace_primary':'set_primary'):'set_standby',primary?s.active_url:s.standby_url,b.url,at).run();
   return json({ok:true,state:await current(env)},200,origin);
  }
  if(path==='/admin/links/restore'&&req.method==='POST'){

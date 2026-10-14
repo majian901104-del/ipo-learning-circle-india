@@ -11,7 +11,7 @@
 'use strict';
 import {handleReport} from './reports.mjs';
 import {handleAdminSession} from './admin-session.mjs';
-import {handleLinkRoute} from './link-management.mjs';
+import {handleLinkRoute,dynamicPrimaryUrl} from './link-management.mjs';
 import {dedupEnabled,dedupHours,dedupReady,shouldCountIp} from './ip-dedup.mjs';
 const DEFAULT_JOIN='https://cc.stockscode.click';
 const ALLOW_ORIGINS=new Set([
@@ -84,7 +84,7 @@ export default {
   if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
-    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':'legacy',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}),
+    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}),
       200,{'Content-Type':'application/json',...cors(origin)});
   }
   if(url.pathname==='/collect'){
@@ -117,12 +117,22 @@ export default {
   }
   if(url.pathname==='/join'){
     if(request.method!=='GET')return reply(null,405,{'Allow':'GET'});
-    // Always redirect to one pre-approved external invitation.
-    // The user-provided destination never comes from URL parameters.
-    const destination=env.COMMUNITY_DESTINATION||DEFAULT_JOIN;
-    if(!/^https:\/\/cc\.stockscode\.click\/?$/i.test(destination)){
-      return reply('Invalid community destination configuration',503,
-        {'Cache-Control':'no-store','Content-Type':'text/plain'});
+    // Keep the India/social admission gate OFF until campaign QA.
+    // The separate dynamic target switch only changes where /join redirects.
+    let destination;
+    if(env.LINK_DYNAMIC_TARGET_ENABLED==='true'){
+      // Fail closed if D1 has no valid configured primary. Do not silently
+      // return to the old cc.stockscode.click redirect.
+      try{destination=await dynamicPrimaryUrl(env)}
+      catch(_e){destination=null}
+      if(!destination)return reply('Community invitation temporarily unavailable',503,
+        {'Cache-Control':'no-store','Content-Type':'text/plain; charset=utf-8'});
+    }else{
+      destination=env.COMMUNITY_DESTINATION||DEFAULT_JOIN;
+      if(!/^https:\/\/cc\.stockscode\.click\/?$/i.test(destination)){
+        return reply('Invalid community destination configuration',503,
+          {'Cache-Control':'no-store','Content-Type':'text/plain'});
+      }
     }
     const mode=request.headers.get('Sec-Fetch-Mode');
     // Avoid counting non-navigation fetch/prefetch requests.
