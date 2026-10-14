@@ -32,7 +32,7 @@ test('V3.2.3 sidebar modules match six exclusive report panels',()=>{
     assert.ok(html.includes('data-admin-panel="'+page+'"'));
     assert.ok(nav.includes(page+':{label:'));
   }
-  assert.equal([...html.matchAll(/class="admin-view-panel"/g)].length,7);
+  assert.equal([...html.matchAll(/class="admin-view-panel"/g)].length,8);
   assert.ok(html.includes('data-admin-panel="overview"'));
   for(const page of pages.slice(1)){
     assert.match(html,new RegExp('id="panel-'+page+'"[^>]* hidden'));
