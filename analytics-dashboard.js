@@ -11,7 +11,7 @@ const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-IN',{style:'currency
 const pct=(num,den)=>den>0?(100*num/den).toFixed(1)+'%':'—';
 const keyFor=(item)=>String(item.source||'direct')+'|'+String(item.campaign||'direct');
 const LOCAL_KEY='angel_research_campaign_manual_v32';
-let accessKey='',report=null,days=7,filter='',loading=false,notes={},excludeTest=true;
+let accessKey='',report=null,days=7,filter='',loading=false,notes={},excludeTest=true,loginBusy=false;
 let worker='';
 try{
  const config=w.AngelConversionConfig||{};
@@ -23,8 +23,9 @@ function setNotice(msg,kind=''){
 }
 function locked(){
  report=null;accessKey='';$('access-key').value='';$('auth-panel').hidden=false;$('reporting').hidden=true;
+ if(typeof w.CustomEvent==='function')w.dispatchEvent(new w.CustomEvent('angel-admin-session-end'));
  $('source-status').className='source-status';$('source-status').lastChild.textContent=' 尚未解锁管理权限';
- setNotice('后台已锁定。请输入 Cloudflare 管理密钥才能读取统计数据。');
+ setNotice('管理后台已锁定。登录一次后即可查看报表、管理主群与备用群。');
 }
 function loadNotes(){
  try{
@@ -239,8 +240,8 @@ async function fetchReport(){
    });
    let data;
    try{data=await response.json()}catch(_e){throw new Error('统计服务响应格式错误')}
-   if(response.status===401){locked();setNotice('管理密钥不正确，请确认与 Cloudflare REPORT_ACCESS_KEY Secret 相同。','error');return}
-   if(response.status===503){setNotice('Cloudflare 报表服务尚未配置，请检查 REPORT_ACCESS_KEY 与 ANALYTICS_SQL 绑定。','error');return}
+   if(response.status===401){locked();setNotice('本次登录已过期，请重新登录。','error');return}
+   if(response.status===503){setNotice('Cloudflare 报表服务暂时不可用；群链接管理仍可使用，请检查 ANALYTICS_SQL 与统计服务配置。','error');return}
    if(!response.ok||data.ok!==true||!Array.isArray(data.campaigns)){
      throw new Error(data.message||'无法获取 Cloudflare 统计数据');
    }
@@ -288,13 +289,37 @@ function init(){
      setNotice('已生成安全密钥，但浏览器阻止了自动复制。请私下从输入框复制，勿截图公开。','error');
    }
  });
- $('access-form').addEventListener('submit',event=>{
+ $('access-form').addEventListener('submit',async event=>{
   event.preventDefault();
-  const v=$('access-key').value;
-  if(v.length<32){setNotice('请输入长度至少32位的管理员访问密钥。','error');return}
-  accessKey=v;$('access-key').value='';fetchReport();
+  if(loginBusy)return;
+  const secret=$('access-key').value;
+  if(secret.length<32){setNotice('请输入已配置的管理员登录密钥。','error');return}
+  $('access-key').value='';
+  if(!worker){setNotice('暂时无法连接到 Cloudflare 登录服务。','error');return}
+  loginBusy=true;$('connect-btn').disabled=true;
+  setNotice('正在验证管理员身份…');
+  try{
+    const response=await w.fetch(worker+'/admin/session',{
+      method:'POST',mode:'cors',credentials:'omit',cache:'no-store',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({key:secret})
+    });
+    const data=await response.json();
+    if(!response.ok||data.ok!==true||typeof data.token!=='string'||!data.token.startsWith('s35.'))
+      throw Error(response.status===401?'登录密钥不正确':'统一认证服务不可用');
+    accessKey=data.token;
+    $('auth-panel').hidden=true;
+    if(typeof w.CustomEvent==='function')w.dispatchEvent(new w.CustomEvent('angel-admin-session',{detail:{
+      token:data.token,expiresAt:data.expiresAt,role:'owner'
+    }}));
+    setNotice('登录成功。本次会话最多有效四小时，可在同一后台管理报表与 WhatsApp 群链接。','ok');
+    await fetchReport();
+  }catch(e){
+    setNotice('登录失败：'+String(e?.message||'网络异常')+'。请使用原 LINK_ADMIN_KEY，勿重复生成新密钥。','error');
+  }finally{loginBusy=false;$('connect-btn').disabled=false}
  });
- d.querySelectorAll('[data-days]').forEach(b=>b.addEventListener('click',()=>{
+ w.addEventListener('angel-admin-request-lock',locked);
+  d.querySelectorAll('[data-days]').forEach(b=>b.addEventListener('click',()=>{
    const next=Number(b.dataset.days);if(![1,7,30].includes(next))return;
    days=next;
    d.querySelectorAll('[data-days]').forEach(x=>{

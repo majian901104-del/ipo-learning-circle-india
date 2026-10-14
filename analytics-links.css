@@ -1,5 +1,5 @@
 /* V3.3 embedded WhatsApp management. Scoped so analytics remains intact. */
-.admin-v323.view-links #auth-panel,.admin-v323.view-links #reporting,.admin-v323.view-links #status,.admin-v323.view-links .workspace-badge{display:none!important}
+.admin-v323.view-links #reporting,.admin-v323.view-links .workspace-badge{display:none!important}
 .admin-v323 #panel-links .link-explainer{background:#e9f2f7;padding:16px;border-left:3px solid #257f9b;border-radius:5px;color:#3f6171;font-size:13px;line-height:1.7}
 .admin-v323 #panel-links .card{background:#fff;padding:24px;margin:17px 0;border:1px solid #d9e5ea;border-radius:9px;box-shadow:0 6px 22px #1b37490b}
 .admin-v323 #panel-links .card h2{font-size:19px;color:#174256;margin:0 0 13px}
