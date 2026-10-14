@@ -4,9 +4,9 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const read=p=>fs.readFileSync(path.resolve(__dirname,'..',p),'utf8');
-test('V3.7 source is staged OFF until production D1 and privacy channel acceptance',()=>{
+test('V3.7 production lead form is ON; country/social gating and IP statistical dedup remain separate',()=>{
  const cfg=read('conversion-worker/wrangler.toml');
- assert.match(cfg,/JOIN_LEAD_FORM_ENABLED = "false"/);
+ assert.match(cfg,/JOIN_LEAD_FORM_ENABLED = "true"/);
  assert.match(cfg,/LINK_DYNAMIC_TARGET_ENABLED = "true"/);
  assert.match(cfg,/LINK_MODE_ENABLED = "false"/);
  assert.match(cfg,/ANALYTICS_IP_DEDUP_ENABLED = "false"/);
