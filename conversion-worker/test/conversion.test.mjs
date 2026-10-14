@@ -229,3 +229,16 @@ test('V3.2.2 cost attribution data never enters worker or the public response',a
  assert.equal(Object.hasOwn(data.campaigns[0],'spend'),false);
  assert.equal(Object.hasOwn(data.campaigns[0],'realJoins'),false);
 });
+
+test('V3.4 health is accessible only as non-secret status and CORS for official admin',async()=>{
+ const e=setup().env;
+ e.LINK_DB={};e.LINK_MODE_ENABLED='false';
+ const request=new Request('https://worker.example/health',{headers:{Origin:'https://angelresearchindia.com'}});
+ const response=await worker.fetch(request,e);
+ assert.equal(response.status,200);
+ assert.equal(response.headers.get('Access-Control-Allow-Origin'),'https://angelresearchindia.com');
+ const body=await response.json();
+ assert.equal(body.routeMode,'legacy');
+ assert.equal(body.linkDatabaseConnected,true);
+ assert.equal(Object.prototype.hasOwnProperty.call(body,'LINK_ADMIN_KEY'),false);
+});

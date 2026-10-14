@@ -72,7 +72,7 @@ export default {
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
     return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':'legacy'}),
-      200,{'Content-Type':'application/json','Cache-Control':'no-store'});
+      200,{'Content-Type':'application/json',...cors(origin)});
   }
   if(url.pathname==='/collect'){
     if(request.method==='OPTIONS'){

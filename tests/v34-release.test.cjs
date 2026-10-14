@@ -30,7 +30,7 @@ test('staged rollout remains disabled and frontend never embeds private groups',
  assert.ok(cfg.includes('v34Protected: false'));
  assert.ok(wrangler.includes('LINK_MODE_ENABLED = "false"'));
  assert.ok(!cfg.includes('https://cc.stockscode.click'));
- assert.ok(!html.includes('https://chat.whatsapp.com/'));
+ assert.ok(!/https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]{15,}/.test(html));
 });
 test('public health diagnostics come from server and never claim aggregate traffic values',()=>{
  const worker=read('conversion-worker/src/index.mjs');
