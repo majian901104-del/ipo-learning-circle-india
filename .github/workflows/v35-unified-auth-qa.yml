@@ -1,0 +1,42 @@
+name: V3.5 Unified Admin Authentication QA
+on:
+  push:
+    branches: [feature/v3-5-unified-admin-session]
+  pull_request:
+    paths:
+      - 'conversion-worker/src/admin-session.mjs'
+      - 'conversion-worker/src/index.mjs'
+      - 'conversion-worker/src/reports.mjs'
+      - 'conversion-worker/src/link-management.mjs'
+      - 'analytics-dashboard.js'
+      - 'link-management.js'
+      - 'analytics-dashboard.html'
+      - 'analytics-links.css'
+      - 'analytics-auth-v35.css'
+      - 'tests/**'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax
+        run: |
+          node --check conversion-worker/src/admin-session.mjs
+          node --check conversion-worker/src/index.mjs
+          node --check conversion-worker/src/reports.mjs
+          node --check conversion-worker/src/link-management.mjs
+          node --check analytics-dashboard.js
+          node --check link-management.js
+      - name: Worker and dashboard regression
+        run: |
+          node --test conversion-worker/test/conversion.test.mjs
+          node --test conversion-worker/test/ip-dedup.test.mjs
+          node --test tests/admin-dashboard-v323.test.cjs
+          node --test tests/v34-release.test.cjs
+      - name: Unified session and UI integration
+        run: |
+          node --test conversion-worker/test/admin-session.test.mjs
+          node --test tests/v35-auth.test.cjs
