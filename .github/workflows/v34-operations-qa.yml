@@ -1,0 +1,43 @@
+name: V3.4 Operations QA
+on:
+  push:
+    branches: [feature/v3-4-operations-center]
+  pull_request:
+    paths:
+      - 'analytics-dashboard*'
+      - 'analytics-links.css'
+      - 'analytics-v34.css'
+      - 'link-management.js'
+      - 'ops-health-v34.js'
+      - 'conversion-worker/**'
+      - 'build-ga4.cjs'
+      - 'conversion-config.js'
+      - 'conversion-tracker.js'
+      - 'link-entry-v34.js'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check link-management.js
+          node --check ops-health-v34.js
+          node --check link-entry-v34.js
+          node --check build-ga4.cjs
+          node --check conversion-tracker.js
+          node --check conversion-worker/src/link-management.mjs
+          node --check conversion-worker/src/index.mjs
+      - name: Worker and old dashboard regression tests
+        run: |
+          node --test conversion-worker/test/conversion.test.mjs
+          node --test tests/admin-dashboard-v323.test.cjs
+      - name: V3.4 implementation contracts
+        run: node --test tests/v34-release.test.cjs
+      - name: Render public site and audit all CTA links
+        run: |
+          node build-ga4.cjs
+          node --test tests/v34-built-site.test.cjs
