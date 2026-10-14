@@ -1,96 +1,109 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {dedupEnabled,dedupHours,reserveUniqueIp,duplicateIpPage} from '../src/ip-dedup.mjs';
+import {dedupEnabled,dedupReady,dedupHours,shouldCountIp} from '../src/ip-dedup.mjs';
 import worker from '../src/index.mjs';
-function mockDB(){
- const state=new Map();
- return {state,prepare(sql){
-  assert.match(sql,/ON CONFLICT\(ip_hash\) DO UPDATE/);
-  assert.match(sql,/RETURNING blocked_count/);
-  return {bind(hash,expires,now){return {async first(){
-   const old=state.get(hash);
-   const current=old&&old.expires>now?{expires:old.expires,created:old.created,count:old.count+1}:{expires,created:now,count:0};
-   state.set(hash,current);
-   return {blocked_count:current.count};
-  }}}};
+const SECRET='github-fixture-only-not-a-deployment-key-3edcf471bc9';
+function d1(){
+ const seen=new Map();
+ return {seen,prepare(sql){
+  if(!sql.includes('analytics_ip_dedup'))throw Error('unexpected query '+sql);
+  assert.ok(sql.includes('ON CONFLICT(metric,ip_hash) DO UPDATE'));
+  assert.ok(sql.includes('RETURNING seen_count'));
+  return {bind(metric,hash,expires,now){return {async first(){
+   const k=metric+'|'+hash,old=seen.get(k);
+   const rec=old&&old.expires>now?{expires:old.expires,first:old.first,count:old.count+1}:{expires,first:now,count:1};
+   seen.set(k,rec);return {seen_count:rec.count}
+  }}}}
  }};
 }
-const SECRET='just-for-github-unit-tests-never-use-as-live-key-6ca238fe';
-const req=(ip,mode='navigate')=>new Request('https://worker.example/join?c=test&s=x',{
- headers:{'CF-Connecting-IP':ip,'Sec-Fetch-Mode':mode}
+function environment(){const events=[],db=d1();return {events,db,env:{
+ ANALYTICS:{writeDataPoint(v){events.push(v)}},
+ LINK_DB:db,
+ ANALYTICS_IP_HASH_KEY:SECRET,
+ ANALYTICS_IP_DEDUP_ENABLED:'true',
+ ANALYTICS_IP_DEDUP_HOURS:'24',
+ LINK_IP_DEDUP_ENABLED:'true', // legacy setting must NOT deny access
+ COMMUNITY_DESTINATION:'https://cc.stockscode.click'
+}}}
+const req=(ip,path='/join',headers={})=>new Request('https://worker.example'+path,{headers:{'CF-Connecting-IP':ip,...headers}});
+test('same-IP repeat page views are not counted twice within 24h',async()=>{
+ const {env,db}=environment(),r=req('203.0.113.14','/collect',{Origin:'https://angelresearchindia.com'});
+ assert.equal(await shouldCountIp(r,env,'page_view',1000),true);
+ assert.equal(await shouldCountIp(r,env,'page_view',1001),false);
+ assert.equal(db.seen.size,1);
+ for(const k of db.seen.keys()){assert.ok(!k.includes('203.0.113.14'));assert.match(k,/^[a-z_]+\|[a-f0-9]{64}$/)}
 });
-function env(db=mockDB()){return {LINK_DB:db,LINK_IP_HASH_KEY:SECRET,LINK_IP_DEDUP_ENABLED:'true',LINK_IP_DEDUP_HOURS:'24',
- COMMUNITY_DESTINATION:'https://cc.stockscode.click'};}
-test('mode off is compatible, no D1 slot or secret required',async()=>{
- const e={LINK_IP_DEDUP_ENABLED:'false'};
- assert.equal(dedupEnabled(e),false);
- assert.deepEqual(await reserveUniqueIp(req('203.0.113.15'),e),{allowed:true,disabled:true});
- const response=await worker.fetch(req('203.0.113.15'),e);
- assert.equal(response.status,302);
+test('page views and WhatsApp clicks have INDEPENDENT counting slots',async()=>{
+ const {env}=environment(),r=req('203.0.113.15');
+ assert.equal(await shouldCountIp(r,env,'page_view',1000),true);
+ assert.equal(await shouldCountIp(r,env,'join_click',1000),true);
+ assert.equal(await shouldCountIp(r,env,'page_view',1002),false);
+ assert.equal(await shouldCountIp(r,env,'join_click',1002),false);
 });
-test('first source IP passes, repeat IP blocked, second public IP passes',async()=>{
- const db=mockDB(),e=env(db);
- const a=await reserveUniqueIp(req('203.0.113.15'),e,100000);
- const b=await reserveUniqueIp(req('203.0.113.15'),e,100001);
- const c=await reserveUniqueIp(req('203.0.113.16'),e,100002);
- assert.equal(a.allowed,true);assert.equal(b.allowed,false);assert.equal(c.allowed,true);
- assert.equal(db.state.size,2);
- for(const hash of db.state.keys()){assert.match(hash,/^[a-f0-9]{64}$/);assert.ok(!hash.includes('203.0.113'))}
+test('24-hour expiry allows new count; duplicates do not renew window',async()=>{
+ const {env}=environment(),r=req('2001:db8::12');
+ assert.equal(await shouldCountIp(r,env,'page_view',1000),true);
+ assert.equal(await shouldCountIp(r,env,'page_view',1000+86399),false);
+ assert.equal(await shouldCountIp(r,env,'page_view',1000+86400),true);
 });
-test('expiration resets after 24 hours, and rejected tries do not extend the window',async()=>{
- const db=mockDB(),e=env(db),ip=req('2001:db8::8');
- assert.equal((await reserveUniqueIp(ip,e,1000)).allowed,true);
- assert.equal((await reserveUniqueIp(ip,e,1001)).allowed,false);
- assert.equal((await reserveUniqueIp(ip,e,1000+24*3600-1)).allowed,false);
- assert.equal((await reserveUniqueIp(ip,e,1000+24*3600)).allowed,true);
- assert.equal([...db.state.values()][0].count,0);
+test('simultaneous same-IP arrivals are atomically counted once',async()=>{
+ const {env}=environment(),r=req('203.0.113.82');
+ const out=await Promise.all([shouldCountIp(r,env,'join_click',1000),shouldCountIp(r,env,'join_click',1000)]);
+ assert.deepEqual(out.sort(),[false,true]);
 });
-test('concurrent requests from one IP cannot both claim the same slot',async()=>{
- const e=env();
- const outcomes=await Promise.all([reserveUniqueIp(req('203.0.113.77'),e,100),
-  reserveUniqueIp(req('203.0.113.77'),e,100)]);
- assert.deepEqual(outcomes.map(x=>x.allowed).sort(),[false,true]);
+test('D1/secret missing or IP unavailable suppress statistics, never route',async()=>{
+ const {env}=environment();
+ delete env.ANALYTICS_IP_HASH_KEY;
+ assert.equal(dedupReady(env),false);
+ assert.equal(await shouldCountIp(req('203.0.113.15'),env,'page_view'),false);
+ env.ANALYTICS_IP_HASH_KEY=SECRET;
+ assert.equal(await shouldCountIp(new Request('https://worker.example/collect'),env,'page_view'),false);
+ env.ANALYTICS_IP_DEDUP_HOURS='bogus';
+ assert.equal(dedupHours(env),24);
+ env.ANALYTICS_IP_DEDUP_ENABLED='false';
+ assert.equal(dedupEnabled(env),false);
+ assert.equal(await shouldCountIp(new Request('https://worker.example/collect'),env,'page_view'),true);
 });
-test('missing secret, missing edge IP, invalid window fail safely',async()=>{
- const e=env();
- delete e.LINK_IP_HASH_KEY;
- assert.equal((await reserveUniqueIp(req('203.0.113.2'),e)).unavailable,true);
- e.LINK_IP_HASH_KEY=SECRET;
- assert.equal((await reserveUniqueIp(new Request('https://worker.example/join'),e)).unavailable,true);
- e.LINK_IP_DEDUP_HOURS='999999';
- assert.equal(dedupHours(e),24);
+test('repeat /join requests ALWAYS redirect even when legacy blocking flag true',async()=>{
+ const {env,events,db}=environment();
+ const r=req('203.0.113.25');
+ const a=await worker.fetch(r,env),b=await worker.fetch(r,env);
+ assert.equal(a.status,302);assert.equal(b.status,302);
+ assert.equal(a.headers.get('Location'),'https://cc.stockscode.click');
+ assert.equal(b.headers.get('Location'),'https://cc.stockscode.click');
+ assert.deepEqual(events.map(x=>x.blobs[0]),['join_click']);
+ assert.equal(db.seen.size,1);
 });
-test('worker /join repeats return 429 HTML without location, preserving aggregate privacy',async()=>{
- const e=env();
- const first=await worker.fetch(req('203.0.113.91'),e);
- assert.equal(first.status,302);
- assert.equal(first.headers.get('Location'),'https://cc.stockscode.click');
- const second=await worker.fetch(req('203.0.113.91'),e);
- assert.equal(second.status,429);
- assert.equal(second.headers.get('Location'),null);
- const body=await second.text();
- assert.match(body,/within 24 hours/);
- assert.match(body,/share a mobile network/);
- assert.ok(!body.includes('203.0.113.91'));
- const third=await worker.fetch(req('203.0.113.92'),e);
- assert.equal(third.status,302);
- const resource=await worker.fetch(req('203.0.113.92','no-cors'),e);
- assert.equal(resource.status,403);
+test('repeat page_view and visit-session events both suppressed, distinct IP counted',async()=>{
+ const {env,events}=environment();
+ const input=ip=>new Request('https://worker.example/collect',{method:'POST',
+  headers:{'CF-Connecting-IP':ip,Origin:'https://angelresearchindia.com'},
+  body:JSON.stringify({event:'page_view',path:'/ipo-community.html',firstSession:true,source:'x',campaign:'test'})
+ });
+ assert.equal((await worker.fetch(input('203.0.113.88'),env)).status,204);
+ assert.equal((await worker.fetch(input('203.0.113.88'),env)).status,204);
+ assert.equal((await worker.fetch(input('203.0.113.89'),env)).status,204);
+ assert.deepEqual(events.map(x=>x.blobs[0]),['page_view','page_session','page_view','page_session']);
 });
-test('worker /health exposes mode only, not IP, secret or hashed identifiers',async()=>{
- const e=env();
- const response=await worker.fetch(new Request('https://worker.example/health',{
-  headers:{Origin:'https://angelresearchindia.com'}}),e);
- const body=await response.json();
- assert.equal(body.ipDedupEnabled,true);
- assert.equal(body.ipDedupWindowHours,24);
- assert.equal(body.routeMode,'legacy');
- assert.equal(JSON.stringify(body).includes(SECRET),false);
- assert.equal(JSON.stringify(body).includes('203.0.113'),false);
+test('Do Not Track request does not insert a network pseudonym',async()=>{
+ const {env,db,events}=environment();
+ const r=req('203.0.113.15','/join',{DNT:'1'});
+ const reply=await worker.fetch(r,env);
+ assert.equal(reply.status,302);
+ assert.equal(db.seen.size,0);assert.equal(events.length,0);
 });
-test('duplicate block page has no redirect or invitation URL',async()=>{
- const r=duplicateIpPage();
- assert.equal(r.status,429);
- assert.equal(r.headers.get('X-Robots-Tag'),'noindex,nofollow');
- assert.doesNotMatch(await r.text(),/chat\.whatsapp\.com/);
+test('health only shows status, never raw IP or hashing key',async()=>{
+ const {env}=environment();
+ const r=await worker.fetch(new Request('https://worker.example/health',{headers:{Origin:'https://angelresearchindia.com'}}),env);
+ const j=await r.json();
+ assert.equal(j.ipDedupScope,'statistics_only');
+ assert.equal(j.ipDedupEnabled,true);
+ assert.equal(j.ipDedupReady,true);
+ assert.equal(j.ipDedupWindowHours,24);
+ assert.equal(JSON.stringify(j).includes(SECRET),false);
+});
+test('no dedup configured means legacy anonymous reporting remains compatible',async()=>{
+ const env={COMMUNITY_DESTINATION:'https://cc.stockscode.click',ANALYTICS:{writeDataPoint(){}},LINK_IP_DEDUP_ENABLED:'true'};
+ const r=await worker.fetch(req('203.0.113.2'),env);
+ assert.equal(r.status,302);
 });
