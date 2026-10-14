@@ -27,7 +27,16 @@ function render(data){
   const tr=d.createElement('tr');
   for(const value of [h.at,h.action,mask(h.old_url),mask(h.new_url)]){
    const td=d.createElement('td');td.textContent=value||'—';tr.append(td);
-  }$('history').append(tr);
+  }
+  const td=d.createElement('td');
+  if(h.old_url){
+   const button=d.createElement('button');button.type='button';button.className='secondary';
+   button.textContent='恢复';button.addEventListener('click',async()=>{
+    if(!confirm('历史目标将先恢复为备用群。确认之后还需要你手动执行切换。'))return;
+    try{await call('/admin/links/restore','POST',{auditId:h.id,version:state.version});await refresh()}
+    catch(e){say('恢复失败：'+e.message)}
+   });td.append(button);
+  }tr.append(td);$('history').append(tr);
  }
  say('已连接。版本号 '+state.version+'；修改后须由管理员确认切换，旧主群不会自动变成备用群。');
 }

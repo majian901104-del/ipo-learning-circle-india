@@ -16,7 +16,7 @@
 <section class="card"><h2>备用群 B <span class="pill">待命</span></h2><div class="label">已保存备用地址</div><div id="standby-url" class="url">—</div><div class="control"><label for="standby-input">新增或替换备用群链接</label><input id="standby-input" type="url" placeholder="WhatsApp 官方邀请或已验证自有短链"><button id="save-standby">验证并保存备用群</button></div></section>
 </div>
 <section class="card"><h2>人工一键切换</h2><p class="muted">先保存并确认备用群可用，再切换。原主群将停用，不会自动成为备用群；需要另行设置新备用群。</p><div class="stack"><button id="switch" class="danger">确认切换至备用群</button><button id="reload" class="secondary">刷新配置</button><button id="logout" class="secondary">退出管理</button></div><div class="alert">未经允许的访问不会得到 WhatsApp 原始邀请码。实际 WhatsApp 成员加入仍建议开启群管理员审批。</div></section>
-<section class="card" style="margin-top:16px"><h2>操作历史（最近 20 条）</h2><div style="overflow-x:auto"><table class="history"><thead><tr><th>时间</th><th>操作</th><th>旧群</th><th>新群</th></tr></thead><tbody id="history"></tbody></table></div></section>
+<section class="card" style="margin-top:16px"><h2>操作历史（最近 20 条）</h2><div style="overflow-x:auto"><table class="history"><thead><tr><th>时间</th><th>操作</th><th>旧群</th><th>新群</th><th>恢复为备用</th></tr></thead><tbody id="history"></tbody></table></div></section>
 </div>
 <p id="message" class="alert" role="status" aria-live="polite">后台尚未连接到 V3.3 安全服务。</p>
 </main>

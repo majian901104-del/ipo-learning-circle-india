@@ -71,7 +71,9 @@ async function protectedEntry(req,env){
  const campaign=clean(q.get('c'));
  await env.LINK_DB.prepare('INSERT INTO link_grants(token_hash,source,campaign,expires_at) VALUES(?,?,?,?)')
  .bind(await digest(token),platform,campaign,Math.floor(Date.now()/1000)+900).run();
- const go=new URL(HOME+'/ipo-community.html');
+ const landing=q.get('landing')||'ipo-community.html';
+ if(!['ipo-community.html','ipo-current.html','index.html'].includes(landing))return fail('invalid_landing',404);
+ const go=new URL(HOME+'/'+landing);
  go.searchParams.set('admission',token);
  go.searchParams.set('utm_source',platform);
  go.searchParams.set('utm_campaign',campaign);
@@ -120,6 +122,21 @@ async function protectedAdmin(req,env){
   if(updated.meta?.changes!==1)return fail('version_conflict',409,origin);
   await env.LINK_DB.prepare('INSERT INTO link_audit(action,old_url,new_url,at) VALUES(?,?,?,?)')
    .bind(primary?'set_primary':'set_standby',primary?null:s.standby_url,b.url,at).run();
+  return json({ok:true,state:await current(env)},200,origin);
+ }
+ if(path==='/admin/links/restore'&&req.method==='POST'){
+  let b;try{b=await smallBody(req)}catch(_e){return fail('bad_input',400,origin)}
+  const s=await current(env);
+  if(!s||b.version!==s.version)return fail('version_conflict',409,origin);
+  if(!Number.isSafeInteger(b.auditId)||b.auditId<1)return fail('invalid_history_id',400,origin);
+  const older=await env.LINK_DB.prepare('SELECT old_url FROM link_audit WHERE id=?').bind(b.auditId).first();
+  if(!older?.old_url||!await allowedDestination(older.old_url,env))return fail('history_target_unavailable',422,origin);
+  const at=new Date().toISOString();
+  const result=await env.LINK_DB.prepare('UPDATE link_state SET standby_url=?,version=version+1,changed_at=? WHERE id=1 AND version=?')
+   .bind(older.old_url,at,s.version).run();
+  if(result.meta?.changes!==1)return fail('version_conflict',409,origin);
+  await env.LINK_DB.prepare('INSERT INTO link_audit(action,old_url,new_url,at) VALUES(?,?,?,?)')
+   .bind('restore_to_standby',s.standby_url,older.old_url,at).run();
   return json({ok:true,state:await current(env)},200,origin);
  }
  if(path==='/admin/links/switch'&&req.method==='POST'){

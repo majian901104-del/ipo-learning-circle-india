@@ -19,6 +19,7 @@ function db(){
   return {
    async first(){
     if(sql.includes('SELECT active_url'))return {...state};
+    if(sql.includes('SELECT old_url FROM link_audit'))return audit.find(x=>x.id===args[0])||null;
     if(sql.includes('UPDATE link_grants')){
      const [now,hash,expiry]=args;const grant=grants.get(hash);
      if(!grant||grant.used_at!==null||grant.expires_at<=expiry)return null;
@@ -108,6 +109,11 @@ test('configure primary, backup and switch atomically',async()=>{
  r=await worker.fetch(admin('/admin/links/switch','POST',{version:2}),e);assert.equal(r.status,409);
  r=await worker.fetch(admin('/admin/links'),e);
  assert.ok((await r.json()).history.some(x=>x.action==='switch'));
+ // Restore old primary to standby; active B must stay active until manual switch.
+ r=await worker.fetch(admin('/admin/links/restore','POST',{version:3,auditId:3}),e);
+ assert.equal(r.status,200);
+ const restored=(await r.json()).state;
+ assert.equal(restored.active_url,b);assert.equal(restored.standby_url,a);
 });
 test('shortlinks require allowlist and do not allow arbitrary destinations',async()=>{
  assert.equal(await allowedDestination('https://evil.example/foo',{SHORTLINK_ALLOWLIST:''}),false);
