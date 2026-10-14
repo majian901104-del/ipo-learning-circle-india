@@ -38,3 +38,4 @@ jobs:
         run: |
           node --test conversion-worker/test/lead-gate.test.mjs
           node --test tests/v37-prejoin.test.cjs
+          node --test tests/v37-privacy-contact.test.cjs
