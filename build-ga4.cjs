@@ -28,7 +28,7 @@ function visit(dir){
        +'<script src="'+prefix+'ga4-analytics.js" defer></script>\n'
        +'<script src="'+prefix+'conversion-config.js" defer></script>\n'
        +'<script src="'+prefix+'conversion-tracker.js" defer></script>\n'
-       +'<script src="'+prefix+'link-entry.js" defer></script>\n';
+       +(s.includes('src="link-entry.js"')?'':'<script src="'+prefix+'link-entry.js" defer></script>\n');
     s=s.replace(/<\/head\s*>/i,scripts+'</head>');
     fs.writeFileSync(full,s,'utf8');
     injected++;

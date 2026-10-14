@@ -52,7 +52,7 @@ function db(){
      }
      return {meta:{changes:changed}};
     }
-    if(sql.startsWith('INSERT INTO link_audit')){
+    if(sql.includes('INTO link_audit')){
      let action,old_url,new_url,at,event_version;
      if(sql.includes('SELECT')){
       [action,old_url,new_url,at,event_version]=args;

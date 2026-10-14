@@ -61,6 +61,9 @@ function reply(body,status,headers){
   return new Response(body,{status,headers});
 }
 export default {
+ async scheduled(_event,env){
+  if(env.LINK_DB)await env.LINK_DB.prepare('DELETE FROM link_grants WHERE expires_at < ?').bind(Math.floor(Date.now()/1000)-86400).run();
+ },
  async fetch(request,env){
   const url=new URL(request.url);
   const origin=request.headers.get('Origin')||'';
