@@ -10,6 +10,7 @@ const sections={
  india:{label:'印度市场',heading:'印度市场专项分析',sub:'聚焦印度访问占比、印度 WS 跳转与主要邦／省分布。'},
  devices:{label:'设备与地区',heading:'设备与地区分析',sub:'观察手机、操作系统、可识别设备型号和近似地理来源。'},
  promoters:{label:'博主管理',heading:'博主推广管理',sub:'按推广活动查看印度流量、访问来源及已登记的合作费用。'},
+ links:{label:'群链接管理',heading:'群链接管理中心',sub:'统一管理 WhatsApp 主群、备用群与安全切换，不需要打开另一个管理后台。'},
  settings:{label:'数据说明',heading:'数据口径与管理工具',sub:'检查统计边界、安全说明，以及已有的推广工具。'}
 };
 const $=id=>d.getElementById(id);
@@ -50,7 +51,8 @@ function setView(name,options){
  $('admin-current-title').textContent=info.label;
  $('admin-page-heading').textContent=info.heading;
  $('admin-page-subtitle').textContent=info.sub;
- d.title='Angel Research · '+info.label+' · V3.2.3';
+ d.title='Angel Research · '+info.label+' · V3.3';
+ d.body.classList.toggle('view-links',name==='links');
  if(options?.setHash && w.history?.replaceState){
   w.history.replaceState(null,'','#'+name);
  }

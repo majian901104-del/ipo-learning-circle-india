@@ -12,7 +12,7 @@ const html=fs.readFileSync(path.join(root,'analytics-dashboard.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'analytics-dashboard.js'),'utf8');
 const nav=fs.readFileSync(path.join(root,'analytics-dashboard-v323.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'analytics-dashboard-v323.css'),'utf8');
-const pages=['overview','traffic','india','devices','promoters','settings'];
+const pages=['overview','traffic','india','devices','promoters','links','settings'];
 test('V3.2.3 retains every operational V3.2.2 analytics control',()=>{
   const used=[...js.matchAll(/\$\('([^']+)'\)/g)].map(m=>m[1]);
   for(const id of new Set(used)){
@@ -32,13 +32,13 @@ test('V3.2.3 sidebar modules match six exclusive report panels',()=>{
     assert.ok(html.includes('data-admin-panel="'+page+'"'));
     assert.ok(nav.includes(page+':{label:'));
   }
-  assert.equal([...html.matchAll(/class="admin-view-panel"/g)].length,6);
+  assert.equal([...html.matchAll(/class="admin-view-panel"/g)].length,7);
   assert.ok(html.includes('data-admin-panel="overview"'));
   for(const page of pages.slice(1)){
     assert.match(html,new RegExp('id="panel-'+page+'"[^>]* hidden'));
   }
   assert.ok(html.includes('src="analytics-dashboard.js?v=20261014-v323"'));
-  assert.ok(html.includes('src="analytics-dashboard-v323.js?v=20261014-v323"'));
+  assert.ok(html.includes('src="analytics-dashboard-v323.js?v=20261014-v33"'));
 });
 test('V3.2.3 mobile shows campaign cards rather than wide scrolling table',()=>{
   assert.match(css,/@media\(max-width:800px\)/);
@@ -79,7 +79,7 @@ function mock(){
  ]);
  main.classList.remove('is-menu-open');
  const d={
-  readyState:'complete',activeElement:menu,title:'',
+  readyState:'complete',activeElement:menu,title:'',body:fakeElement(),
   addEventListener:()=>{},
   getElementById:id=>controls[id],
   querySelector:sel=>sel==='.admin-shell'?main:null,
@@ -127,3 +127,5 @@ test('V3.2.3 sidebar can open/close with aria state and page links',()=>{
  m.overlay.click();
  assert.equal(m.overlay.hidden,true);
 });
+
+test('V3.3 group-link module stays within the original admin shell',()=>{const m=mock();m.navButtons[5].click();assert.equal(m.panels.filter(p=>!p.hidden).length,1);assert.equal(m.panels[5].hidden,false);assert.equal(m.w.location.hash,'#links');assert.equal(m.controls['admin-page-heading'].textContent,'群链接管理中心');assert.ok(html.includes('id="link-key"'));assert.ok(html.includes('id="link-switch"'));assert.ok(!html.includes('href="link-management.html"'));m.navButtons[0].click();assert.equal(m.panels[0].hidden,false);assert.equal(m.panels[5].hidden,true)});

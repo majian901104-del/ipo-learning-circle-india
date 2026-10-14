@@ -1,0 +1,24 @@
+/* V3.3 embedded WhatsApp management. Scoped so analytics remains intact. */
+.admin-v323.view-links #auth-panel,.admin-v323.view-links #reporting,.admin-v323.view-links #status,.admin-v323.view-links .workspace-badge{display:none!important}
+.admin-v323 #panel-links .link-explainer{background:#e9f2f7;padding:16px;border-left:3px solid #257f9b;border-radius:5px;color:#3f6171;font-size:13px;line-height:1.7}
+.admin-v323 #panel-links .card{background:#fff;padding:24px;margin:17px 0;border:1px solid #d9e5ea;border-radius:9px;box-shadow:0 6px 22px #1b37490b}
+.admin-v323 #panel-links .card h2{font-size:19px;color:#174256;margin:0 0 13px}
+.admin-v323 #panel-links .card p{font-size:13px;color:#5f7c89;line-height:1.7}
+.admin-v323 #panel-links .card label,.admin-v323 #panel-links .card .label{display:block;color:#4b6b7a;font-size:12px;font-weight:750;margin:8px 0}
+.admin-v323 #panel-links .card .control{display:flex;flex-direction:column;gap:9px;margin:15px 0}
+.admin-v323 #panel-links .card input{width:100%;min-height:47px;padding:12px 13px;border:1px solid #c6d8e0;border-radius:6px;font-size:14px;background:#fff;color:#173d52}
+.admin-v323 #panel-links .card input:focus-visible{outline:2px solid #247e9e;outline-offset:2px}
+.admin-v323 #panel-links .card button{border:0;border-radius:6px;background:#14506a;color:#fff;cursor:pointer;font-size:13px;font-weight:750;padding:11px 16px;min-height:42px}
+.admin-v323 #panel-links .card button:disabled{opacity:.45;cursor:not-allowed}
+.admin-v323 #panel-links .card button.secondary{background:#eff5f8;color:#254c5d;border:1px solid #d9e6ec}
+.admin-v323 #panel-links .card button.danger{background:#b15b41}
+.admin-v323 #panel-links .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.admin-v323 #panel-links .grid .card{margin:16px 0 0}
+.admin-v323 #panel-links .pill{background:#e6f5ec;border-radius:30px;color:#246545;font-size:11px;padding:4px 9px;margin-left:8px}
+.admin-v323 #panel-links .url{padding:13px;border-radius:6px;background:#f0f5f7;color:#234c5e;font:13px/1.5 ui-monospace,monospace;overflow-wrap:anywhere;min-height:45px}
+.admin-v323 #panel-links .stack{display:flex;flex-wrap:wrap;gap:8px}
+.admin-v323 #panel-links .alert{background:#eaf2f6;color:#395e70;border:1px solid #d2e3e9;border-radius:6px;padding:14px;margin:14px 0;font-size:13px}
+.admin-v323 #panel-links .history{border-collapse:collapse;min-width:570px;width:100%}
+.admin-v323 #panel-links .history td,.admin-v323 #panel-links .history th{padding:12px 9px;border-bottom:1px solid #e1eaf0;text-align:left;font-size:12px;overflow-wrap:anywhere}
+.admin-v323 #panel-links [style*="overflow-x:auto"]{overflow-x:auto}
+@media(max-width:800px){.admin-v323 #panel-links .grid{grid-template-columns:1fr}.admin-v323 #panel-links .card{padding:17px}.admin-v323 #panel-links .stack{flex-direction:column}.admin-v323 #panel-links .stack button{width:100%}}
