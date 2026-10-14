@@ -1,0 +1,35 @@
+name: V3.3 Secure Link Tests
+on:
+  push:
+    branches: [feature/v3-3-secure-whatsapp-links]
+  pull_request:
+    paths:
+      - 'conversion-worker/**'
+      - 'link-entry.js'
+      - 'link-management.js'
+      - 'link-management.html'
+      - 'build-ga4.cjs'
+      - 'conversion-tracker.js'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: |
+          node --check conversion-worker/src/link-management.mjs
+          node --check conversion-worker/src/index.mjs
+          node --check link-entry.js
+          node --check link-management.js
+          node --check conversion-tracker.js
+          node --check build-ga4.cjs
+      - name: Worker regression tests and security tests
+        run: node --test conversion-worker/test/*.mjs
+      - name: Static site build
+        run: node build-ga4.cjs
+      - name: Assert source does not publicly expose WhatsApp invite
+        run: |
+          node -e "const fs=require('fs'); const s=fs.readFileSync('ipo-community.html','utf8'); if(/href=['\\\"]https:\\/\\/cc\\.stockscode\\.click/i.test(s)) process.exit(1)"

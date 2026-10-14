@@ -5,8 +5,9 @@
  */
 window.AngelConversionConfig=Object.freeze({
   enabled: true,
+  v33Enabled: true, // feature branch only; activate after Cloudflare D1 deployment
   workerBase: 'https://angel-research-conversion-v31.majian901104.workers.dev',
-  destination: 'https://cc.stockscode.click',
+  destination: '', // V3.3 public code must not disclose even legacy group shortlinks
   analyticsConsentKey: 'angelresearch_ga4_consent_v1',
   allowAnonymousAggregateWithoutChoice: true,
   campaignLanding: '/ipo-community.html'
