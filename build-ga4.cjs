@@ -20,15 +20,25 @@ function visit(dir){
     // Private reporting pages must not inflate the public marketing funnel.
     if(entry.name==='analytics-dashboard.html'){skipped++;continue}
     let s=fs.readFileSync(full,'utf8');
-    if(s.includes('src="ga4-analytics.js"') || s.includes('/ga4-analytics.js"')){skipped++;continue}
+    // Rewrite legacy public CTAs to our controlled Cloudflare /join entry.
+    // Admission enforcement is deliberately disabled until the rollout is tested.
+    const original=s;
+    s=s.replace(/href=(["'])https:\/\/cc\.stockscode\.click\/?\1/gi,
+       'href="https://angel-research-conversion-v31.majian901104.workers.dev/join" data-conversion-join');
+    if(s.includes('src="ga4-analytics.js"') || s.includes('/ga4-analytics.js"')){
+      if(s!==original)fs.writeFileSync(full,s,'utf8');
+      skipped++;continue
+    }
     if(!/<\/head\s*>/i.test(s))throw new Error('HTML has no closing head: '+full);
     const rel=path.relative(path.dirname(full),root).replace(/\\/g,'/');
     const prefix=rel?rel+'/':'';
-    const scripts='<script src="'+prefix+'ga4-config.js" defer></script>\n'
+    const scripts='<script src="'+prefix+'conversion-config.js" defer></script>\n'
+       +'<script src="'+prefix+'link-entry-v34.js" defer></script>\n'
+       +'<script src="'+prefix+'ga4-config.js" defer></script>\n'
        +'<script src="'+prefix+'ga4-analytics.js" defer></script>\n'
-       +'<script src="'+prefix+'conversion-config.js" defer></script>\n'
        +'<script src="'+prefix+'conversion-tracker.js" defer></script>\n';
     s=s.replace(/<\/head\s*>/i,scripts+'</head>');
+    if(/href=(["'])https:\/\/cc\.stockscode\.click\/?\1/i.test(s))throw new Error('Legacy CTA remained in '+full);
     fs.writeFileSync(full,s,'utf8');
     injected++;
   }

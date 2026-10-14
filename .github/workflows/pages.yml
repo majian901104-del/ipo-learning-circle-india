@@ -31,6 +31,10 @@ jobs:
           node --check lead-form.js
           node --check conversion-config.js
           node --check conversion-tracker.js
+          node --check link-entry-v34.js
+          node --check ops-health-v34.js
+          node --check link-management.js
+          node --check conversion-worker/src/link-management.mjs
           node --check analytics-dashboard.js
           node --check analytics-dashboard-v323.js
           node --check conversion-worker/src/reports.mjs

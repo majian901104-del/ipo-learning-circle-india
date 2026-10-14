@@ -51,7 +51,7 @@ function setView(name,options){
  $('admin-current-title').textContent=info.label;
  $('admin-page-heading').textContent=info.heading;
  $('admin-page-subtitle').textContent=info.sub;
- d.title='Angel Research · '+info.label+' · V3.3';
+ d.title='Angel Research · '+info.label+' · V3.4';
  d.body.classList.toggle('view-links',name==='links');
  if(options?.setHash && w.history?.replaceState){
   w.history.replaceState(null,'','#'+name);

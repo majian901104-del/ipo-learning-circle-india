@@ -1,0 +1,59 @@
+/* Angel Research V3.4 institution-grade operations UX; shared dashboard shell */
+:root{--a-sidebar:#091c2d;--a-sidebar-soft:#153c4f;--a-page:#edf3f7;--a-border:#d7e3eb;--a-ink:#102f43;--a-muted:#627a89;--a-teal:#118775;--a-gold:#c4a16f}
+.admin-v323{background:#edf3f7!important;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.admin-v323 .admin-sidebar{background:linear-gradient(175deg,#071b2b 0%,#0b2939 56%,#102f3d 100%)!important;box-shadow:4px 0 24px #0e2b3a14}
+.admin-v323 .sidebar-brand{min-height:99px}
+.admin-v323 .sidebar-monogram{border-radius:7px;color:#f8d7a6;font-family:Arial,sans-serif}
+.admin-v323 .sidebar-workspace{padding-bottom:27px}
+.admin-v323 .sidebar-workspace strong{font-size:14px;color:#f1f9fd}
+.admin-v323 .admin-nav-item{min-height:50px;margin:2px 0;padding:12px 15px;border-radius:6px;letter-spacing:0}
+.admin-v323 .admin-nav-item.is-active{background:#214a59!important;box-shadow:inset 0 0 0 1px #3362748a}
+.admin-v323 .admin-nav-item:focus-visible,.admin-v323 button:focus-visible,.admin-v323 a:focus-visible{outline:2px solid #5ccfbc;outline-offset:3px}
+.admin-v323 .admin-header{background:#fff;border-bottom:1px solid #dce5eb;box-shadow:0 2px 13px #163b4b08}
+.admin-v323 .admin-workspace{max-width:none}
+.admin-v323 .workspace-head{margin-bottom:19px;padding:21px 25px 23px;background:linear-gradient(110deg,#0b3043 0%,#154b5a 67%,#173d4d 100%);border-radius:11px;box-shadow:0 10px 28px #153e521a;position:relative;overflow:hidden}
+.admin-v323 .workspace-head:after{content:"";position:absolute;pointer-events:none;border:1px solid #ffffff19;border-radius:50%;width:240px;height:240px;right:-110px;top:-120px}
+.admin-v323 .workspace-eyebrow{color:#a4d7d4;letter-spacing:.14em;font-size:10px;font-weight:800}
+.admin-v323 .workspace-heading h1{color:#fff;font-size:31px;line-height:1.25;margin:6px 0 7px;font-weight:800;letter-spacing:-.03em}
+.admin-v323 .workspace-heading p{color:#c0d7df;font-size:13px}
+.admin-v323 .workspace-badge{background:#ffffff14;border:1px solid #ffffff26;box-shadow:none;min-width:218px}
+.admin-v323 .workspace-badge strong{color:#fff}
+.admin-v323 .workspace-badge small{color:#c0d6de}
+.admin-v323 .ops-livebar{display:grid;grid-template-columns:minmax(190px,1.45fr) repeat(3,minmax(110px,1fr)) auto;align-items:center;gap:11px;padding:15px 17px;background:#fff;border:1px solid #dbe6ec;border-radius:9px;box-shadow:0 5px 18px #123b4e09;margin-bottom:21px}
+.admin-v323 .ops-livebar-heading{display:flex;flex-direction:column;gap:2px}
+.admin-v323 .ops-livebar-heading strong{font-size:14px;color:#153d52;line-height:1.2}
+.admin-v323 .ops-livebar-heading small{color:#738997;font-size:11px}
+.admin-v323 .ops-livebar-eyebrow{font-size:9px;font-weight:800;color:#9c815c;letter-spacing:.12em}
+.admin-v323 .ops-status-tile{border-left:1px solid #e5edf1;padding:5px 10px 5px 15px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.admin-v323 .ops-status-tile small{font-size:10px;color:#7b909e}
+.admin-v323 .ops-status-tile strong{font-size:13px;color:#194457;white-space:normal}
+.admin-v323 .ops-livebar[data-health="ok"] #ops-worker-status{color:#16765d}
+.admin-v323 .ops-livebar[data-health="error"] #ops-worker-status{color:#ad5037}
+.admin-v323 .ops-refresh{padding:10px 12px;border:1px solid #cbdde5;border-radius:5px;background:#f6f9fa;color:#28556a;font-size:12px;font-weight:750;min-height:41px;cursor:pointer}
+.admin-v323 .ops-refresh:disabled{opacity:.5;cursor:wait}
+.admin-v323 .section-heading h2{font-size:25px}
+.admin-v323 .section-index{font-size:10px;color:#a27b52;letter-spacing:.12em}
+.admin-v323 .metric-grid{gap:15px}
+.admin-v323 .metric{padding:22px 24px;min-height:152px;box-shadow:0 7px 24px #17384a0b;border-radius:9px}
+.admin-v323 .metric strong{font-size:39px;letter-spacing:-.025em}
+.admin-v323 .metric small{font-size:12px;line-height:1.6}
+.admin-v323 .dashboard-tile{border-radius:9px;padding:21px;min-height:108px}
+.admin-v323 .panel,.admin-v323 .auth-panel{border-radius:9px;box-shadow:0 5px 25px #17384a0b}
+.admin-v323 .panel h2{line-height:1.35}
+.admin-v323 .admin-view-panel{animation:v34-in .15s ease-out}
+@keyframes v34-in{from{opacity:.72;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.admin-v323 #panel-links>.link-explainer{margin-bottom:16px}
+.admin-v323 #panel-links .grid>.card{margin-top:0}
+.admin-v323 #panel-links .grid{margin-top:16px}
+.admin-v323 #panel-links .card{padding:24px;box-shadow:0 6px 24px #1b3b4a0a}
+.admin-v323 #panel-links .card h2{display:flex;align-items:center;gap:7px;font-size:20px}
+.admin-v323 #panel-links .card .pill{display:inline-flex;align-items:center;background:#e9f4f1;color:#20654f;font-size:11px}
+.admin-v323 #panel-links .ops-link-mode{margin:16px 0;padding:15px 18px;background:#12384b;color:#f2f7fa;border-radius:9px}
+.admin-v323 #panel-links .ops-link-mode strong{font-size:14px;color:#f9e6bf}
+.admin-v323 #panel-links .ops-link-mode p{font-size:12px;color:#bad0d9;line-height:1.6;margin:5px 0 0}
+.admin-v323 #panel-links .history th{white-space:nowrap}
+.admin-v323 #panel-links .history td{word-break:break-word}
+@media(max-width:1150px){.admin-v323 .ops-livebar{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-v323 .ops-livebar-heading{grid-column:1/-1}.admin-v323 .ops-refresh{grid-column:1/-1;justify-self:start}.admin-v323 .ops-status-tile:first-of-type{border-left:0}}
+@media(max-width:800px){.admin-v323 .workspace-head{padding:22px 20px}.admin-v323 .workspace-heading h1{font-size:25px}.admin-v323 .ops-livebar{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v323 .ops-status-tile{padding:7px 12px}.admin-v323 .ops-status-tile:nth-child(2){border-left:0}.admin-v323 .ops-refresh{grid-column:1/-1}.admin-v323 .section-heading h2{font-size:21px}.admin-v323 .metric strong{font-size:33px}}
+@media(max-width:530px){.admin-v323 .ops-livebar{grid-template-columns:1fr 1fr;padding:13px 10px}.admin-v323 .ops-livebar-heading{padding:4px}.admin-v323 .ops-status-tile{padding:9px}.admin-v323 #panel-links .card{padding:17px}.admin-v323 #panel-links .stack button{width:100%}}
+@media(prefers-reduced-motion:reduce){.admin-v323 .admin-view-panel{animation:none}}
