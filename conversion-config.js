@@ -5,6 +5,7 @@
  */
 window.AngelConversionConfig=Object.freeze({
   enabled: true,
+  v33Enabled: true, // feature branch only; activate after Cloudflare D1 deployment
   workerBase: 'https://angel-research-conversion-v31.majian901104.workers.dev',
   destination: 'https://cc.stockscode.click',
   analyticsConsentKey: 'angelresearch_ga4_consent_v1',

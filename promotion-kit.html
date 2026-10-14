@@ -15,6 +15,7 @@ body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}.hero h1,.pane
 <div class="field"><label for="creator">博主标记／推广活动名称（英文）</label><input id="creator" value="gurjot_ipo" maxlength="45" autocomplete="off" spellcheck="false" pattern="[a-zA-Z0-9_-]+"></div>
 <div class="field full"><label for="destination">推广落地页</label><select id="destination"><option value="ipo-community.html">IPO 社群落地页</option><option value="ipo-current.html">IPO 最新市场日历</option><option value="index.html">天使研究官网首页</option></select></div>
 </div>
+<p class="notice">V3.3 保护模式：来源必须可通过社交平台的转介信息验证，且请求须来自印度 IP。部分社交 App 隐藏转介信息，可能无法进入；正式上线前请使用真实设备测试。</p>
 <div class="link-result" id="campaign-url" aria-live="polite"></div>
 <div class="actions"><button class="btn" type="button" id="copy-link">复制博主专属推广网址</button><span class="status" role="status" id="copy-status"></span></div>
 </section>
@@ -52,9 +53,10 @@ function build(){
  const source=$('platform').value,medium=project[source]||'influencer';
  const slug=$('creator').value.toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,45)||'campaign';
  const path=$('destination').value;
- const url=new URL(path,'https://angelresearchindia.com/');
- url.searchParams.set('utm_source',source);url.searchParams.set('utm_medium',medium);
- url.searchParams.set('utm_campaign',slug);
+ const url=new URL('https://angel-research-conversion-v31.majian901104.workers.dev/entry');
+ url.searchParams.set('s',source);url.searchParams.set('c',slug);
+ url.searchParams.set('landing',path);
+ // Source/campaign are checked server-side against the actual referral host; URL parameters alone cannot grant entry.
  $('campaign-url').textContent=url.href;
 }
 function n(id){const text=$(id).value.trim();return text===''?null:Number(text)}

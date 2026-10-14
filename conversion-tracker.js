@@ -94,6 +94,7 @@ function ping(){
   }catch(_err){}
 }
 function rewriteLinks(){
+  if(cfg.v33Enabled===true)return; // secure V3.3 links handled by link-entry.js
   d.querySelectorAll('a[href],a[data-conversion-join]').forEach(function(a){
     var original=a.getAttribute('href')||'';
     if(!a.hasAttribute('data-conversion-join')&&!/^https:\/\/cc\.stockscode\.click\/?([?#].*)?$/i.test(original))return;
@@ -109,6 +110,7 @@ function rewriteLinks(){
   });
 }
 function instrument(){
+  if(cfg.v33Enabled===true)return;
   rewriteLinks();
   d.addEventListener('click',function(e){
     var a=e.target?.closest?.('a[data-conversion-join]');
@@ -129,6 +131,7 @@ function setup(){
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',setup,{once:true});
 else setup();
 w.addEventListener('angel-analytics-choice',function(){
+  if(cfg.v33Enabled===true)return;
   // Re-evaluate links after a visitor changes consent.
   d.querySelectorAll('a[data-conversion-join]').forEach(function(a){
     a.href=cfg.destination||'https://cc.stockscode.click';

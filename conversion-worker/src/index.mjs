@@ -10,6 +10,7 @@
  */
 'use strict';
 import {handleReport} from './reports.mjs';
+import {handleLinkRoute} from './link-management.mjs';
 const DEFAULT_JOIN='https://cc.stockscode.click';
 const ALLOW_ORIGINS=new Set([
  'https://angelresearchindia.com',
@@ -63,6 +64,8 @@ export default {
  async fetch(request,env){
   const url=new URL(request.url);
   const origin=request.headers.get('Origin')||'';
+  const secureLinkResponse=await handleLinkRoute(request,env,record);
+  if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
     return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS}),
