@@ -25,3 +25,7 @@ binding = "ANALYTICS_SQL"
 binding = "LINK_DB"
 database_name = "angel-research-links-v33"
 database_id = "18cb4b62-6b89-481a-bc24-6601f24d2e49"
+
+# Daily deletion of expired IP pseudonyms and old one-use link grants.
+[triggers]
+crons = ["0 3 * * *"]

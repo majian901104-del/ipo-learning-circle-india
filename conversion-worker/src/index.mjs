@@ -65,7 +65,9 @@ export default {
  async scheduled(_event,env){
   if(env.LINK_DB){
    await env.LINK_DB.prepare('DELETE FROM link_grants WHERE expires_at < ?').bind(Math.floor(Date.now()/1000)-86400).run();
-   if(dedupEnabled(env))await env.LINK_DB.prepare('DELETE FROM link_ip_limits WHERE expires_at < ?').bind(Math.floor(Date.now()/1000)-86400).run();
+   // Delete expired IP pseudonyms every day, even if the enforcement flag was turned off.
+   // The table may not exist before the migration is applied.
+   try{await env.LINK_DB.prepare('DELETE FROM link_ip_limits WHERE expires_at <= ?').bind(Math.floor(Date.now()/1000)).run()}catch(_e){}
   }
  },
  async fetch(request,env){
