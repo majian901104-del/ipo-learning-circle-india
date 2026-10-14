@@ -1,0 +1,40 @@
+name: V3.7 Registration QA
+on:
+  push:
+    branches: [feature/v3-7-prejoin-lead-registration]
+  pull_request:
+    paths:
+      - 'conversion-worker/**'
+      - 'analytics-dashboard*'
+      - 'leads-admin-v37.js'
+      - 'privacy.html'
+      - 'tests/**'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check conversion-worker/src/lead-gate.mjs
+          node --check conversion-worker/src/index.mjs
+          node --check leads-admin-v37.js
+          node --check analytics-dashboard-v323.js
+      - name: Existing test suites
+        run: |
+          node --test conversion-worker/test/conversion.test.mjs
+          node --test conversion-worker/test/ip-dedup.test.mjs
+          node --test conversion-worker/test/admin-session.test.mjs
+          node --test conversion-worker/test/dynamic-primary.test.mjs
+          node --test tests/admin-dashboard-v323.test.cjs
+          node --test tests/v34-release.test.cjs
+          node --test tests/v35-auth.test.cjs
+          node build-ga4.cjs
+          node --test tests/v36-dynamic-site.test.cjs
+      - name: New pre-join registration tests
+        run: |
+          node --test conversion-worker/test/lead-gate.test.mjs
+          node --test tests/v37-prejoin.test.cjs
