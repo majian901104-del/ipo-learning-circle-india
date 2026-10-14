@@ -6,8 +6,9 @@ workers_dev = true
 [vars]
 COMMUNITY_DESTINATION = "https://cc.stockscode.click"
 LINK_MODE_ENABLED = "false"  # Enable only after worker + static-site coordinated release
-LINK_IP_DEDUP_ENABLED = "false" # V3.4.1: enable after migration + LINK_IP_HASH_KEY Secret
-LINK_IP_DEDUP_HOURS = "24" # One successful invitation redirect per Cloudflare edge IP in 24 hours
+LINK_IP_DEDUP_ENABLED = "false" # Deprecated: never blocks repeat network visitors anymore
+ANALYTICS_IP_DEDUP_ENABLED = "false" # Set true after ANALYTICS_IP_HASH_KEY and D1 schema
+ANALYTICS_IP_DEDUP_HOURS = "24" # First page view and first WhatsApp click per IP per rolling 24h
 
 # V3.1 redeploy after enabling Cloudflare Analytics Engine in the dashboard.
 # The dataset name and Worker binding match the newly enabled account.

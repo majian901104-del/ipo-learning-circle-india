@@ -198,7 +198,8 @@ export async function handleReport(request,env){
     const hardware=deviceGroups(responses[3].data);
     return json({ok:true,days,asOf:new Date().toISOString(),start,
       sourceType:'Cloudflare Analytics Engine aggregate events',
-      countsAre:'Event counts include repeats. Browser tab estimates are NOT verified unique visitors or confirmed WhatsApp joins.',
+      countsAre:env.ANALYTICS_IP_DEDUP_ENABLED==='true'?'Events recorded after enabling are limited to one count per public IP per rolling 24h for each of page_view and join_click. Earlier aggregate events are not recalculated. IPs are not individuals or confirmed WhatsApp joins.':'Event counts include repeats. Browser tab estimates are NOT verified unique visitors or confirmed WhatsApp joins.',
+      ipDedup:{enabled:env.ANALYTICS_IP_DEDUP_ENABLED==='true',hours:Math.max(1,Math.min(168,Number(env.ANALYTICS_IP_DEDUP_HOURS)||24)),historicalEventsNotReprocessed:true},
       excludeTest,
       campaigns,totals:totals(campaigns),
       daily:daily(responses[1].data),

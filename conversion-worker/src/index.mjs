@@ -11,7 +11,7 @@
 'use strict';
 import {handleReport} from './reports.mjs';
 import {handleLinkRoute} from './link-management.mjs';
-import {dedupEnabled,dedupHours,reserveUniqueIp,duplicateIpPage} from './ip-dedup.mjs';
+import {dedupEnabled,dedupHours,dedupReady,shouldCountIp} from './ip-dedup.mjs';
 const DEFAULT_JOIN='https://cc.stockscode.click';
 const ALLOW_ORIGINS=new Set([
  'https://angelresearchindia.com',
@@ -29,8 +29,9 @@ function safePath(s){
 function noAnalytics(req){
   return req.headers.get('DNT')==='1'||req.headers.get('Sec-GPC')==='1';
 }
-function record(env,request,kind,fields){
-  if(!env.ANALYTICS||noAnalytics(request))return;
+async function record(env,request,kind,fields){
+  if(!env.ANALYTICS||noAnalytics(request))return false;
+  if((kind==='page_view'||kind==='join_click')&&!await shouldCountIp(request,env,kind))return false;
   try{
     // The event timestamp is managed by Analytics Engine.
     // Only aggregated, non-identifying dimensions are retained.
@@ -50,8 +51,10 @@ function record(env,request,kind,fields){
       doubles:[1],
       indexes:['v31']
     });
+    return true;
   }catch(_ignored){
     // Analytics outages must never interrupt the user journey.
+    return false;
   }
 }
 function cors(origin){
@@ -65,8 +68,9 @@ export default {
  async scheduled(_event,env){
   if(env.LINK_DB){
    await env.LINK_DB.prepare('DELETE FROM link_grants WHERE expires_at < ?').bind(Math.floor(Date.now()/1000)-86400).run();
-   // Delete expired IP pseudonyms every day, even if the enforcement flag was turned off.
-   // The table may not exist before the migration is applied.
+   // Cleanup: delete expired keyed-IP statistical identifiers.
+   try{await env.LINK_DB.prepare('DELETE FROM analytics_ip_dedup WHERE expires_at <= ?').bind(Math.floor(Date.now()/1000)).run()}catch(_e){}
+   // Deprecated IP blocking data, if present.
    try{await env.LINK_DB.prepare('DELETE FROM link_ip_limits WHERE expires_at <= ?').bind(Math.floor(Date.now()/1000)).run()}catch(_e){}
   }
  },
@@ -77,7 +81,7 @@ export default {
   if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
-    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':'legacy',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env)}),
+    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':'legacy',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}),
       200,{'Content-Type':'application/json',...cors(origin)});
   }
   if(url.pathname==='/collect'){
@@ -97,12 +101,12 @@ export default {
     }catch(_e){return reply(null,400,cors(origin))}
     if(!body||body.event!=='page_view'||typeof body!=='object')
       return reply(null,400,cors(origin));
-    record(env,request,'page_view',{
+    const counted=await record(env,request,'page_view',{
       path:body.path,campaign:body.campaign,source:body.source,medium:body.medium,
       device:body.device,os:body.os,model:body.model
     });
     // Aggregate tab-based session estimates; never send or store a visitor ID.
-    if(body.firstSession===true)record(env,request,'page_session',{
+    if(counted&&body.firstSession===true)await record(env,request,'page_session',{
       path:body.path,campaign:body.campaign,source:body.source,medium:body.medium,
       device:body.device,os:body.os,model:body.model
     });
@@ -118,25 +122,14 @@ export default {
         {'Cache-Control':'no-store','Content-Type':'text/plain'});
     }
     const mode=request.headers.get('Sec-Fetch-Mode');
-    // Do not consume an IP slot for automated subresource requests.
-    if(dedupEnabled(env)&&mode&&mode!=='navigate')return reply(null,403,{'Cache-Control':'no-store'});
-    if(dedupEnabled(env)){
-     let gate;
-     try{gate=await reserveUniqueIp(request,env)}catch(_e){gate={unavailable:true}}
-     if(gate.unavailable)return reply('Invitation service temporarily unavailable',503,{'Cache-Control':'no-store','Content-Type':'text/plain'});
-     if(!gate.allowed){
-      record(env,request,'join_duplicate_blocked',{path:'/join',campaign:url.searchParams.get('c'),source:url.searchParams.get('s'),medium:'social'});
-      return duplicateIpPage(gate.windowHours);
-     }
-    }
     // Avoid counting non-navigation fetch/prefetch requests.
     if(!mode||mode==='navigate'){
-      record(env,request,'join_click',{
+      const counted=await record(env,request,'join_click',{
         path:'/join',campaign:url.searchParams.get('c'),
         source:url.searchParams.get('s'),medium:url.searchParams.get('m'),
         device:url.searchParams.get('d'),os:url.searchParams.get('o'),model:url.searchParams.get('model')
       });
-      if(url.searchParams.get('u')==='1')record(env,request,'join_session',{
+      if(counted&&url.searchParams.get('u')==='1')await record(env,request,'join_session',{
         path:'/join',campaign:url.searchParams.get('c'),source:url.searchParams.get('s'),
         medium:url.searchParams.get('m'),device:url.searchParams.get('d'),
         os:url.searchParams.get('o'),model:url.searchParams.get('model')

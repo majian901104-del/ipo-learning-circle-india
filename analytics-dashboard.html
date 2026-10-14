@@ -19,7 +19,7 @@
 <div class="ops-livebar-heading"><span class="ops-livebar-eyebrow">PRODUCTION SYSTEM STATUS</span><strong>运营与跳转服务</strong><small>仅展示实际后端返回的运行状态</small></div>
 <div class="ops-status-tile"><small>Cloudflare Worker</small><strong id="ops-worker-status">检查中…</strong></div>
 <div class="ops-status-tile"><small>数据库绑定</small><strong id="ops-db-status">检查中…</strong></div>
-<div class="ops-status-tile"><small>访客限制模式</small><strong id="ops-route-status">检查中…</strong></div><div class="ops-status-tile"><small>同 IP 去重</small><strong id="ops-ip-dedup-status">检查中…</strong></div>
+<div class="ops-status-tile"><small>访客限制模式</small><strong id="ops-route-status">检查中…</strong></div><div class="ops-status-tile"><small>统计 IP 去重</small><strong id="ops-ip-dedup-status">检查中…</strong></div>
 <button id="ops-refresh" type="button" class="ops-refresh">↻ 检查状态</button>
 </section>
 <section class="auth-panel" id="auth-panel" aria-labelledby="auth-title">
@@ -54,8 +54,8 @@
 <div class="metric-grid" aria-label="核心统计指标">
    <div class="metric"><span>网站访问会话（估算）</span><strong id="metric-sessions">—</strong><small>按浏览器标签页粗略去重，非独立人数</small></div>
    <div class="metric"><span>WS点击会话（估算）</span><strong id="metric-click-sessions">—</strong><small>同一标签页首次跳转，不等于进群人数</small></div>
-   <div class="metric"><span>网站页面访问次数</span><strong id="metric-views">—</strong><small>包含重复浏览、刷新</small></div>
-   <div class="metric"><span>WhatsApp 链接跳转次数</span><strong id="metric-clicks">—</strong><small>包含重复点击，不代表成功进群</small></div>
+   <div class="metric"><span>网站页面访问次数</span><strong id="metric-views">—</strong><small>启用 IP 去重后每个公网 IP / 24h 计一次；旧数据未回算</small></div>
+   <div class="metric"><span>WhatsApp 链接跳转次数</span><strong id="metric-clicks">—</strong><small>启用 IP 去重后每个公网 IP / 24h 计一次；不代表成功进群</small></div>
    <div class="metric"><span>跳转次数 ÷ 页面访问次数</span><strong id="metric-rate">—</strong><small>事件数量比率，非真实人数转化率</small></div>
    <div class="metric"><span>每位确认进群者成本</span><strong id="metric-cpa">—</strong><small>仅计算推广费用与实际进群人数均已登记的活动</small></div>
   </div>
@@ -147,12 +147,12 @@
 <section class="card"><h2>人工一键切换</h2><p class="muted">先保存并确认备用群可用，再切换。原主群将停用，不会自动成为备用群；需要另行设置新备用群。</p><div class="stack"><button id="link-switch" class="danger">确认切换至备用群</button><button id="link-reload" class="secondary">刷新配置</button><button id="link-logout" class="secondary">退出管理</button></div><div class="alert">未经允许的访问不会得到 WhatsApp 原始邀请码。实际 WhatsApp 成员加入仍建议开启群管理员审批。</div></section>
 <section class="card" style="margin-top:16px"><h2>操作历史（最近 20 条）</h2><div style="overflow-x:auto"><table class="history"><thead><tr><th>时间</th><th>操作</th><th>旧群</th><th>新群</th><th>恢复为备用</th></tr></thead><tbody id="link-history"></tbody></table></div></section>
 </div>
-<div class="ops-link-mode"><strong id="link-ip-dedup-status">IP 重复限制等待读取</strong><p>去重仅限制网站再次发放邀请链接，不等于确认 WhatsApp 成员已入群；同一公共出口 IP 可能包含多位真实访客。</p></div><div class="ops-link-mode"><strong id="link-mode">访问模式等待读取</strong><p id="link-routing-note">登录后会从 Cloudflare 返回当前真实路由模式。</p></div><p id="link-message" class="alert" role="status" aria-live="polite">尚未连接到群链接管理服务。</p></section></main>
+<div class="ops-link-mode"><strong id="link-ip-dedup-status">统计 IP 去重等待读取</strong><p>仅对统计去重：同一公网 IP 在 24 小时内的访问与 WhatsApp 点击分别只计一次；绝不因 IP 重复禁止进群。历史汇总数据不回算，公网 IP 不等于真实独立人数。</p></div><div class="ops-link-mode"><strong id="link-mode">访问模式等待读取</strong><p id="link-routing-note">登录后会从 Cloudflare 返回当前真实路由模式。</p></div><p id="link-message" class="alert" role="status" aria-live="polite">尚未连接到群链接管理服务。</p></section></main>
 <footer class="admin-footer"><span>ANGEL RESEARCH / OPERATIONS CENTER · V3.4</span><span>受保护的统计数据 · 仅供管理评估</span></footer>
 </div></div>
 <script src="conversion-config.js" defer></script>
 <script src="analytics-dashboard.js?v=20261014-v323" defer></script>
 <script src="analytics-dashboard-v323.js?v=20261014-v33" defer></script>
-<script src="link-management.js?v=20261015-v341" defer></script>
-<script src="ops-health-v34.js?v=20261015-v341" defer></script>
+<script src="link-management.js?v=20261015-v342" defer></script>
+<script src="ops-health-v34.js?v=20261015-v342" defer></script>
 </body></html>
