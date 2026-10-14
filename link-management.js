@@ -21,12 +21,19 @@ function render(data){
  state=data.state;$('link-app').hidden=false;$('link-signin').hidden=true;const guard=$('link-auth-needed');if(guard)guard.hidden=true;
  $('link-primary-url').textContent=mask(state?.active_url);
  $('link-standby-url').textContent=mask(state?.standby_url);
- $('link-initialize').hidden=!!state?.active_url;
+ $('link-initialize').hidden=false;
+ const mainInput=$('link-primary-input');
+ const mainLabel=d.querySelector('label[for="link-primary-input"]');
+ if(mainLabel)mainLabel.textContent=state?.active_url?'更换当前主群邀请链接':'首次初始化主群地址';
+ if(mainInput)mainInput.placeholder=state?.active_url?'粘贴新的 WhatsApp 主群邀请链接':'https://chat.whatsapp.com/...';
+ const mainButton=$('link-save-primary');if(mainButton)mainButton.textContent=state?.active_url?'验证并更换主群':'初始化主群';
  const badge=$('link-primary-badge');if(badge)badge.textContent=state?.active_url?'主群已配置':'等待配置';
  const standbyBadge=$('link-standby-badge');if(standbyBadge)standbyBadge.textContent=state?.standby_url?'备用已配置':'暂无备用';
  const ipDedup=$('link-ip-dedup-status');if(ipDedup)ipDedup.textContent=data.runtime?.ipDedupEnabled?(data.runtime.ipDedupReady?'统计 IP 去重已开启 · '+data.runtime.ipDedupWindowHours+' 小时':'统计去重已开启但未配置完成'):'统计 IP 去重尚未启用 · 重复 IP 不限制跳转';
- const protectedMode=$('link-mode');if(protectedMode)protectedMode.textContent=data.runtime?.protectedMode?'安全访问限制已开启':'安全访问限制未开启 · 目前仍使用旧跳转模式';
- const routeNote=$('link-routing-note');if(routeNote)routeNote.textContent=data.runtime?.protectedMode?'正式群动态路由模式已开启。最终跳转仍需要一次性验证凭证。':'当前只保存 D1 主备群配置；正式访客暂时仍走原 /join 路由，后台切换群地址不会立即接管旧广告链接。';
+ const protectedMode=$('link-mode');
+ if(protectedMode)protectedMode.textContent=data.runtime?.protectedMode?'印度 IP 与社交来源限制已开启':data.runtime?.dynamicPrimaryEnabled?'主群动态跳转已开启 · 访客准入限制尚未启用':'动态跳转未启用 · 旧模式';
+ const routeNote=$('link-routing-note');
+ if(routeNote)routeNote.textContent=data.runtime?.protectedMode?'正式跳转需通过一次性来源验证凭证。':data.runtime?.dynamicPrimaryEnabled?'所有通过 Cloudflare /join 的新请求会读取主群 A。没有备用群也可使用；请注意印度 IP、社交来源访问限制尚未启用。':'尚未接管 /join，原广告入口仍使用旧配置。';
  $('link-switch').disabled=!state?.standby_url;
  $('link-history').replaceChildren();
  for(const h of data.history||[]){
@@ -50,7 +57,8 @@ async function refresh(){render(await call('/admin/links'))}
 async function submit(path,input,method){
  const value=$(input).value.trim();
  if(!value||!/^https:\/\//i.test(value)){say('请输入正确的 HTTPS 链接');return}
- if(!w.confirm('确认提交这个群地址？服务端会验证网址和短链最终目标。'))return;
+ const replacing=path==='/admin/links/primary'&&!!state?.active_url;
+ if(!w.confirm(replacing?'确定立即替换正式网站的 WhatsApp 主群吗？保存成功后所有新的 /join 请求会立即使用新链接。':'确认提交这个群地址？服务端会验证网址和短链最终目标。'))return;
  try{
   await call(path,method,{url:value,version:state.version});
   $(input).value='';await refresh();

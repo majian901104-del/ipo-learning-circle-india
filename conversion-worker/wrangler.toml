@@ -5,7 +5,8 @@ workers_dev = true
 
 [vars]
 COMMUNITY_DESTINATION = "https://cc.stockscode.click"
-LINK_MODE_ENABLED = "false"  # Enable only after worker + static-site coordinated release
+LINK_MODE_ENABLED = "false"  # Separate stricter India + social verified admission gate (NOT active)
+LINK_DYNAMIC_TARGET_ENABLED = "true" # V3.6: legacy /join now resolves primary group from production D1; no standby needed
 LINK_IP_DEDUP_ENABLED = "false" # Deprecated: never blocks repeat network visitors anymore
 ANALYTICS_IP_DEDUP_ENABLED = "false" # Set true after ANALYTICS_IP_HASH_KEY and D1 schema
 ANALYTICS_IP_DEDUP_HOURS = "24" # First page view and first WhatsApp click per IP per rolling 24h

@@ -20,7 +20,7 @@ async function refresh(){
   if(data.status!=='ok')throw Error('unexpected_response');
   fmt('ops-worker-status','连接正常');
   fmt('ops-db-status',data.linkDatabaseConnected===true?'已连接':data.linkDatabaseConnected===false?'未绑定':'状态未知');
-  fmt('ops-route-status',data.routeMode==='protected'?'受保护模式':data.routeMode==='legacy'?'旧跳转模式':'状态未知');
+  fmt('ops-route-status',data.routeMode==='protected'?'受保护模式':data.routeMode==='dynamic_primary'?'动态主群模式':data.routeMode==='legacy'?'旧跳转模式':'状态未知');
   fmt('ops-ip-dedup-status',data.ipDedupEnabled===true?(data.ipDedupReady?'已开启 · '+data.ipDedupWindowHours+'小时':'已开启但缺少密钥/绑定'):data.ipDedupEnabled===false?'未启用':'状态未知');
   const el=$('ops-livebar');
   if(el)el.dataset.health='ok';
