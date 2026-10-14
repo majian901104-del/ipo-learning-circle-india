@@ -86,8 +86,14 @@ export async function handleLeadGate(request,env,record){
   if(mode&&mode!=='navigate')return new Response('Navigation only',{status:403,headers:HEADERS});
   return render({formToken:await tokenNew(env),data:meta});
  }
+ // A browser may send Origin: null for a form submitted from a page served
+ // with Referrer-Policy: no-referrer (or privacy-enhanced browser settings).
+ // Do not reject that legitimate case: signed, short-lived, one-time form
+ // tokens are verified below. Still block explicit cross-site form attempts.
  const origin=request.headers.get('Origin');
- if(origin&&origin!==url.origin)return render({message:'Please open this form from the official invitation page.',data:meta,formToken:await tokenNew(env)});
+ const fetchSite=request.headers.get('Sec-Fetch-Site');
+ if(fetchSite==='cross-site'||(origin&&origin!=='null'&&origin!==url.origin))
+  return render({message:'Please open this form from the official invitation page.',data:meta,formToken:await tokenNew(env)});
  if(!/^application\/x-www-form-urlencoded(?:\s*;|$)/i.test(request.headers.get('Content-Type')||''))
   return render({message:'Invalid form format.',data:meta,formToken:await tokenNew(env)});
  if(Number(request.headers.get('Content-Length')||0)>4096)return render({message:'Form is too large.',data:meta,formToken:await tokenNew(env)});
