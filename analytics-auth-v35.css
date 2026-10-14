@@ -11,3 +11,6 @@
 .admin-v323.view-links #status:not([hidden]){display:block!important}
 .admin-v323 #panel-links #link-auth-needed{background:#e5f2f5;color:#225566;border:1px solid #c9e0e8;border-left:3px solid #1d8490;padding:16px 19px;margin:0 0 18px;border-radius:8px}
 @media(max-width:800px){.admin-v323 #auth-panel .auth-info h2{font-size:20px}.admin-v323.view-links #auth-panel:not([hidden]){display:flex!important}}
+
+/* Ensure programmatic `hidden` always overrides pre-existing styled surfaces. */
+.admin-v323 #auth-panel[hidden],.admin-v323 #reporting[hidden],.admin-v323 #panel-links #link-app[hidden]{display:none!important}
