@@ -8,7 +8,7 @@
 <div class="sidebar-workspace"><span>WORKSPACE</span><strong>推广数据管理系统</strong><small>VERSION 3.4 <i aria-hidden="true"></i></small></div>
 <div class="nav-overline">功能导航</div><nav class="admin-navigation"><button type="button" class="admin-nav-item is-active" data-admin-view="overview" aria-current="page" aria-controls="panel-overview"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-text">总览中心</span><span aria-hidden="true">›</span></button><button type="button" class="admin-nav-item" data-admin-view="traffic" aria-current="false" aria-controls="panel-traffic"><span class="nav-icon" aria-hidden="true">↗</span><span class="nav-text">访问分析</span><span aria-hidden="true">›</span></button><button type="button" class="admin-nav-item" data-admin-view="india" aria-current="false" aria-controls="panel-india"><span class="nav-icon" aria-hidden="true">◎</span><span class="nav-text">印度市场</span><span aria-hidden="true">›</span></button><button type="button" class="admin-nav-item" data-admin-view="devices" aria-current="false" aria-controls="panel-devices"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-text">设备与地区</span><span aria-hidden="true">›</span></button><button type="button" class="admin-nav-item" data-admin-view="promoters" aria-current="false" aria-controls="panel-promoters"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-text">博主管理</span><span aria-hidden="true">›</span></button><button type="button" class="admin-nav-item" data-admin-view="links" aria-current="false" aria-controls="panel-links"><span class="nav-icon" aria-hidden="true">↗</span><span class="nav-text">群链接管理</span><span aria-hidden="true">›</span></button><button type="button" class="admin-nav-item" data-admin-view="settings" aria-current="false" aria-controls="panel-settings"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-text">数据说明</span><span aria-hidden="true">›</span></button></nav><div class="sidebar-divider"></div><div class="nav-overline">快捷工具</div>
 <div class="sidebar-links"><a href="promotion-kit.html">↗ &nbsp;博主推广链接</a><a href="ipo-community.html">↗ &nbsp;IPO 社群落地页</a><a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">↗ &nbsp;Google Analytics 4</a></div>
-<div class="sidebar-bottom"><div class="sidebar-status"><span class="signal-dot" aria-hidden="true"></span> CLOUDFLARE · OPERATIONS</div><p>私有报表需要管理员密钥授权。访问与跳转不等于真实独立人数。</p><small>ANGEL RESEARCH © 2026</small></div></aside>
+<div class="sidebar-bottom"><div class="sidebar-status"><span class="signal-dot" aria-hidden="true"></span> CLOUDFLARE · OPERATIONS</div><p>私有报表需要管理员密钥授权。公网 IP 不等于真实独立人数；重复点击允许访问，但统计可按 IP 去重。</p><small>ANGEL RESEARCH © 2026</small></div></aside>
 <div class="admin-sidebar-overlay" id="admin-sidebar-overlay" hidden></div><div class="admin-main">
 <header class="admin-header"><div class="header-leading"><button type="button" class="menu-toggle" id="admin-menu-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="admin-sidebar">☰</button><div class="header-breadcrumb"><span>ANGEL RESEARCH</span><span class="crumb-arrow">›</span><strong id="admin-current-title">总览中心</strong></div></div>
 <div class="header-trailing"><span class="header-tz">数据汇总时区 UTC</span><span class="header-private"><i class="private-dot"></i> 私有统计</span><a href="promotion-kit.html" class="header-action">＋ 新建推广链接</a></div></header>
@@ -114,7 +114,7 @@
    <div class="table-scroll"><table>
     <thead><tr><th>推广活动 / 来源</th><th>访问会话<br>估算</th><th>WS点击会话<br>估算</th><th>网页访问次数</th><th>WS跳转次数</th><th>次数比率</th><th>印度访问次数</th><th>印度访问占比</th><th>印度WS跳转</th><th>费用 ₹</th><th>帖子曝光量</th><th>实际进群人数</th><th>每次WS跳转成本 ₹</th><th>每位真实进群成本 ₹</th></tr></thead>
     <tbody id="campaign-body"></tbody></table></div>
-    <p class="helper">费用、帖子曝光和真实进群人数需要手工录入，属于整场合作数据，不会随上面的日期筛选自动分摊。请只比较相同日期及推广范围；访问与点击均为事件次数，不等于真实人数。</p>
+    <p class="helper">费用、帖子曝光和真实进群人数需要手工录入，属于整场合作数据，不会随上面的日期筛选自动分摊。请只比较相同日期及推广范围；启用 IP 去重前按事件计数，启用后同 IP 在 24 小时内同类事件只计一次，历史数据不回算；IP 不等于真实人数。</p>
   </section><section class="panel cost-rank" aria-label="博主投放成本排行榜">
     <div class="section-top"><div><div class="kicker">推广费用 · 投放效率</div><h2>博主成本效率排行</h2>
       <p class="section-sub">仅展示已填推广费用、且所选日期内存在WS跳转的活动。按“登记的合作总费用 ÷ 当前筛选期跳转次数”排序，属于参考值；不同投放周期不要直接比较，更不是实际进群获客成本。</p></div></div>
@@ -125,7 +125,7 @@
    <div class="panel methodology"><div class="kicker">数据说明</div><h2>分清访问、点击和真实进群。</h2>
     <p><b>访问会话（估算）：</b>同一浏览器标签页、同一推广活动只记录一次首次页面会话。重复打开新标签页仍可能算作不同会话。</p>
     <p><b>WS点击会话（估算）：</b>同一标签页、同一推广活动首次点击跳转记录一次。不是 WhatsApp 已入群人数。</p>
-    <p><b>页面访问和链接跳转：</b>是原始事件次数，可能包含同一用户重复浏览和点击。</p>
+    <p><b>页面访问和链接跳转：</b>原为原始事件次数；启用 IP 去重后，每个公网 IP 在滚动 24 小时内只统计一次页面访问与一次群跳转，历史不会回算。一个 IP 可能包含多人，IP 也可能变化。</p>
     <p><b>实际成功进群：</b>需要依据 WhatsApp 群管理记录核实，无法仅靠网站跳转自动确认。</p>
     <p><b>GA4：</b>如需查看另一种活跃用户指标，可在 <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">Google Analytics 4 中查看活跃用户 ↗</a>。GA4 依赖浏览器隐私设置与授权，并不能精确代表所有访客，也不能与这里的会话数简单相加。</p>
    </div>

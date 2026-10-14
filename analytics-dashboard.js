@@ -245,7 +245,8 @@ async function fetchReport(){
      throw new Error(data.message||'无法获取 Cloudflare 统计数据');
    }
    report=data;render();
-   setNotice('已连接真实数据；'+(excludeTest?'已排除测试活动。':'当前包含测试活动。')+' 访问／跳转均为事件次数，估算会话不代表独立人数。','ok');
+   const scope=data.ipDedup?.enabled?'已启用公网 IP / 24 小时统计去重（仅新事件，旧数据不会回算）':'目前按事件次数统计，IP 去重尚未启用';
+   setNotice('已连接真实数据；'+(excludeTest?'已排除测试活动。':'当前包含测试活动。')+' '+scope+'。IP 不等于独立人数，点击不等于实际进群。','ok');
  }catch(error){setNotice('读取私有报表失败：'+String(error?.message||'网络错误').slice(0,200),'error')}
  finally{loading=false;$('connect-btn').disabled=false;$('refresh').disabled=false}
 }
