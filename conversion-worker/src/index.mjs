@@ -11,6 +11,7 @@
 'use strict';
 import {handleReport} from './reports.mjs';
 import {handleAdminSession} from './admin-session.mjs';
+import {handleLeadGate,handleLeadAdmin} from './lead-gate.mjs';
 import {handleLinkRoute,dynamicPrimaryUrl} from './link-management.mjs';
 import {dedupEnabled,dedupHours,dedupReady,shouldCountIp} from './ip-dedup.mjs';
 const DEFAULT_JOIN='https://cc.stockscode.click';
@@ -71,6 +72,8 @@ export default {
    await env.LINK_DB.prepare('DELETE FROM link_grants WHERE expires_at < ?').bind(Math.floor(Date.now()/1000)-86400).run();
    // Cleanup: delete expired keyed-IP statistical identifiers.
    try{await env.LINK_DB.prepare('DELETE FROM analytics_ip_dedup WHERE expires_at <= ?').bind(Math.floor(Date.now()/1000)).run()}catch(_e){}
+   // Remove collected personal details after 90 days.
+   try{await env.LINK_DB.prepare('DELETE FROM community_leads WHERE created_at < ?').bind(Math.floor(Date.now()/1000)-90*86400).run()}catch(_e){}
    // Deprecated IP blocking data, if present.
    try{await env.LINK_DB.prepare('DELETE FROM link_ip_limits WHERE expires_at <= ?').bind(Math.floor(Date.now()/1000)).run()}catch(_e){}
   }
@@ -80,11 +83,15 @@ export default {
   const origin=request.headers.get('Origin')||'';
   const adminSessionResponse=await handleAdminSession(request,env);
   if(adminSessionResponse)return adminSessionResponse;
+  const leadAdminResponse=await handleLeadAdmin(request,env);
+  if(leadAdminResponse)return leadAdminResponse;
+  const leadGateResponse=await handleLeadGate(request,env,record);
+  if(leadGateResponse)return leadGateResponse;
   const secureLinkResponse=await handleLinkRoute(request,env,record);
   if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
-    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}),
+    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy',leadFormEnabled:env.JOIN_LEAD_FORM_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}),
       200,{'Content-Type':'application/json',...cors(origin)});
   }
   if(url.pathname==='/collect'){
