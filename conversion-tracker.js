@@ -94,12 +94,13 @@ function ping(){
   }catch(_err){}
 }
 function rewriteLinks(){
+  if(cfg.v34Protected===true)return;
   d.querySelectorAll('a[href],a[data-conversion-join]').forEach(function(a){
     var original=a.getAttribute('href')||'';
     if(!a.hasAttribute('data-conversion-join')&&!/^https:\/\/cc\.stockscode\.click\/?([?#].*)?$/i.test(original))return;
     a.setAttribute('data-conversion-join','true');
     if(!allowed()){
-      a.href=cfg.destination||'https://cc.stockscode.click';
+      a.href=cfg.destination||backend+'/join';
       return;
     }
     var u=new URL(backend+'/join');
@@ -109,6 +110,7 @@ function rewriteLinks(){
   });
 }
 function instrument(){
+  if(cfg.v34Protected===true)return;
   rewriteLinks();
   d.addEventListener('click',function(e){
     var a=e.target?.closest?.('a[data-conversion-join]');
@@ -129,9 +131,10 @@ function setup(){
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',setup,{once:true});
 else setup();
 w.addEventListener('angel-analytics-choice',function(){
+  if(cfg.v34Protected===true)return;
   // Re-evaluate links after a visitor changes consent.
   d.querySelectorAll('a[data-conversion-join]').forEach(function(a){
-    a.href=cfg.destination||'https://cc.stockscode.click';
+    a.href=cfg.destination||backend+'/join';
   });
   rewriteLinks();
 });

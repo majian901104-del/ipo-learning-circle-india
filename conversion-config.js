@@ -6,7 +6,8 @@
 window.AngelConversionConfig=Object.freeze({
   enabled: true,
   workerBase: 'https://angel-research-conversion-v31.majian901104.workers.dev',
-  destination: 'https://cc.stockscode.click',
+  destination: 'https://angel-research-conversion-v31.majian901104.workers.dev/join',
+  v34Protected: false, // Activate only after Cloudflare + social campaign link QA
   analyticsConsentKey: 'angelresearch_ga4_consent_v1',
   allowAnonymousAggregateWithoutChoice: true,
   campaignLanding: '/ipo-community.html'

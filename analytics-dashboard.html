@@ -121,7 +121,7 @@
     <div id="cost-rank-list" class="rank-list"></div>
   </section></section>
 <section id="panel-settings" class="admin-view-panel" data-admin-panel="settings" aria-label="统计口径与管理工具" hidden>
-<div class="section-heading"><div><span class="section-index">06 / DATA GOVERNANCE</span><h2>统计口径与管理工具</h2><p>了解数据边界、隐私与工具使用说明。</p></div></div><div class="notice accounting-note"><b>统计口径：</b>“估算访问会话”和“估算WS点击会话”采用同一浏览器标签页内的首次事件去重，<b>不等于真实独立人数</b>。访问次数与跳转次数可包含同一人重复操作；成功进入群组的人数需要单独核对。</div><section class="bottom-grid">
+<div class="section-heading"><div><span class="section-index">08 / DATA GOVERNANCE</span><h2>统计口径与管理工具</h2><p>了解数据边界、隐私与工具使用说明。</p></div></div><div class="notice accounting-note"><b>统计口径：</b>“估算访问会话”和“估算WS点击会话”采用同一浏览器标签页内的首次事件去重，<b>不等于真实独立人数</b>。访问次数与跳转次数可包含同一人重复操作；成功进入群组的人数需要单独核对。</div><section class="bottom-grid">
    <div class="panel methodology"><div class="kicker">数据说明</div><h2>分清访问、点击和真实进群。</h2>
     <p><b>访问会话（估算）：</b>同一浏览器标签页、同一推广活动只记录一次首次页面会话。重复打开新标签页仍可能算作不同会话。</p>
     <p><b>WS点击会话（估算）：</b>同一标签页、同一推广活动首次点击跳转记录一次。不是 WhatsApp 已入群人数。</p>
@@ -135,7 +135,7 @@
     <p class="helper">密钥不存储在网站服务器。个人信息不会进入聚合统计数据。</p>
    </div>
   </section></section>
-</section><section id="panel-links" class="admin-view-panel" data-admin-panel="links" aria-label="WhatsApp 主群与备用群管理" hidden><div class="section-heading"><div><span class="section-index">06 / COMMUNITY ROUTING CONTROL</span><h2>WhatsApp 主群与备用群</h2><p>统一动态入口 · 独立管理授权 · 审计与人工切换</p></div><span class="section-side-note">V3.4 · LINK CONTROL</span></div><p class="link-explainer">群链接管理已合并到同一后台；使用专用 LINK_ADMIN_KEY 授权编辑，报表查看密钥不会授予修改群链接的权限。印度 IP / 社交来源限制仍处于安全关闭状态。</p><section id="link-signin" class="card" aria-label="安全登录">
+</section><section id="panel-links" class="admin-view-panel" data-admin-panel="links" aria-label="WhatsApp 主群与备用群管理" hidden><div class="section-heading"><div><span class="section-index">07 / COMMUNITY ROUTING CONTROL</span><h2>WhatsApp 主群与备用群</h2><p>统一动态入口 · 独立管理授权 · 审计与人工切换</p></div><span class="section-side-note">V3.4 · LINK CONTROL</span></div><p class="link-explainer">群链接管理已合并到同一后台；使用专用 LINK_ADMIN_KEY 授权编辑，报表查看密钥不会授予修改群链接的权限。印度 IP / 社交来源限制仍处于安全关闭状态。</p><section id="link-signin" class="card" aria-label="安全登录">
 <h2>管理员链接管理授权</h2><p class="muted">请输入独立的 LINK_ADMIN_KEY。此密钥只存于本标签页的运行内存，不写入浏览器存储。</p>
 <div class="control"><label for="link-key">链接管理密钥</label><input id="link-key" type="password" autocomplete="off" minlength="32" placeholder="Cloudflare LINK_ADMIN_KEY"></div>
 <button id="link-unlock">解锁控制中心</button></section>
