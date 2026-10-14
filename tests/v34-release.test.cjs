@@ -12,7 +12,7 @@ test('V3.4 institutional dashboard has real-state surface and mobile CSS',()=>{
  }
  assert.ok(html.includes('analytics-v34.css'));
  assert.ok(html.includes('ops-health-v34.js'));
- assert.ok(nav.includes("V3.4"));
+ assert.ok(nav.includes("V3.7"));
  const css=read('analytics-v34.css');
  assert.ok(css.includes('@media(max-width:800px)'));
  assert.ok(css.includes('prefers-reduced-motion'));
