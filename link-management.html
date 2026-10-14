@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>群链接管理 V3.3 | ANGEL RESEARCH</title>
+<style>
+:root{font:15px/1.55 system-ui,"Microsoft YaHei",sans-serif;color:#193547;background:#f3f6f8}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}header{background:#102d43;color:#fff;padding:20px 25px;display:flex;gap:16px;align-items:center;justify-content:space-between}header strong{letter-spacing:.06em}header a{color:#f4d69b;font-size:13px}main{max-width:1050px;margin:32px auto;padding:0 18px 45px}.top{display:flex;align-items:start;justify-content:space-between;gap:12px}.top h1{font-size:29px;margin:0}.muted{color:#5a7180}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.card{background:#fff;border:1px solid #d7e2e9;border-radius:10px;padding:24px;box-shadow:0 3px 15px #112e4210}.card h2{font-size:19px;margin:0 0 12px}.label{font-size:12px;font-weight:700;color:#4b6574}.pill{display:inline-block;padding:3px 9px;border-radius:20px;background:#e9f5ec;color:#196438;font-weight:700;font-size:11px}.url{font-family:ui-monospace,monospace;overflow-wrap:anywhere;background:#f4f8fa;padding:10px;border-radius:6px;min-height:45px}.control{display:flex;flex-direction:column;gap:8px;margin:15px 0}input{padding:12px;width:100%;border:1px solid #bbcdd8;border-radius:6px}button{border:0;border-radius:7px;padding:12px 18px;background:#144e70;color:#fff;font-weight:700}.danger{background:#ad5230}.secondary{background:#edf3f7;color:#244b63}.stack{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.alert{background:#eef3f6;border:1px solid #d7e2e9;border-radius:8px;padding:13px;margin-top:16px}.history{width:100%;border-collapse:collapse}.history td,.history th{text-align:left;border-bottom:1px solid #e3eaef;padding:10px 7px;font-size:13px}.history td{overflow-wrap:anywhere}#app[hidden],#signin[hidden]{display:none}@media(max-width:700px){.grid{grid-template-columns:1fr}.top h1{font-size:23px}.card{padding:17px}header{flex-direction:column;align-items:flex-start}}
+</style></head><body>
+<header><strong>ANGEL RESEARCH · OPERATIONS V3.3</strong><nav><a href="analytics-dashboard.html">← 数据分析后台</a>　<a href="promotion-kit.html">推广链接生成</a></nav></header>
+<main>
+<div class="top"><div><h1>WhatsApp 主群与备用群</h1><p class="muted">服务端动态管理 · 印度 IP 与社交来源入口限制 · 人工切换</p></div><span class="pill">V3.3</span></div>
+<section id="signin" class="card" aria-label="安全登录">
+<h2>管理员链接管理授权</h2><p class="muted">请输入独立的 LINK_ADMIN_KEY。此密钥只存于本标签页的运行内存，不写入浏览器存储。</p>
+<div class="control"><label for="key">链接管理密钥</label><input id="key" type="password" autocomplete="off" minlength="32" placeholder="Cloudflare LINK_ADMIN_KEY"></div>
+<button id="unlock">解锁控制中心</button></section>
+<div id="app" hidden>
+<div class="grid">
+<section class="card"><h2>主群 A <span class="pill">生效中</span></h2><div class="label">当前目标（保护性遮挡邀请码）</div><div id="primary-url" class="url">—</div><div class="control" id="initialize"><label for="primary-input">首次初始化主群地址</label><input id="primary-input" type="url" placeholder="https://chat.whatsapp.com/..."><button id="save-primary">初始化主群</button></div></section>
+<section class="card"><h2>备用群 B <span class="pill">待命</span></h2><div class="label">已保存备用地址</div><div id="standby-url" class="url">—</div><div class="control"><label for="standby-input">新增或替换备用群链接</label><input id="standby-input" type="url" placeholder="WhatsApp 官方邀请或已验证自有短链"><button id="save-standby">验证并保存备用群</button></div></section>
+</div>
+<section class="card"><h2>人工一键切换</h2><p class="muted">先保存并确认备用群可用，再切换。原主群将停用，不会自动成为备用群；需要另行设置新备用群。</p><div class="stack"><button id="switch" class="danger">确认切换至备用群</button><button id="reload" class="secondary">刷新配置</button><button id="logout" class="secondary">退出管理</button></div><div class="alert">未经允许的访问不会得到 WhatsApp 原始邀请码。实际 WhatsApp 成员加入仍建议开启群管理员审批。</div></section>
+<section class="card" style="margin-top:16px"><h2>操作历史（最近 20 条）</h2><div style="overflow-x:auto"><table class="history"><thead><tr><th>时间</th><th>操作</th><th>旧群</th><th>新群</th><th>恢复为备用</th></tr></thead><tbody id="history"></tbody></table></div></section>
+</div>
+<p id="message" class="alert" role="status" aria-live="polite">后台尚未连接到 V3.3 安全服务。</p>
+</main>
+<script src="conversion-config.js"></script><script src="link-management.js"></script></body></html>
