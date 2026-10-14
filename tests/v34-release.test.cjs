@@ -34,7 +34,7 @@ test('staged rollout remains disabled and frontend never embeds private groups',
 });
 test('public health diagnostics come from server and never claim aggregate traffic values',()=>{
  const worker=read('conversion-worker/src/index.mjs');
- assert.ok(worker.includes("routeMode:env.LINK_MODE_ENABLED==='true'?'protected':'legacy'"));
+ assert.ok(worker.includes("env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy'"));
  assert.ok(worker.includes('linkDatabaseConnected:!!env.LINK_DB'));
  const status=read('ops-health-v34.js');
  assert.ok(status.includes("base+'/health'"));
