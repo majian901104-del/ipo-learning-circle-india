@@ -1,6 +1,7 @@
 /* V3.3 Cloudflare protected group routing. Requires D1 LINK_DB, LINK_ADMIN_KEY,
    and LINK_MODE_ENABLED=true. Referral headers are signals, not identity proof. */
 import {dedupEnabled,dedupHours,dedupReady} from './ip-dedup.mjs';
+import {verifyAdminSession} from './admin-session.mjs';
 const HOME='https://angelresearchindia.com';
 const ORIGINS=new Set([HOME,'https://www.angelresearchindia.com','https://majian901104-del.github.io']);
 const PLATFORMS={x:['x.com','twitter.com','t.co'],facebook:['facebook.com','fb.com','fb.me'],
@@ -24,6 +25,7 @@ async function digest(value){
  return Array.from(a,b=>b.toString(16).padStart(2,'0')).join('');
 }
 async function authorized(req,env){
+ if(await verifyAdminSession(req,env))return true;
  const expected=env.LINK_ADMIN_KEY;
  if(typeof expected!=='string'||expected.length<32)return false;
  const h=req.headers.get('Authorization')||'';

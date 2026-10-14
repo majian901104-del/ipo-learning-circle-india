@@ -4,6 +4,7 @@
  * No raw event-level data, names, phone numbers, IPs or browser IDs are returned.
  * Tokens are never accepted in URLs and must never be stored in GitHub.
  */
+import {verifyAdminSession} from './admin-session.mjs';
 const REPORT_ORIGINS=new Set([
   'https://angelresearchindia.com',
   'https://www.angelresearchindia.com',
@@ -151,7 +152,7 @@ export async function handleReport(request,env){
   }
   const auth=request.headers.get('Authorization')||'';
   const supplied=auth.startsWith('Bearer ')?auth.slice(7):'';
-  if(!await secureEqual(supplied,env.REPORT_ACCESS_KEY)){
+  if(!await verifyAdminSession(request,env)&&!await secureEqual(supplied,env.REPORT_ACCESS_KEY)){
     return json({error:'unauthorized',message:'Invalid access key'},401,origin);
   }
   const url=new URL(request.url);
