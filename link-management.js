@@ -3,6 +3,7 @@
 const $=id=>d.getElementById(id);
 const base=String(w.AngelConversionConfig?.workerBase||'').replace(/\/+$/,'');
 let key='',state=null;
+const locked=()=>{key='';state=null;$('link-app').hidden=true;$('link-signin').hidden=true;const guard=$('link-auth-needed');if(guard)guard.hidden=false;say('请先在本后台登录，随后自动读取群配置。')};
 function say(text){$('link-message').textContent=text}
 function mask(text){
  if(!text)return '未配置';
@@ -17,7 +18,7 @@ async function call(path,method='GET',payload){
  return data;
 }
 function render(data){
- state=data.state;$('link-app').hidden=false;$('link-signin').hidden=true;
+ state=data.state;$('link-app').hidden=false;$('link-signin').hidden=true;const guard=$('link-auth-needed');if(guard)guard.hidden=true;
  $('link-primary-url').textContent=mask(state?.active_url);
  $('link-standby-url').textContent=mask(state?.standby_url);
  $('link-initialize').hidden=!!state?.active_url;
@@ -68,6 +69,21 @@ $('link-switch').addEventListener('click',async()=>{
  catch(e){say('切换失败：'+e.message)}
 });
 $('link-reload').addEventListener('click',()=>refresh().catch(e=>say(e.message)));
-$('link-logout').addEventListener('click',()=>{key='';state=null;$('link-app').hidden=true;$('link-signin').hidden=false;say('管理权限已锁定。')});
-w.addEventListener('pagehide',()=>{key=''});
+$('link-logout').addEventListener('click',()=>{
+ if(typeof w.CustomEvent==='function')w.dispatchEvent(new w.CustomEvent('angel-admin-request-lock'));
+ else locked();
+});
+w.addEventListener('angel-admin-session',event=>{
+ const token=event.detail?.token;
+ if(typeof token!=='string'||!token.startsWith('s35.'))return;
+ key=token;
+ $('link-signin').hidden=true;
+ const guard=$('link-auth-needed');if(guard)guard.hidden=true;
+ refresh().catch(e=>{
+   say('群链接配置读取失败：'+e.message);
+   // Keep the session in place so reporting can still work.
+ });
+});
+w.addEventListener('angel-admin-session-end',locked);
+w.addEventListener('pagehide',()=>{key='';state=null});
 })(window,document);

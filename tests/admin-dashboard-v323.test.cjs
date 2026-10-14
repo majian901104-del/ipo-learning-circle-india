@@ -37,7 +37,7 @@ test('V3.2.3 sidebar modules match six exclusive report panels',()=>{
   for(const page of pages.slice(1)){
     assert.match(html,new RegExp('id="panel-'+page+'"[^>]* hidden'));
   }
-  assert.ok(html.includes('src="analytics-dashboard.js?v=20261014-v323"'));
+  assert.ok(html.includes('src="analytics-dashboard.js?v=20261015-v35"'));
   assert.ok(html.includes('src="analytics-dashboard-v323.js?v=20261014-v33"'));
 });
 test('V3.2.3 mobile shows campaign cards rather than wide scrolling table',()=>{

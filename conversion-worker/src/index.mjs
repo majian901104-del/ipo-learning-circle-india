@@ -10,6 +10,7 @@
  */
 'use strict';
 import {handleReport} from './reports.mjs';
+import {handleAdminSession} from './admin-session.mjs';
 import {handleLinkRoute} from './link-management.mjs';
 import {dedupEnabled,dedupHours,dedupReady,shouldCountIp} from './ip-dedup.mjs';
 const DEFAULT_JOIN='https://cc.stockscode.click';
@@ -77,6 +78,8 @@ export default {
  async fetch(request,env){
   const url=new URL(request.url);
   const origin=request.headers.get('Origin')||'';
+  const adminSessionResponse=await handleAdminSession(request,env);
+  if(adminSessionResponse)return adminSessionResponse;
   const secureLinkResponse=await handleLinkRoute(request,env,record);
   if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
