@@ -5,6 +5,7 @@ workers_dev = true
 
 [vars]
 COMMUNITY_DESTINATION = "https://cc.stockscode.click"
+LINK_MODE_ENABLED = "false"  # Enable only after worker + static-site coordinated release
 
 # V3.1 redeploy after enabling Cloudflare Analytics Engine in the dashboard.
 # The dataset name and Worker binding match the newly enabled account.
@@ -16,3 +17,9 @@ dataset = "angel_research_conversion_v31"
 # Requires Wrangler >= 4.145; REPORT_ACCESS_KEY is configured as a Worker secret.
 [analytics]
 binding = "ANALYTICS_SQL"
+
+# V3.3 Cloudflare D1 linkage; database ID from Cloudflare console.
+[[d1_databases]]
+binding = "LINK_DB"
+database_name = "angel-research-links-v33"
+database_id = "18cb4b62-6b89-481a-bc24-6601f24d2e49"
