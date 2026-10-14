@@ -57,3 +57,8 @@
 @media(max-width:800px){.admin-v323 .workspace-head{padding:22px 20px}.admin-v323 .workspace-heading h1{font-size:25px}.admin-v323 .ops-livebar{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v323 .ops-status-tile{padding:7px 12px}.admin-v323 .ops-status-tile:nth-child(2){border-left:0}.admin-v323 .ops-refresh{grid-column:1/-1}.admin-v323 .section-heading h2{font-size:21px}.admin-v323 .metric strong{font-size:33px}}
 @media(max-width:530px){.admin-v323 .ops-livebar{grid-template-columns:1fr 1fr;padding:13px 10px}.admin-v323 .ops-livebar-heading{padding:4px}.admin-v323 .ops-status-tile{padding:9px}.admin-v323 #panel-links .card{padding:17px}.admin-v323 #panel-links .stack button{width:100%}}
 @media(prefers-reduced-motion:reduce){.admin-v323 .admin-view-panel{animation:none}}
+
+/* V3.4.1 duplicate IP guard status */
+.admin-v323 .ops-livebar{grid-template-columns:minmax(185px,1.45fr) repeat(4,minmax(100px,1fr)) auto}
+@media(max-width:1150px){.admin-v323 .ops-livebar{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-v323 .ops-livebar-heading,.admin-v323 .ops-refresh{grid-column:1/-1}}
+@media(max-width:530px){.admin-v323 #ops-ip-dedup-status{font-size:12px}}

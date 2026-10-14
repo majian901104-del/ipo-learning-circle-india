@@ -3,7 +3,7 @@
 'use strict';
 const $=id=>d.getElementById(id);
 const base=String(w.AngelConversionConfig?.workerBase||'').replace(/\/+$/,'');
-const controls=['ops-worker-status','ops-db-status','ops-route-status'];
+const controls=['ops-worker-status','ops-db-status','ops-route-status','ops-ip-dedup-status'];
 const fmt=(id,s)=>{const el=$(id);if(el)el.textContent=s};
 let busy=false;
 async function refresh(){
@@ -21,12 +21,14 @@ async function refresh(){
   fmt('ops-worker-status','连接正常');
   fmt('ops-db-status',data.linkDatabaseConnected===true?'已连接':data.linkDatabaseConnected===false?'未绑定':'状态未知');
   fmt('ops-route-status',data.routeMode==='protected'?'受保护模式':data.routeMode==='legacy'?'旧跳转模式':'状态未知');
+  fmt('ops-ip-dedup-status',data.ipDedupEnabled===true?'已开启 · '+data.ipDedupWindowHours+'小时':data.ipDedupEnabled===false?'未开启':'状态未知');
   const el=$('ops-livebar');
   if(el)el.dataset.health='ok';
  }catch(_e){
   fmt('ops-worker-status','无法连接');
   fmt('ops-db-status','暂不可查');
   fmt('ops-route-status','暂不可查');
+  fmt('ops-ip-dedup-status','暂不可查');
   const el=$('ops-livebar');if(el)el.dataset.health='error';
  }finally{busy=false;if(btn)btn.disabled=false}
 }
