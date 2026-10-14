@@ -111,6 +111,47 @@ test('invalid phone, missing privacy consent, spoofed origin and cross-site dire
  }),env);
  assert.equal(spoof.status,400);assert.equal(leads.length,0);
 });
+test('no-referrer browser POST with Origin null succeeds using a signed form token',async()=>{
+ const {env,leads}=mock();
+ const nonce=await token(env);
+ const body=new URLSearchParams({request_token:nonce,full_name:'Asha Patel',whatsapp:'9876543210',consent:'yes'});
+ const response=await worker.fetch(new Request('https://worker.example/join?s=x&c=promotion42',{
+  method:'POST',headers:{Origin:'null','Sec-Fetch-Site':'same-origin','Content-Type':'application/x-www-form-urlencoded'},
+  body:body.toString()
+ }),env);
+ assert.equal(response.status,303);
+ assert.equal(response.headers.get('Location'),DEST);
+ assert.equal(leads.length,1);
+ assert.equal(leads[0].whatsapp_number,'+919876543210');
+});
+test('Origin null does not permit an explicitly cross-site form POST',async()=>{
+ const {env,leads}=mock();
+ const nonce=await token(env);
+ const body=new URLSearchParams({request_token:nonce,full_name:'Asha Patel',whatsapp:'9876543210',consent:'yes'});
+ const response=await worker.fetch(new Request('https://worker.example/join',{
+  method:'POST',headers:{Origin:'null','Sec-Fetch-Site':'cross-site','Content-Type':'application/x-www-form-urlencoded'},
+  body:body.toString()
+ }),env);
+ assert.equal(response.status,400);
+ assert.equal(response.headers.get('Location'),null);
+ assert.equal(leads.length,0);
+});
+test('POST missing Origin is allowed only with valid signed token',async()=>{
+ const {env,leads}=mock();
+ const nonce=await token(env);
+ const response=await worker.fetch(new Request('https://worker.example/join',{
+  method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+  body:new URLSearchParams({request_token:nonce,full_name:'Asha Patel',whatsapp:'9876543210',consent:'yes'}).toString()
+ }),env);
+ assert.equal(response.status,303);
+ assert.equal(leads.length,1);
+ const forged=await worker.fetch(new Request('https://worker.example/join',{
+  method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+  body:new URLSearchParams({request_token:'l37.invalid',full_name:'Asha Patel',whatsapp:'9876543210',consent:'yes'}).toString()
+ }),env);
+ assert.equal(forged.status,400);
+ assert.equal(leads.length,1);
+});
 test('admin lead record viewing and deletion require authenticated V3.5 session',async()=>{
  const {env,leads}=mock();
  const t=await token(env);
