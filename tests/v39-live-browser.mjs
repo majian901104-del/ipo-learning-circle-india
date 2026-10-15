@@ -36,6 +36,14 @@ for(const v of widths){
     ctas:Array.from(document.querySelectorAll('a[data-conversion-join]')).map(a=>a.href)
    }));
    assert.equal(overflow.oldLinks,0,'deprecated group links');
+   if(overflow.outer>overflow.viewport+8){
+    const bad=await page.evaluate(()=>[...document.querySelectorAll('body *')].map(e=>{
+      const r=e.getBoundingClientRect();
+      return {tag:e.tagName,className:typeof e.className==='string'?e.className.slice(0,100):'',left:Math.round(r.left),right:Math.round(r.right),
+        width:Math.round(r.width),scroll:e.scrollWidth,client:e.clientWidth};
+    }).filter(x=>x.right>innerWidth+9&&x.width>5).sort((a,b)=>b.right-a.right).slice(0,15));
+    console.error('OVERFLOW_ELEMENTS '+spec.label+' '+v.label+' '+JSON.stringify(bad));
+   }
    assert.ok(overflow.outer<=overflow.viewport+8,
     'horizontal overflow: '+JSON.stringify(overflow));
    assert.ok(overflow.ctas.length>0,'missing signup CTA');
