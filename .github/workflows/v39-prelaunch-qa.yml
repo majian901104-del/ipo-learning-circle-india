@@ -1,0 +1,40 @@
+name: V3.9 Final IPO + Campaign Prelaunch QA
+on:
+  push:
+    branches: [release/v39-prelaunch-ipo-refresh-oct15]
+  pull_request:
+    paths:
+      - '*.html'
+      - 'ipo-market-*.js'
+      - 'ipo-market.css'
+      - 'community-entry-v39.js'
+      - 'tests/v39-prelaunch.test.cjs'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and bundle
+        run: |
+          node --check community-entry-v39.js
+          node --check ipo-market-data.js
+          node --check ipo-market-ui.js
+          node --check conversion-worker/src/lead-gate.mjs
+          node --check conversion-worker/src/index.mjs
+          node build-ga4.cjs
+      - name: Website prelaunch and source QA
+        run: |
+          node --test tests/v39-prelaunch.test.cjs
+          node --test tests/v34-built-site.test.cjs
+          node --test tests/v36-dynamic-site.test.cjs
+          node --test tests/v37-prejoin.test.cjs
+      - name: Production workflow regressions
+        run: |
+          node --test conversion-worker/test/ip-dedup.test.mjs
+          node --test conversion-worker/test/dynamic-primary.test.mjs
+          node --test conversion-worker/test/lead-gate.test.mjs
+          node --test conversion-worker/test/admin-session.test.mjs
