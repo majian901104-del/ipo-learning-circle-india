@@ -38,8 +38,8 @@ function render(el){
    el.innerHTML=header+'<div class="ipo-card-grid">'+data.map(item).join('')+'</div>'+caut;
  }
  var lastChecked=Date.parse(m.checkedAt);
- if(Date.now()>lastChecked+3*24*3600*1000){
-   var alert=d.createElement('div');alert.className='ipo-aged';alert.textContent='The published data is more than three days old. Treat all schedule statuses as unverified until the next editorial update.';
+ if(Date.now()>lastChecked+2*24*3600*1000){
+   var alert=d.createElement('div');alert.className='ipo-aged';alert.textContent='The IPO editorial review is more than two days old. Check official NSE/BSE notices and the latest prospectuses before using issue dates, bands or lot sizes.';
    el.insertBefore(alert,el.firstChild);
  }
 }
