@@ -1,0 +1,26 @@
+name: V3.9 Live Mobile + Desktop Browser QA
+on:
+  push:
+    branches: [qa/v39-live-production-browser]
+jobs:
+  browser-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Read-only browser QA for real production site
+        run: node tests/v39-live-browser.mjs
+      - name: Upload desktop/mobile screenshots even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v39-browser-screenshots
+          path: screenshots/
+          if-no-files-found: warn
