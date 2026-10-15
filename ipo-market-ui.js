@@ -13,6 +13,11 @@ function item(v){
  var href=v.detail||'ipo-company.html?issue='+encodeURIComponent(v.id);
  return '<article class="ipo-card'+(v.featured?' ipo-card-featured':'')+'" id="'+esc(v.id)+'"><div class="ipo-card-top"><span class="ipo-pill">'+esc(v.segment)+'</span><span class="ipo-state">'+esc(status(v))+'</span></div><h3>'+esc(v.name)+'</h3><div class="ipo-band">₹'+esc(v.low)+'–'+esc(v.high)+'</div><div class="ipo-row"><span>Scheduled bid window</span><b>'+esc(dateFmt(v.open))+' – '+esc(dateFmt(v.close))+'</b></div><div class="ipo-row"><span>Indicative issue size</span><b>'+esc(v.size)+'</b></div><div class="ipo-row"><span>Retail lot</span><b>'+esc(v.lot?String(v.lot)+' shares':'See offer document')+'</b></div><p>'+esc(v.notes)+'</p><a href="'+href+'">ISSUE DETAILS &amp; SOURCES →</a></article>';
 }
+function briefing(){
+ if(!Array.isArray(m.briefing)||!m.briefing.length)return '';
+ return '<section class="ipo-briefing" aria-label="Latest editorial IPO updates"><div class="ipo-briefing-title"><span>EDITORIAL MARKET BRIEF · 15 OCT 2026</span><h2>What investors are watching</h2><p>Source-dated reporting. No unofficial estimates or guaranteed allotment.</p></div><div class="ipo-briefing-grid">'+
+  m.briefing.map(function(v){return '<article class="ipo-brief"><div class="ipo-brief-meta"><span>'+esc(v.topic)+'</span><time>'+esc(v.date)+'</time></div><h3>'+esc(v.title)+'</h3><p>'+esc(v.summary)+'</p><div class="ipo-brief-links"><span>'+esc(v.tag)+'</span><a href="'+esc(m.sources[v.source])+'" target="_blank" rel="noopener noreferrer">VIEW SOURCE ↗</a></div></article>'}).join('')+'</div></section>'
+}
 function render(el){
  var type=el.getAttribute('data-ipo-mode')||'compact';
  var data=sortItems(m.issues);
@@ -23,7 +28,7 @@ function render(el){
    var nav='<div class="ipo-filters" role="group" aria-label="Filter IPO issues"><button type="button" data-filter="all" aria-pressed="true">All issues</button><button type="button" data-filter="Mainboard" aria-pressed="false">Mainboard</button><button type="button" data-filter="SME" aria-pressed="false">SME</button></div>';
    var archived='<section class="ipo-archive" aria-label="Previous IPO research"><h2>Historical IPO coverage</h2><p>Earlier research is retained with its original date and not relabelled as current.</p><div class="ipo-archive-list">'+m.archived.map(function(v){return '<div><b>'+esc(v.name)+'</b><span>'+esc(v.detail)+'</span><a href="'+esc(v.link)+'">Read dated review →</a></div>'}).join('')+'</div></section>';
    var sources='<section class="ipo-sources"><h2>Sources &amp; verification</h2><p>Curated public coverage as of '+esc(m.verifiedDate)+'. Issuer/SEBI/NSE/BSE disclosures override media calendars. Confirm before applying.</p><a href="'+m.sources.sebi+'" target="_blank" rel="noopener noreferrer">SEBI public issues ↗</a><a href="'+m.sources.exchange+'" target="_blank" rel="noopener noreferrer">NSE IPO notices ↗</a><a href="'+m.sources.groww+'" target="_blank" rel="noopener noreferrer">Groww IPO calendar ↗</a><a href="'+m.sources.jioReuters+'" target="_blank" rel="noopener noreferrer">Jio · Reuters 15 Oct ↗</a><a href="'+m.sources.reuters+'" target="_blank" rel="noopener noreferrer">Zetwerk · Reuters 12 Oct ↗</a></section>';
-   el.innerHTML=header+nav+'<div class="ipo-card-grid" id="ipo-issues">'+data.map(item).join('')+'</div>'+caut+archived+sources;
+   el.innerHTML=header+briefing()+nav+'<div class="ipo-card-grid" id="ipo-issues">'+data.map(item).join('')+'</div>'+caut+archived+sources;
    var buttons=el.querySelectorAll('[data-filter]');
    buttons.forEach(function(b){b.addEventListener('click',function(){
      var value=b.getAttribute('data-filter');
@@ -35,7 +40,7 @@ function render(el){
        if(match)match.scrollIntoView({block:'start'})}
    })});
  }else{
-   el.innerHTML=header+'<div class="ipo-card-grid">'+data.map(item).join('')+'</div>'+caut;
+   el.innerHTML=header+briefing()+'<div class="ipo-card-grid">'+data.map(item).join('')+'</div>'+caut;
  }
  var lastChecked=Date.parse(m.checkedAt);
  if(Date.now()>lastChecked+2*24*3600*1000){

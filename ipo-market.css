@@ -64,3 +64,20 @@
  .ipo-card-grid{gap:13px}
 }
 @media(prefers-reduced-motion:reduce){.ipo-card{transition:none}}
+
+/* V3.10 dated IPO editorial market brief, accessible campaign landing on desktop and mobile. */
+.ipo-briefing{margin:20px 0 30px;border:1px solid #d4e1e5;background:#f1f6f7;padding:24px;border-radius:6px}
+.ipo-briefing-title>span{font-size:11px;font-weight:800;letter-spacing:.1em;color:#977442}
+.ipo-briefing-title h2{font:400 clamp(26px,3vw,37px)/1.2 Georgia,serif;margin:9px 0;color:#13374a}
+.ipo-briefing-title p{font-size:13px;color:#56707c;margin:0 0 20px}
+.ipo-briefing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ipo-brief{padding:20px;border:1px solid #d9e4e7;border-top:3px solid #107b70;background:#fff;border-radius:4px;display:flex;flex-direction:column}
+.ipo-brief-meta,.ipo-brief-links{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.ipo-brief-meta{font-size:11px;color:#56727e}.ipo-brief-meta span{color:#976d39;font-weight:800}
+.ipo-brief h3{font:700 17px/1.35 Arial,Helvetica,sans-serif;margin:14px 0 10px;color:#13384a}
+.ipo-brief p{font-size:13px;line-height:1.6;flex:1;color:#4c6877;margin:0 0 18px}
+.ipo-brief-links{font-size:10px;letter-spacing:.02em;color:#687b85}.ipo-brief-links a{font-weight:800;color:#08695b;text-decoration:underline}
+.ipo-brief a:focus-visible,.ipo-page-nav a:focus-visible,.ipo-card a:focus-visible{outline:3px solid #178876;outline-offset:3px}
+@media(max-width:900px){.ipo-briefing-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.ipo-briefing{padding:17px;margin:14px 0 25px}.ipo-briefing-grid{grid-template-columns:1fr}
+.ipo-brief{padding:17px}.ipo-page-nav{flex-wrap:wrap;gap:12px}.ipo-market-join{min-height:46px;display:inline-flex;align-items:center;justify-content:center}}

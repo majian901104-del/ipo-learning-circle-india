@@ -16,6 +16,9 @@ test('published dates and Jio announced issue terms are updated 15 Oct 2026',()=
  assert.equal(d.verifiedDate,'15 Oct 2026 (IST)');
  assert.match(d.notice,/not a live exchange feed/i);
  assert.equal(d.issues.length,10);
+ assert.equal(d.briefing.length,3);
+ assert.ok(d.briefing.every(x=>d.sources[x.source]),'all editorial briefs must link to sources');
+ assert.match(d.briefing[2].tag,/PROPOSAL/);
  const j=d.issues.find(x=>x.id==='jio-platforms');
  assert.ok(j?.featured);
  assert.equal(j.open,'2026-10-21');assert.equal(j.close,'2026-10-23');
@@ -49,9 +52,11 @@ test('every page previously using fixed group shortlink now points to form',()=>
 test('important pages have editorial as-of-date and correct landing',()=>{
  for(const p of ['index.html','primary-markets.html','ipo-dashboard.html'])
   assert.match(read(p),/IPO market schedule reviewed 15 Oct 2026 IST/);
- assert.match(read('ipo-current.html'),/As of 15 October 2026 IST/);
+ assert.match(read('ipo-current.html'),/Editorially reviewed 15 October 2026 IST/);
  assert.match(read('ipo-current.html'),/data-ipo-mode="full"/);
  assert.match(read('ipo-market-ui.js'),/Date\.parse\(m\.checkedAt\)/);
+ assert.match(read('ipo-market-ui.js'),/What investors are watching/);
+ assert.match(read('ipo-market-ui.js'),/briefing\(\)/);
  assert.match(read('ipo-market-ui.js'),/Date\.now\(\)>lastChecked\+2\*24/);
  assert.match(read('ipo-jio-platforms.html'),/₹1,065–₹1,119/);
  assert.match(read('ipo-jio-platforms.html'),/UPDATED 15 OCT 2026/);
