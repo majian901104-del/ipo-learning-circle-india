@@ -9,7 +9,7 @@ test('V3.7 production lead form is ON; country/social gating and IP statistical 
  assert.match(cfg,/JOIN_LEAD_FORM_ENABLED = "true"/);
  assert.match(cfg,/LINK_DYNAMIC_TARGET_ENABLED = "true"/);
  assert.match(cfg,/LINK_MODE_ENABLED = "false"/);
- assert.match(cfg,/ANALYTICS_IP_DEDUP_ENABLED = "false"/);
+ assert.match(cfg,/ANALYTICS_IP_DEDUP_ENABLED = "true"/);
 });
 test('management menu shows protected client details, not publicly exposed data',()=>{
  const html=read('analytics-dashboard.html');

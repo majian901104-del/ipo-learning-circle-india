@@ -9,7 +9,7 @@ test('production dynamic routing is independent of inactive country/social and I
  const cfg=read('conversion-worker/wrangler.toml');
  assert.match(cfg,/LINK_DYNAMIC_TARGET_ENABLED = "true"/);
  assert.match(cfg,/LINK_MODE_ENABLED = "false"/);
- assert.match(cfg,/ANALYTICS_IP_DEDUP_ENABLED = "false"/);
+ assert.match(cfg,/ANALYTICS_IP_DEDUP_ENABLED = "true"/);
  const worker=read('conversion-worker/src/index.mjs');
  assert.ok(worker.includes('await dynamicPrimaryUrl(env)'));
  assert.ok(!worker.includes("reserveUniqueIp"));

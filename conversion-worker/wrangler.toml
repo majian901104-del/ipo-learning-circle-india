@@ -9,8 +9,10 @@ LINK_MODE_ENABLED = "false"  # Separate stricter India + social verified admissi
 LINK_DYNAMIC_TARGET_ENABLED = "true" # V3.6: existing active D1 main group A (no standby required)
 JOIN_LEAD_FORM_ENABLED = "true" # V3.7 production: D1 community_leads table+index created, support inbox confirmed by owner
 LINK_IP_DEDUP_ENABLED = "false" # Deprecated: never blocks repeat network visitors anymore
-ANALYTICS_IP_DEDUP_ENABLED = "false" # Set true after ANALYTICS_IP_HASH_KEY and D1 schema
+ANALYTICS_IP_DEDUP_ENABLED = "true" # V3.8: reuse existing Worker LINK_ADMIN_KEY for pseudonymous HMAC stats, lazy D1 schema bootstrapping
 ANALYTICS_IP_DEDUP_HOURS = "24" # First page view and first WhatsApp click per IP per rolling 24h
+JOIN_INDIA_ONLY_ENABLED = "true" # India-only server-side /join GET/POST; does not lock administration
+JOIN_SOURCE_POLICY = "observe" # DO NOT call Referer or ?s=x verified; strict social proof requires separate tested workflow
 
 # V3.1 redeploy after enabling Cloudflare Analytics Engine in the dashboard.
 # The dataset name and Worker binding match the newly enabled account.
