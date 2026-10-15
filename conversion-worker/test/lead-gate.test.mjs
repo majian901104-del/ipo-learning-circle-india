@@ -78,6 +78,29 @@ test('opt-in OFF keeps old D1 dynamic 302 flow exactly as before',async()=>{
  const {env}=mock();env.JOIN_LEAD_FORM_ENABLED='false';
  const r=await invitation(env);assert.equal(r.status,302);assert.equal(r.headers.get('Location'),DEST);
 });
+test('production geographic admission checks both GET and POST before contact data is saved',async()=>{
+ const {env,leads}=mock();
+ env.JOIN_INDIA_ONLY_ENABLED='true';
+ const req=(method,country,body)=>{const r=new Request('https://worker.example/join',{method,
+  headers:method==='POST'?{Origin:'https://worker.example','Content-Type':'application/x-www-form-urlencoded'}:{},
+  ...(body?{body}:{} )});Object.defineProperty(r,'cf',{value:{country}});return r};
+ for(const country of ['MY','US',undefined]){
+  const get=await worker.fetch(req('GET',country),env);
+  assert.equal(get.status,403);
+  assert.doesNotMatch(await get.text(),/chat\.whatsapp\.com/);
+  const post=await worker.fetch(req('POST',country,'full_name=Anna&whatsapp=9876543210&consent=yes'),env);
+  assert.equal(post.status,403);
+ }
+ const getIndia=await worker.fetch(req('GET','IN'),env);
+ assert.equal(getIndia.status,200);
+ assert.match(await getIndia.text(),/name="full_name"/);
+ assert.equal(leads.length,0);
+ const health=await worker.fetch(new Request('https://worker.example/health'),env);
+ const diagnostics=await health.json();
+ assert.equal(diagnostics.inviteIndiaOnly,true);
+ assert.equal(diagnostics.socialSourcePolicy,'observe');
+});
+
 test('GET /join renders mobile English registration and never exposes invitation or phone via URL',async()=>{
  const {env}=mock(),t=await token(env);assert.match(t,/^l37\./);
  const h=await worker.fetch(new Request('https://worker.example/health'),env);
