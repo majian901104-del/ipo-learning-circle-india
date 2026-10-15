@@ -1091,3 +1091,14 @@ img{max-width:100%}.button,.mast-actions>a,.about-actions>a{white-space:normal!i
  main section[id]{scroll-margin-top:20px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* V3.9 production mobile QA: remove the 400px intrinsic min track width
+ * discovered on 390px Android viewport. Do not hide page-level overflow;
+ * make the media column genuinely shrink within the viewport. */
+@media(max-width:980px){
+ .institutional-hero .ih-grid{grid-template-columns:minmax(0,1fr)!important}
+ .institutional-hero .ih-grid > *{min-width:0;max-width:100%}
+ .institutional-hero .ih-photo{width:100%;min-width:0;max-width:100%;margin:0}
+ .institutional-hero .ih-photo img,
+ .institutional-hero .ih-photo figcaption{max-width:100%}
+}
