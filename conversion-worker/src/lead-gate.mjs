@@ -73,6 +73,49 @@ function render({formToken='',data={},message='',unavailable=false}={}){
  '<footer>ANGEL RESEARCH · <a href="'+HOME+'/privacy.html">Privacy</a> · <a href="'+HOME+'/terms.html">Terms</a> · <a href="mailto:support@angelresearchindia.com">Privacy &amp; support</a> · Securities involve risk.</footer></body></html>';
  return html(doc,unavailable?503:message?400:200);
 }
+/* Browser-safe WhatsApp handoff.
+ * Chrome can block a cross-site 303 following a form submission constrained by
+ * CSP form-action 'self'. A 200 confirmation document navigates separately via
+ * meta refresh and provides a usable manual fallback for in-app browsers.
+ * The destination is only the server-validated D1 primary invitation.
+ * No personal information or analytics tokens are ever included in the page.
+ */
+function successPage(destination,{alreadySaved=false}={}){
+ const safeDestination=esc(destination);
+ const description=alreadySaved?
+  'This registration was already saved. You do not need to enter your details again.':
+  'Your registration has been received and securely saved.';
+ const document='<!doctype html><html lang="en"><head><meta charset="utf-8">'+
+  '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+  '<meta name="theme-color" content="#0b2938">'+
+  '<meta http-equiv="refresh" content="2;url='+safeDestination+'">'+
+  '<title>Registration confirmed | Angel Research</title>'+
+  '<style>:root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;'+
+  'color:#143649;background:#edf3f6}*{box-sizing:border-box}body{margin:0;min-height:100vh;'+
+  'display:flex;align-items:center;justify-content:center;padding:22px}main{width:100%;'+
+  'max-width:560px;background:#fff;border:1px solid #cbdde5;border-radius:14px;'+
+  'box-shadow:0 14px 48px #102f3b19;padding:clamp(25px,5vw,48px)}.brand{font-size:12px;'+
+  'font-weight:850;letter-spacing:.11em;color:#527988}.check{display:inline-flex;'+
+  'align-items:center;justify-content:center;background:#e0f4eb;color:#087960;'+
+  'font-weight:bold;font-size:24px;width:55px;height:55px;border-radius:50%;margin-top:28px}'+
+  'h1{font-size:28px;line-height:1.2;margin:20px 0 12px}p{font-size:15px;'+
+  'line-height:1.7;color:#516e7d}.cta{display:block;background:#098269;color:#fff;'+
+  'font-size:16px;font-weight:800;text-align:center;text-decoration:none;border-radius:8px;'+
+  'min-height:54px;padding:16px 15px;margin:24px 0 13px}.cta:focus-visible{'+
+  'outline:3px solid #1b7198;outline-offset:3px}.small{font-size:13px;color:#667f8e}'+
+  'footer{font-size:12px;color:#627d8c;margin-top:26px;border-top:1px solid #dce7ec;'+
+  'padding-top:18px}footer a{color:#1b697c}</style></head><body><main>'+
+  '<div class="brand">AR · ANGEL RESEARCH</div><div class="check" aria-hidden="true">✓</div>'+
+  '<h1>Registration confirmed</h1><p>'+esc(description)+'</p>'+
+  '<p>Opening your WhatsApp community invitation now…</p>'+
+  '<a class="cta" href="'+safeDestination+'" rel="noopener noreferrer">OPEN WHATSAPP GROUP →</a>'+
+  '<p class="small">If WhatsApp does not open automatically, tap the button above. '+
+  'You do not need to submit the registration form again.</p>'+
+  '<footer>Submitting this form does not guarantee membership. Group administrators may need '+
+  'to approve your request. <a href="mailto:support@angelresearchindia.com">Contact support</a>.'+
+  '</footer></main></body></html>';
+ return html(document,200);
+}
 export async function handleLeadGate(request,env,record){
  const url=new URL(request.url);
  if(url.pathname!=='/join'||env.JOIN_LEAD_FORM_ENABLED!=='true'||env.LINK_MODE_ENABLED==='true')return null;
@@ -109,9 +152,20 @@ export async function handleLeadGate(request,env,record){
   result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at) VALUES(?,?,?,?,?,?,?,?)')
    .bind(nonce,name,phone,meta.source,meta.campaign,meta.medium,body.get('updates_opt_in')==='yes'?1:0,Math.floor(Date.now()/1000)).run();
  }catch(_e){return render({unavailable:true})}
- if(result?.meta?.changes!==1)return render({message:'This form was already processed. Please request a new invitation form.',data:meta,formToken:await tokenNew(env)});
+ if(result?.meta?.changes!==1){
+  // Replaying the exact, signed form after a blocked browser redirect must
+  // resume the handoff, not create more rows or force another registration.
+  let previous;
+  try{previous=await env.LINK_DB.prepare(
+   'SELECT full_name,whatsapp_number FROM community_leads WHERE request_nonce=?'
+  ).bind(nonce).first()}catch(_e){return render({unavailable:true})}
+  if(previous?.full_name===name&&previous?.whatsapp_number===phone)
+   return successPage(destination,{alreadySaved:true});
+  return render({message:'This form was already processed. Please request a new invitation form.',
+   data:meta,formToken:await tokenNew(env)});
+ }
  if(typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium});
- return new Response(null,{status:303,headers:{...HEADERS,'Location':destination}});
+ return successPage(destination);
 }
 export async function handleLeadAdmin(request,env){
  const url=new URL(request.url),p=url.pathname;
