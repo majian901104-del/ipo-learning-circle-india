@@ -30,7 +30,8 @@ test('V3.5 login state is kept only in tab memory; no local/session storage for 
 test('public routing and statistics IP dedup remain unchanged by admin login upgrade',()=>{
  const cfg=read('conversion-worker/wrangler.toml'),worker=read('conversion-worker/src/index.mjs');
  assert.match(cfg,/LINK_MODE_ENABLED = "false"/);
- assert.match(cfg,/ANALYTICS_IP_DEDUP_ENABLED = "false"/);
+ assert.match(cfg,/ANALYTICS_IP_DEDUP_ENABLED = "true"/);
+ assert.match(cfg,/JOIN_INDIA_ONLY_ENABLED = "true"/);
  assert.ok(worker.includes("url.pathname==='/join'"));
  assert.ok(worker.includes("url.pathname==='/report'"));
 });
