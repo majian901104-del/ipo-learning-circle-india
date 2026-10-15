@@ -33,6 +33,7 @@ jobs:
           node --test tests/admin-dashboard-v323.test.cjs
           node --test tests/v34-release.test.cjs
           node --test tests/v35-auth.test.cjs
+          node build-ga4.cjs
           node --test tests/v36-dynamic-site.test.cjs
           node --test tests/v37-prejoin.test.cjs
           node --test tests/v37-privacy-contact.test.cjs
