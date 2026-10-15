@@ -1,0 +1,20 @@
+name: V3.8 live production read-only smoke
+on:
+  push:
+    branches: [qa/v38-production-readonly-smoke]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Live Worker + Pages smoke (no production mutations)
+        run: node tests/v38-live-smoke.mjs
+      - name: Existing isolated integration tests
+        run: |
+          node --test conversion-worker/test/ip-dedup.test.mjs
+          node --test conversion-worker/test/lead-gate.test.mjs
