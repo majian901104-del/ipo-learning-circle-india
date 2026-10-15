@@ -120,7 +120,7 @@ async function protectedAdmin(req,env){
  const path=new URL(req.url).pathname;
  if(path==='/admin/links'&&req.method==='GET'){
   const history=(await env.LINK_DB.prepare('SELECT id,action,old_url,new_url,at FROM link_audit ORDER BY id DESC LIMIT 20').all()).results||[];
-  return json({ok:true,state:await current(env),history,runtime:{protectedMode:env.LINK_MODE_ENABLED==='true',dynamicPrimaryEnabled:env.LINK_MODE_ENABLED!=='true'&&env.LINK_DYNAMIC_TARGET_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}},200,origin);
+  return json({ok:true,state:await current(env),history,runtime:{protectedMode:env.LINK_MODE_ENABLED==='true',dynamicPrimaryEnabled:env.LINK_MODE_ENABLED!=='true'&&env.LINK_DYNAMIC_TARGET_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only',inviteIndiaOnly:env.JOIN_INDIA_ONLY_ENABLED==='true',socialSourcePolicy:env.JOIN_SOURCE_POLICY||'observe'}},200,origin);
  }
  if(['/admin/links/primary','/admin/links/standby'].includes(path)&&req.method==='PUT'){
   let b;try{b=await smallBody(req)}catch(_e){return fail('bad_input',400,origin)}

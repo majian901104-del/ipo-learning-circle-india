@@ -31,9 +31,12 @@ function render(data){
  const standbyBadge=$('link-standby-badge');if(standbyBadge)standbyBadge.textContent=state?.standby_url?'备用已配置':'暂无备用';
  const ipDedup=$('link-ip-dedup-status');if(ipDedup)ipDedup.textContent=data.runtime?.ipDedupEnabled?(data.runtime.ipDedupReady?'统计 IP 去重已开启 · '+data.runtime.ipDedupWindowHours+' 小时':'统计去重已开启但未配置完成'):'统计 IP 去重尚未启用 · 重复 IP 不限制跳转';
  const protectedMode=$('link-mode');
- if(protectedMode)protectedMode.textContent=data.runtime?.protectedMode?'印度 IP 与社交来源限制已开启':data.runtime?.dynamicPrimaryEnabled?'主群动态跳转已开启 · 访客准入限制尚未启用':'动态跳转未启用 · 旧模式';
+ if(protectedMode)protectedMode.textContent=data.runtime?.protectedMode?'旧版严格模式':data.runtime?.dynamicPrimaryEnabled?
+  (data.runtime?.inviteIndiaOnly?'主群动态跳转已开启 · 仅印度 IP':'主群动态跳转已开启 · 无地区限制'):'动态跳转未启用 · 旧模式';
  const routeNote=$('link-routing-note');
- if(routeNote)routeNote.textContent=data.runtime?.protectedMode?'正式跳转需通过一次性来源验证凭证。':data.runtime?.dynamicPrimaryEnabled?'所有通过 Cloudflare /join 的新请求会读取主群 A。没有备用群也可使用；请注意印度 IP、社交来源访问限制尚未启用。':'尚未接管 /join，原广告入口仍使用旧配置。';
+ if(routeNote)routeNote.textContent=data.runtime?.protectedMode?'旧版受限模式':data.runtime?.dynamicPrimaryEnabled?
+  '通过 Cloudflare /join 登记后读取主群 A。印度 IP 准入已在服务端启用；社交平台来源仍处于观察状态，网址参数不是可靠的来源证明。备用群可留空。':
+  '尚未接管 /join，原广告入口仍使用旧配置。';
  $('link-switch').disabled=!state?.standby_url;
  $('link-history').replaceChildren();
  for(const h of data.history||[]){

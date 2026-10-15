@@ -107,3 +107,28 @@ test('no dedup configured means legacy anonymous reporting remains compatible',a
  const r=await worker.fetch(req('203.0.113.2'),env);
  assert.equal(r.status,302);
 });
+
+test('v3.8 reuses existing long admin secret, no third user password is needed',async()=>{
+ const {env,db}=environment();
+ delete env.ANALYTICS_IP_HASH_KEY;
+ env.LINK_ADMIN_KEY=SECRET;
+ assert.equal(dedupReady(env),true);
+ assert.equal(await shouldCountIp(req('203.0.113.60'),env,'page_view',11000),true);
+ assert.equal(await shouldCountIp(req('203.0.113.60'),env,'page_view',11001),false);
+ assert.equal(db.seen.size,1);
+});
+test('missing statistical table initializes safely with idempotent D1 migration',async()=>{
+ const {env}=environment();
+ let table=false,ddl=0,seen=0;
+ env.LINK_DB={prepare(sql){
+  if(sql.startsWith('CREATE TABLE IF NOT EXISTS analytics_ip_dedup')||
+     sql.startsWith('CREATE INDEX IF NOT EXISTS analytics_ip_dedup_expiry')){
+   return {async run(){table=true;ddl++;return {meta:{changes:0}}}}
+  }
+  if(!table)throw Error('no such table: analytics_ip_dedup');
+  return {bind(){return {async first(){seen++;return {seen_count:seen}}}}};
+ }};
+ assert.equal(await shouldCountIp(req('203.0.113.6'),env,'page_view',2000),true);
+ assert.equal(await shouldCountIp(req('203.0.113.6'),env,'page_view',2001),false);
+ assert.equal(ddl,2);
+});

@@ -85,13 +85,19 @@ export default {
   if(adminSessionResponse)return adminSessionResponse;
   const leadAdminResponse=await handleLeadAdmin(request,env);
   if(leadAdminResponse)return leadAdminResponse;
+  // Server-side admission gate only for WhatsApp registration (GET and POST).
+  // Run before any contact collection. No impact on administrator dashboard.
+  if(url.pathname==='/join'&&env.JOIN_INDIA_ONLY_ENABLED==='true'&&request.cf?.country!=='IN'){
+    return reply('This community invitation is available to visitors in India only. If you are in India, disable your VPN and try again.',403,
+      {'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store,private','X-Robots-Tag':'noindex,nofollow'});
+  }
   const leadGateResponse=await handleLeadGate(request,env,record);
   if(leadGateResponse)return leadGateResponse;
   const secureLinkResponse=await handleLinkRoute(request,env,record);
   if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
-    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy',leadFormEnabled:env.JOIN_LEAD_FORM_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only'}),
+    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy',leadFormEnabled:env.JOIN_LEAD_FORM_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only',inviteIndiaOnly:env.JOIN_INDIA_ONLY_ENABLED==='true',socialSourcePolicy:env.JOIN_SOURCE_POLICY||'observe'}),
       200,{'Content-Type':'application/json',...cors(origin)});
   }
   if(url.pathname==='/collect'){
