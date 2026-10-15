@@ -12,6 +12,10 @@ function mock(){
    async first(){
     if(sql.includes('FROM link_state'))return {active_url:DEST,standby_url:null,version:1};
     if(sql.includes('SELECT id FROM community_leads'))return leads[0]?{id:leads[0].id}:null;
+    if(sql.includes('FROM community_leads WHERE request_nonce=')){
+     const record=leads.find(x=>x.request_nonce===p[0]);
+     return record?{full_name:record.full_name,whatsapp_number:record.whatsapp_number}:null;
+    }
     throw Error('Unexpected first '+sql)
    },
    async all(){
@@ -82,7 +86,13 @@ test('GET /join renders mobile English registration and never exposes invitation
 test('required fields & consent saved in private D1, then WhatsApp 303',async()=>{
  const {env,leads,events}=mock();
  const t=await token(env);const result=await submit(env,t,'9876543210','Asha Patel');
- assert.equal(result.status,303);assert.equal(result.headers.get('Location'),DEST);
+ assert.equal(result.status,200);assert.equal(result.headers.get('Location'),null);
+ const resultPage=await result.text();
+ assert.match(resultPage,/Registration confirmed/);
+ assert.match(resultPage,/http-equiv="refresh"/);
+ assert.match(resultPage,/href="https:\/\/chat\.whatsapp\.com\//);
+ assert.ok(!resultPage.includes('Asha Patel'));
+ assert.ok(!resultPage.includes('9876543210'));
  assert.equal(leads.length,1);assert.equal(leads[0].whatsapp_number,'+919876543210');
  assert.equal(leads[0].full_name,'Asha Patel');assert.equal(leads[0].updates_opt_in,0);
  assert.equal(leads[0].source,'x');assert.equal(leads[0].campaign,'promotion42');
@@ -90,13 +100,36 @@ test('required fields & consent saved in private D1, then WhatsApp 303',async()=
  assert.equal(JSON.stringify(events).includes('Asha'),false);
  assert.equal(JSON.stringify(events).includes('9876543210'),false);
 });
-test('same form token cannot be used twice; new form permits repeat visitor registration',async()=>{
+test('same form token is idempotent and resumes WhatsApp handoff without new data',async()=>{
  const {env,leads}=mock();const t=await token(env);
- assert.equal((await submit(env,t)).status,303);
+ assert.equal((await submit(env,t)).status,200);
  const repeat=await submit(env,t);
- assert.equal(repeat.status,400);assert.equal(repeat.headers.get('Location'),null);assert.equal(leads.length,1);
- const fresh=await token(env);assert.equal((await submit(env,fresh)).status,303);
+ assert.equal(repeat.status,200);assert.equal(repeat.headers.get('Location'),null);
+ assert.match(await repeat.text(),/already saved/);assert.equal(leads.length,1);
+ const fresh=await token(env);assert.equal((await submit(env,fresh)).status,200);
  assert.equal(leads.length,2);
+});
+test('successful POST returns an independent confirmation document, avoiding cross-site CSP form redirects',async()=>{
+ const {env,events}=mock();
+ const t=await token(env),response=await submit(env,t);
+ const markup=await response.text();
+ assert.equal(response.status,200);
+ assert.equal(response.headers.get('Content-Type'),'text/html; charset=utf-8');
+ assert.equal(response.headers.get('Location'),null);
+ assert.match(markup,/http-equiv="refresh" content="2;url=https:\/\/chat\.whatsapp\.com\//);
+ assert.match(markup,/rel="noopener noreferrer"/);
+ assert.match(markup,/If WhatsApp does not open automatically/);
+ assert.match(response.headers.get('Content-Security-Policy'),/form-action 'self'/);
+ assert.equal(events.length,1);
+});
+test('duplicate submit with changed identity never discloses invite and creates no row',async()=>{
+ const {env,leads,events}=mock();
+ const t=await token(env);
+ await submit(env,t,'9876543210','Asha Patel');
+ const response=await submit(env,t,'9876543210','Unrelated Person');
+ assert.equal(response.status,400);assert.equal(response.headers.get('Location'),null);
+ assert.doesNotMatch(await response.text(),/href="https:\/\/chat\.whatsapp\.com\//);
+ assert.equal(leads.length,1);assert.equal(events.length,1);
 });
 test('invalid phone, missing privacy consent, spoofed origin and cross-site direct POST never redirect',async()=>{
  const {env,leads}=mock(),t=await token(env);
@@ -119,8 +152,9 @@ test('no-referrer browser POST with Origin null succeeds using a signed form tok
   method:'POST',headers:{Origin:'null','Sec-Fetch-Site':'same-origin','Content-Type':'application/x-www-form-urlencoded'},
   body:body.toString()
  }),env);
- assert.equal(response.status,303);
- assert.equal(response.headers.get('Location'),DEST);
+ assert.equal(response.status,200);
+ assert.equal(response.headers.get('Location'),null);
+ assert.match(await response.text(),/OPEN WHATSAPP GROUP/);
  assert.equal(leads.length,1);
  assert.equal(leads[0].whatsapp_number,'+919876543210');
 });
@@ -143,7 +177,7 @@ test('POST missing Origin is allowed only with valid signed token',async()=>{
   method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
   body:new URLSearchParams({request_token:nonce,full_name:'Asha Patel',whatsapp:'9876543210',consent:'yes'}).toString()
  }),env);
- assert.equal(response.status,303);
+ assert.equal(response.status,200);
  assert.equal(leads.length,1);
  const forged=await worker.fetch(new Request('https://worker.example/join',{
   method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
@@ -155,7 +189,7 @@ test('POST missing Origin is allowed only with valid signed token',async()=>{
 test('admin lead record viewing and deletion require authenticated V3.5 session',async()=>{
  const {env,leads}=mock();
  const t=await token(env);
- assert.equal((await submit(env,t,'9876543210','Asha Patel',{updates_opt_in:'yes'})).status,303);
+ assert.equal((await submit(env,t,'9876543210','Asha Patel',{updates_opt_in:'yes'})).status,200);
  assert.equal((await worker.fetch(new Request('https://worker.example/admin/leads',{headers:{Origin:ORIGIN}}),env)).status,401);
  assert.equal((await worker.fetch(new Request('https://worker.example/admin/leads',{headers:{Origin:'https://attacker.example'}}),env)).status,403);
  const bearer=await login(env);
