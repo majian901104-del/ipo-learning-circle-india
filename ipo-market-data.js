@@ -5,7 +5,7 @@
 (function(root){
 'use strict';
 root.AngelIPOData={
-  checkedAt:'2026-10-15T14:00:00+05:30',
+  checkedAt:'2026-10-15T12:15:00+05:30',
   verifiedDate:'15 Oct 2026 (IST)',
   notice:'Editorial refresh: 15 Oct 2026 IST. Schedules reflect announced dates; not a live exchange feed. Verify RHP, issuer updates, exchanges, and registrar before applying. No allotment or gains are assured.',
   sources:{
