@@ -37,3 +37,17 @@
 .v40-research .v40-research-result-count{display:block;margin:16px auto 30px!important;max-width:1200px;padding:0 22px;font-size:13px!important;color:#516a78!important}
 @media(max-width:900px){.v40-guide-grid{grid-template-columns:1fr!important;gap:0}.v40-guide-grid>div{border-right:0;border-bottom:1px solid #cad9df;padding:13px 8px}.v40-guide-grid>div:first-child{padding-left:8px}.v40-guide-grid>div:last-child{border-bottom:0}}
 @media(max-width:760px){.v40-ipo .ipo-intelligence-controls{padding:16px 12px}.v40-ipo .ipo-intelligence-controls button{font-size:13px!important}.v40-research .database-tools{align-items:stretch}.v40-research .database-tools .dbchip{flex:1 0 42%}.v40-research .v40-research-search{min-width:100%;margin:0 0 4px}.v40-research .v40-research-hero h1{font-size:38px!important}.v40-ipo .ipo-card-actions a{font-size:13px!important}.v40-research .research-visual-card .research-card-copy p{font-size:16px!important}}
+
+/* V4 Phase2 visual review: balance the research hero without crowding phones. */
+.v40-research .v40-research-hero{min-height:0!important;padding:58px 0!important}
+.v40-research .v40-research-hero-grid{display:grid!important;grid-template-columns:minmax(0,1.06fr) minmax(315px,.94fr)!important;gap:clamp(24px,5vw,78px);align-items:center!important}
+.v40-research .v40-research-hero-copy{min-width:0}
+.v40-research .v40-research-hero-panel{border:1px solid rgba(231,239,243,.28);border-radius:11px;background:rgba(255,255,255,.055);padding:29px 31px;max-width:520px}
+.v40-research .v40-research-hero-panel>span{display:block;font-size:11px;letter-spacing:.15em;color:#d0b585;font-weight:800}
+.v40-research .v40-research-hero-panel h2{font-size:27px!important;line-height:1.25!important;color:#fff!important;margin:14px 0 21px!important}
+.v40-research .v40-research-hero-panel>div{padding:13px 0;border-top:1px solid rgba(229,241,246,.16)}
+.v40-research .v40-research-hero-panel strong{display:block;color:#fff;font-size:14px;line-height:1.45}
+.v40-research .v40-research-hero-panel small{display:block;color:#c4d9e2;font-size:12px;line-height:1.6;margin-top:2px}
+.v40-research .v40-research-hero-panel a{display:inline-block;color:#e5c996;margin-top:17px;font-size:13px;font-weight:750}
+@media(max-width:900px){.v40-research .v40-research-hero-grid{grid-template-columns:1fr!important}.v40-research .v40-research-hero-panel{display:none!important}}
+@media(max-width:760px){.v40-research .v40-research-hero{padding:44px 0 47px!important}}
