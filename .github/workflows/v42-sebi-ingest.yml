@@ -1,5 +1,11 @@
 name: Collect SEBI Public Filing Index
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/v42-sebi-public-filings.py"
+      - "sebi-filings-watch.js"
+      - ".github/workflows/v42-sebi-ingest.yml"
   schedule:
     - cron: '10 6 * * 1-5' # weekday ~11:40 India Standard Time
   workflow_dispatch:
