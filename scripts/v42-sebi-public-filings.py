@@ -170,6 +170,10 @@ def main():
         obj = PublicIssues()
         obj.feed(raw)
         print(json.dumps({'debug': [{'cells': r['cells'][:3], 'links': r['links'][:4]} for r in obj.rows[:5]]}, indent=2)[:3000], file=sys.stderr)
+        for needle in ('Jio Platforms', 'Zetwerk Manufacturing'):
+            at = raw.find(needle)
+            if at >= 0:
+                print('HTML context near '+needle+': '+raw[max(0,at-650):at+500].replace('\\n',' ')[:1150], file=sys.stderr)
     # When the SEBI index changes markup or becomes a block/challenge page,
     # fail: NEVER replace a working snapshot with fabricated/empty data.
     if not records:
