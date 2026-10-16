@@ -60,7 +60,7 @@ test('collaboration scope remains factual and separate from brokerage',()=>{
 });
 test('IPO calendar remains explicitly source-dated rather than real-time',()=>{
   const html=read('ipo-current.html');
-  assert.match(html,/Last editorial verification: 15 October 2026 IST/);
+  assert.match(html,/Editorially reviewed 15 October 2026 IST/);
   assert.match(html,/not a live exchange feed/i);
   assert.match(html,/data-ipo-board data-ipo-mode="full"/);
 });
