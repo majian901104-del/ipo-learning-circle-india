@@ -8,7 +8,7 @@ const base='http://127.0.0.1:4173';
 const out='v40-preview';
 fs.mkdirSync(out,{recursive:true});
 const routes=[
- ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html'],['research','research.html'],['source-ledger','ipo-data-quality.html'],['issuer-profile','ipo-company.html?issue=hd-fire-protect'],['research-framework','research-framework.html']
+ ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html'],['research','research.html'],['source-ledger','ipo-data-quality.html'],['issuer-profile','ipo-company.html?issue=hd-fire-protect'],['research-framework','research-framework.html'],['contact','contact.html'],['getting-started','service-process.html']
 ];
 let errors=[];
 for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
@@ -54,6 +54,20 @@ console.log(label,viewport.name,JSON.stringify(metrics));
 if(!metrics.hasMain||!metrics.hasJoin)errors.push(label+' '+viewport.name+': missing main or registration CTA');
 if(metrics.scrollWidth>metrics.viewport+4)errors.push(label+' '+viewport.name+': horizontal overflow by '+(metrics.scrollWidth-metrics.viewport)+'px');
 if(viewport.name==='mobile'&&metrics.mobileMenu==='none')errors.push(label+': mobile nav hidden');
+if(label==='home'){
+  const paths=await page.locator('.v43-paths > a').count();
+  if(paths!==3)errors.push('Homepage needs 3 distinct routes; got '+paths);
+  const label=await page.locator('[data-v43-review-label]').innerText();
+  if(!label.includes('IPO editorial review:')||!label.includes('Dated snapshot')&&!label.includes('Review overdue'))errors.push('Homepage review date not sourced from editorial data');
+}
+if(label==='contact'){
+  const txt=await page.locator('.v43-contact-identity').innerText();
+  if(!txt.includes('Two separate ways to stay informed'))errors.push('Contact role separation missing');
+}
+if(label==='getting-started'){
+  const txt=await page.locator('.service-steps').innerText();
+  if(!txt.includes('Request information'))errors.push('Missing clear onboarding steps');
+}
 if(label==='research'){
   const input=page.locator('#research-query');
   await input.fill('SRIT');
