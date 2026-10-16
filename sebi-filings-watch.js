@@ -12,6 +12,37 @@
   var target=root.querySelector('[data-sebi-fetch-status]');
   if(target){target.textContent=text;target.className='v42-fetch-status '+(cls||'')}
  }
+ function normalizedCompany(text){
+  return String(text||'').replace(/\s*[-–—]\s*(?:rhp|drhp|red herring|prospectus)\b.*$/i,'')
+  .replace(/\b(?:limited|ltd|private|pvt)\b/gi,'')
+  .replace(/[^a-z0-9]+/gi,' ').trim().replace(/\s+/g,' ').toLowerCase();
+ }
+ function attachOfficialMatches(records){
+  var direct=new Map();
+  records.forEach(function(f){
+    if(f.documentType!=='rhp')return;
+    var key=normalizedCompany(f.title),link=safeUrl(f.sebiPageUrl);
+    if(key&&link&&!direct.has(key))direct.set(key,link);
+  });
+  function addTags(){
+    document.querySelectorAll('.ipo-card h3').forEach(function(heading){
+      var card=heading.closest('.ipo-card');
+      if(!card||card.querySelector('.v42-crosscheck'))return;
+      var official=direct.get(normalizedCompany(heading.textContent));
+      if(!official)return;
+      var note=el('a','SEBI RHP INDEX LISTED ↗','v42-crosscheck');
+      note.href=official;note.target='_blank';note.rel='noopener noreferrer';
+      note.title='Confirms SEBI filing index presence only; price band and issue terms not verified';
+      card.append(note);
+    });
+  }
+  addTags();
+  var parent=document.querySelector('[data-ipo-board]');
+  if(parent&&typeof MutationObserver!=='undefined'){
+    var observer=new MutationObserver(addTags);
+    observer.observe(parent,{subtree:true,childList:true});
+  }
+ }
  function render(json){
   if(!json||json.schemaVersion!=='4.2'||json.feedType!=='official-public-document-index'||!Array.isArray(json.records))throw Error('Unrecognized feed structure');
   var rawDate=Date.parse(json.fetchedAtUtc);
@@ -30,6 +61,7 @@
    var arrow=el('span','Open official filing ↗','v42-filing-link');
    a.append(cap,title,arrow);list.append(a);
   });
+  attachOfficialMatches(json.records);
   var notice=root.querySelector('[data-sebi-meaning]');
   if(notice)notice.textContent='Fetched entries confirm that SEBI listed these filing documents. Individual price bands, lot sizes, subscription levels and allotments have NOT been extracted or independently verified.';
  }
