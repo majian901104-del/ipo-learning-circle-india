@@ -15,10 +15,11 @@ for(const [name,url,selector] of [
   if(!r||r.status()!==200)throw Error('HTTP '+r?.status());
   await page.locator(selector).waitFor({state:'attached',timeout:5000});
   let img=page.locator(selector);
-  let v=await img.evaluate(async x=>{await Promise.race([x.decode().catch(()=>{}),new Promise(r=>setTimeout(r,10000))]);return{loaded:x.complete&&x.naturalWidth>0,px:x.naturalWidth,py:x.naturalHeight,src:x.currentSrc}});
+  let v=await img.evaluate(async x=>{await Promise.race([x.decode().catch(()=>{}),new Promise(r=>setTimeout(r,10000))]);return{loaded:x.complete&&x.naturalWidth>0,px:x.naturalWidth,py:x.naturalHeight,cssWidth:x.getBoundingClientRect().width,dpr:devicePixelRatio,requestedW:Number(new URL(x.currentSrc).searchParams.get('w'))||null,src:x.currentSrc}});
   console.log(name,JSON.stringify(v));
   if(!v.loaded)errors.push(name+' actual photo failed to load');
-  if(v.loaded&&v.px<700)errors.push(name+' low-res source '+v.px+'px');
+  if(v.loaded&&v.px<v.cssWidth-3)errors.push(name+' image intrinsic CSS size too small: '+v.px+' vs '+v.cssWidth);
+  if(v.loaded&&v.requestedW&&v.requestedW<v.cssWidth*v.dpr*0.95)errors.push(name+' image request source size too small: '+v.requestedW+' vs '+Math.ceil(v.cssWidth*v.dpr));
   await page.screenshot({path:'hero-qa/'+name+'-mobile-hero.png',fullPage:false,animations:'disabled',timeout:14000});
  }catch(e){errors.push(name+': '+e.message.slice(0,200))}
  finally{await page.close()}
