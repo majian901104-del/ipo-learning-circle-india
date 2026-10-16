@@ -1,0 +1,39 @@
+/* V4 Phase 2 · Institutional IPO intelligence & research library */
+.v40-ipo .ipo-intelligence-controls{border:1px solid #d7e2e6;background:#f4f8f9;padding:18px 20px;border-radius:12px;margin:22px 0 26px}
+.v40-ipo .ipo-intelligence-controls .ipo-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.v40-ipo .ipo-intelligence-controls button{padding:10px 15px;min-height:42px;border-radius:6px;font:650 13px/1.25 Arial,sans-serif;border:1px solid #cad7dc;background:#fff;color:#234458;cursor:pointer}
+.v40-ipo .ipo-intelligence-controls button:hover{border-color:#456b7a}
+.v40-ipo .ipo-intelligence-controls button[aria-pressed="true"]{background:#13384c!important;color:#fff!important;border-color:#13384c!important}
+.v40-ipo .ipo-stage-filters{padding-top:13px;border-top:1px solid #d8e3e7}
+.v40-ipo .ipo-results-count{font-size:13px!important;color:#4d6676!important;line-height:1.6!important;margin:8px 0 0!important}
+.v40-ipo .ipo-card{display:flex;flex-direction:column;min-width:0}
+.v40-ipo .ipo-card p{flex:1}
+.v40-ipo .ipo-card-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;border-top:1px solid #e1e9ec;padding-top:14px;margin-top:16px}
+.v40-ipo .ipo-card-actions a{font-size:12px!important;line-height:1.5!important;display:inline-flex!important;min-height:34px;align-items:center;font-weight:800;color:#23546b;text-decoration:none!important}
+.v40-ipo .ipo-card-actions .ipo-original-source{color:#526b78!important;font-size:11px!important;font-weight:700!important;border:1px solid #dce5e7;padding:5px 9px;border-radius:4px}
+.v40-ipo .ipo-empty{grid-column:1/-1;background:#f4f7f7;border:1px dashed #cad8df;padding:25px 20px;color:#526977;font-size:15px!important;border-radius:9px}
+.v40-research .v40-research-hero{background:linear-gradient(120deg,#0b283c,#174154)!important;color:white}
+.v40-research .v40-research-hero h1{color:#fff!important;font-size:clamp(36px,4.2vw,59px)!important;letter-spacing:-.035em!important;line-height:1.14!important}
+.v40-research .v40-research-hero p{font-size:18px!important;color:#d5e5ea!important;line-height:1.75!important}
+.v40-research .v40-research-guide{background:#eef4f5;border-bottom:1px solid #d6e2e6}
+.v40-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding-top:23px;padding-bottom:23px}
+.v40-guide-grid>div{padding:12px 26px;border-right:1px solid #cad9df}
+.v40-guide-grid>div:first-child{padding-left:0}
+.v40-guide-grid>div:last-child{border-right:0}
+.v40-guide-grid span{display:block;font-size:11px;letter-spacing:.13em;color:#926f40;text-transform:uppercase;font-weight:800;margin-bottom:7px}
+.v40-guide-grid strong{display:block;color:#173d50;font-size:14px;line-height:1.55}
+.v40-research .v40-research-library{background:#fff}
+.v40-research .database-head{align-items:flex-start!important}
+.v40-research .database-tools{display:flex;flex-wrap:wrap;gap:10px!important;align-items:flex-end}
+.v40-research .v40-research-search{display:flex;flex-direction:column;gap:6px;min-width:210px;flex:1 1 250px;margin-right:8px}
+.v40-research .v40-research-search span{font-size:12px;font-weight:800;color:#3e6474}
+.v40-research .v40-research-search input{display:block;width:100%;background:#fff;border:1px solid #b8cbd3;border-radius:6px;min-height:44px;padding:10px 13px;font-size:15px;color:#1e4153;font-family:inherit}
+.v40-research .v40-research-search input:focus{outline:2px solid #9b8153;outline-offset:2px}
+.v40-research .database-tools .dbchip{min-height:44px!important;font-size:12px!important;border-radius:6px!important}
+.v40-research .research-visual-card{border:1px solid #d6e3e7;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 4px 14px rgba(10,40,54,.055)}
+.v40-research .research-visual-card[hidden]{display:none!important}
+.v40-research .research-visual-card .research-card-copy h3{font-size:22px!important;line-height:1.32!important}
+.v40-research .research-visual-card .research-card-copy p{font-size:15px!important;line-height:1.7!important}
+.v40-research .v40-research-result-count{display:block;margin:16px auto 30px!important;max-width:1200px;padding:0 22px;font-size:13px!important;color:#516a78!important}
+@media(max-width:900px){.v40-guide-grid{grid-template-columns:1fr!important;gap:0}.v40-guide-grid>div{border-right:0;border-bottom:1px solid #cad9df;padding:13px 8px}.v40-guide-grid>div:first-child{padding-left:8px}.v40-guide-grid>div:last-child{border-bottom:0}}
+@media(max-width:760px){.v40-ipo .ipo-intelligence-controls{padding:16px 12px}.v40-ipo .ipo-intelligence-controls button{font-size:13px!important}.v40-research .database-tools{align-items:stretch}.v40-research .database-tools .dbchip{flex:1 0 42%}.v40-research .v40-research-search{min-width:100%;margin:0 0 4px}.v40-research .v40-research-hero h1{font-size:38px!important}.v40-ipo .ipo-card-actions a{font-size:13px!important}.v40-research .research-visual-card .research-card-copy p{font-size:16px!important}}
