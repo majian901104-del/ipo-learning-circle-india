@@ -51,5 +51,5 @@ jobs:
       - name: Rebuild GitHub Pages after bot's push
         if: steps.commit.outputs.changed == 'true'
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: gh workflow run pages.yml --ref main
