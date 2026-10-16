@@ -21,7 +21,8 @@ jobs:
           node-version: "22"
       - name: Validate V4.0 structure and legacy critical JS
         run: |
-          node --test tests/v40-institutional.test.cjs
+          node --test tests/v40-institutional.test.cjs tests/v40-phase2.test.cjs
+          node --check site.js
           node --check community-entry-v39.js
           node --check ipo-market-data.js
           node --check ipo-market-ui.js
