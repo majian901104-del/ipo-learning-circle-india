@@ -5,7 +5,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {spawnSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
-const fixture=path.join(root,'tests','fixtures','sebi-ipo-index.html');
+const fixture=path.join(root,'tests','fixtures','sebi-ipo-index.fixture');
 const proc=spawnSync('python3',['scripts/v42-sebi-public-filings.py','--input-html',fixture,'--dry-run'],{cwd:root,encoding:'utf8'});
 test('SEBI index fixture parsed into original filing links, with no issue price values',()=>{
  assert.equal(proc.status,0,proc.stderr);
