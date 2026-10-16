@@ -1,0 +1,26 @@
+'use strict';
+const {chromium}=require('playwright');
+(async()=>{
+ const browser=await chromium.launch({headless:true});
+ const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true,locale:'en-IN'});
+ await context.route('**/*',route=>route.request().resourceType()==='image'?route.abort():route.continue());
+ const page=await context.newPage();
+ await page.goto('http://127.0.0.1:4173/ipo-community.html',{waitUntil:'domcontentloaded',timeout:16000});
+ const popup=page.locator('#angel-consent-banner');
+ await popup.waitFor({state:'visible',timeout:10000});
+ const state=await popup.evaluate(n=>({height:n.getBoundingClientRect().height,width:n.getBoundingClientRect().width,bottom:innerHeight-n.getBoundingClientRect().bottom,viewport:innerHeight,txt:n.innerText}));
+ if(state.height>200)throw Error('Consent banner too tall on mobile: '+state.height+'px');
+ if(state.bottom>20)throw Error('Consent banner unnecessarily lifted from screen bottom: '+state.bottom);
+ const buttons=page.locator('#angel-consent-actions button');
+ if(await buttons.count()!==2)throw Error('Consent requires two clear choices');
+ const no=buttons.nth(1);
+ if(!await no.isVisible())throw Error('Decline choice not available');
+ if((await page.locator('script[src*="googletagmanager.com/gtag/js"]').count())!==0)throw Error('GA4 script loaded before opt-in');
+ await no.click();
+ if(await popup.count())throw Error('Consent banner persisted after declining');
+ const consent=await page.evaluate(()=>localStorage.getItem(window.AngelGA4Config?.consentKey||'angelresearch_ga4_consent_v1'));
+ if(consent!=='denied')throw Error('Optional analytics rejection not persisted');
+ if((await page.locator('script[src*="googletagmanager.com/gtag/js"]').count())!==0)throw Error('GA4 loaded after analytics decline');
+ console.log(JSON.stringify({passed:true,mobileConsentHeight:state.height,viewportHeight:state.viewport,declineAccessible:true,ga4NotLoadedBeforeOrAfterDecline:true}));
+ await browser.close();
+})().catch(e=>{console.error(e);process.exitCode=1});
