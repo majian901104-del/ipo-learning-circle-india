@@ -1,0 +1,25 @@
+name: V4.3 Fast Live Mobile Functional Gate
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "tests/v43-fast-mobile-smoke.cjs"
+      - ".github/workflows/v43-fast-mobile.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  critical-path:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Chromium for mobile smoke
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Verify live mobile UI, links, campaign parameters and Worker GET
+        run: node tests/v43-fast-mobile-smoke.cjs
