@@ -144,3 +144,18 @@ body.v40-site .inner{max-width:1290px}
 }
 @media(max-width:370px){.v40-header .v40-brand b{font-size:13px!important}.v40-header .v40-brand small{font-size:8px!important}.v40-brand-mark{display:none}.v40-trust .v40-trust-grid{grid-template-columns:1fr!important}.v40-trust .v40-trust-grid>div{border-right:0!important}}
 @media(prefers-reduced-motion:reduce){body.v40-site *,body.v40-site *::before,body.v40-site *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Shared editorial reading scale across the upgraded legacy pages. */
+body.v40-site :where(.article,.clean-hero,.clean-card,.wealth-card,.scope-note,.corporate-layout,.editorial-policy,.section-head) p{font-size:16px!important;line-height:1.75!important}
+body.v40-site :where(.article,.scope-note,.corporate-layout,.clean-grid) li{font-size:16px!important;line-height:1.7!important}
+body.v40-site :where(.article,.clean-card,.wealth-card,.scope-note) h2{line-height:1.23!important}
+body.v40-site :where(.article,.clean-card,.wealth-card,.scope-note) h3{line-height:1.32!important}
+body.v40-site a{text-underline-offset:3px}
+body.v40-site .button{min-height:46px!important;border-radius:6px!important;display:inline-flex;align-items:center;justify-content:center}
+body.v40-site .source-note,body.v40-site .article-meta,body.v40-site .hs-source{font-size:13px!important;line-height:1.6!important}
+body.v40-site :where(.clean-hero,.wealth-hero) h1{letter-spacing:-.03em!important}
+@media(max-width:760px){
+ body.v40-site :where(.article,.clean-hero,.clean-card,.wealth-card,.scope-note,.corporate-layout,.editorial-policy,.section-head) p{font-size:16px!important;line-height:1.72!important}
+ body.v40-site .clean-hero h1{font-size:clamp(32px,8vw,41px)!important;line-height:1.12!important}
+ body.v40-site :where(.clean-hero,.wealth-hero,.pagehead) .inner{padding-left:20px!important;padding-right:20px!important}
+}
