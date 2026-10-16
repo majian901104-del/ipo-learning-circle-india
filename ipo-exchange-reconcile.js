@@ -14,15 +14,20 @@ function norm(s){return String(s||'').normalize('NFKC').toLowerCase()
 function iso(s){return /^\d{4}-\d{2}-\d{2}$/.test(s||'')&&!isNaN(Date.parse(s+'T00:00:00Z'))&&new Date(s+'T00:00:00Z').toISOString().slice(0,10)===s;}
 function isoTime(s){var t=Date.parse(s||'');return Number.isFinite(t)?t:null;}
 function uri(s,domain){try{var u=new URL(s);return u.protocol==='https:'&&(u.hostname===domain||u.hostname.endsWith('.'+domain))?u.href:null}catch(e){return null;}}
-function verifyLicense(r){
- var a=r&&r.rights;
- return !!(a&&a.approved===true&&a.publicDisplay===true&&a.reconciliation===true&&
- typeof a.permissionReference==='string'&&a.permissionReference.trim().length>=8&&
- typeof a.providerId==='string'&&a.providerId.trim().length>1);
+function verifyLicense(r,registry,now){
+ var a=r&&r.rights, ent=registry&&Array.isArray(registry.providers)?registry.providers.find(function(p){return p.providerId===a?.providerId}):null;
+ // A vendor assertion alone is never sufficient. The locally controlled
+ // permission register must list the provider and exact grant scope.
+ return !!(ent&&ent.approved===true&&ent.publicDisplay===true&&ent.reconciliation===true&&
+ ent.allowedExchanges&&ent.allowedExchanges.includes(r.exchange)&&
+ ent.permissionReference===a.permissionReference&&
+ typeof a.providerId==='string'&&a.providerId.length>1&&
+ typeof ent.permissionReference==='string'&&ent.permissionReference.length>=8&&
+ (!ent.expiresAt||Date.parse(ent.expiresAt)>(now||Date.now())));
 }
-function classify(snapshot, now){
+function classify(snapshot, now, registry){
  if(!snapshot||!['NSE','BSE'].includes(snapshot.exchange))return {ok:false,reason:'unapproved-source'};
- if(!verifyLicense(snapshot))return {ok:false,reason:'rights-not-documented'};
+ if(!verifyLicense(snapshot,registry,now))return {ok:false,reason:'rights-not-documented'};
  if(typeof snapshot.issuer!=='string'||norm(snapshot.issuer).length<4)return {ok:false,reason:'invalid-issuer'};
  if(snapshot.isin!=null&&!/^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(snapshot.isin))return {ok:false,reason:'invalid-isin'};
  if(!uri(snapshot.sourceUrl,snapshot.exchange==='NSE'?'nseindia.com':'bseindia.com'))return {ok:false,reason:'source-link-not-exchange'};
@@ -55,13 +60,13 @@ function filingsForIssue(issue,sebi){
  return rows.filter(function(x){return docs.has(x.documentType)&&norm(x.title)===norm(issue.name)&&
  !!uri(x.sebiPageUrl,'sebi.gov.in')}).map(function(x){return {documentType:x.documentType,filingDate:x.filingDate,url:x.sebiPageUrl}});
 }
-function reconcile(issue,exchangeRows,sebi,now){
+function reconcile(issue,exchangeRows,sebi,now,registry){
  now=now===undefined?Date.now():now;
  var filings=filingsForIssue(issue,sebi);
  var rows=[],rejected=[];
  (exchangeRows||[]).forEach(function(r){
   if(!matchIssuer(issue,r))return;
-  var v=classify(r,now);
+  var v=classify(r,now,registry);
   if(v.ok)rows.push(r);else rejected.push({exchange:r.exchange||'unknown',reason:v.reason});
  });
  var comparison={};
@@ -86,12 +91,13 @@ function reconcile(issue,exchangeRows,sebi,now){
   fields:comparison,eligibleExchangeSnapshots:rows.length,rejected:rejected,
   sourcePolicy:'Two distinct licensed providers from NSE and BSE must agree, within the freshness window, for a field to be marked verified. SEBI filing directory does not verify issue terms.'};
 }
-function build(issues,exchanges,sebi,now){
- var result=issues.map(function(x){return reconcile(x,exchanges,sebi,now)});
+function build(issues,exchanges,sebi,now,registry){
+ now=now===undefined?Date.now():now;
+ var result=issues.map(function(x){return reconcile(x,exchanges,sebi,now,registry)});
  var conflicts=result.reduce(function(n,r){return n+fields.filter(function(f){return r.fields[f].status==='conflict'}).length},0);
  var verified=result.reduce(function(n,r){return n+fields.filter(function(f){return r.fields[f].status==='verified'}).length},0);
- return {schemaVersion:'4.2.1',kind:'cross-source-evidence',builtAt:new Date(now||Date.now()).toISOString(),
-  hasLicensedExchangeData:(exchanges||[]).some(function(r){return classify(r,now||Date.now()).ok}),
+ return {schemaVersion:'4.2.1',kind:'cross-source-evidence',builtAt:new Date(now).toISOString(),
+  hasLicensedExchangeData:(exchanges||[]).some(function(r){return classify(r,now,registry).ok}),
   issueCount:result.length,verifiedFields:verified,disputedFields:conflicts,rows:result,
   notes:'No NSE/BSE website scraping. Verified status is conditional on licensed independent exchange snapshots and exact per-field agreement.'};
 }
