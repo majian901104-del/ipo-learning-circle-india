@@ -1,0 +1,40 @@
+name: V4.1 Data Governance QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "*.html"
+      - "ipo-*.js"
+      - "v41-*.css"
+      - "tests/v41-*"
+      - "scripts/v41-*"
+      - ".github/workflows/ipo-editorial-freshness.yml"
+      - ".github/workflows/v41-data-governance-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate existing research and data governance
+        run: |
+          node --test tests/v41-data-governance.test.cjs tests/v40-phase2.test.cjs tests/v40-institutional.test.cjs
+          node --check ipo-market-ui.js
+          node --check ipo-evidence.js
+          node --check ipo-data-quality-ui.js
+          node --check scripts/v41-ipo-audit.cjs
+          node scripts/v41-ipo-audit.cjs --output=.reports/v41-audit.json
+      - name: Publish reviewable machine audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v41-ipo-evidence-audit
+          path: .reports/v41-audit.json
+          if-no-files-found: warn
+          retention-days: 14

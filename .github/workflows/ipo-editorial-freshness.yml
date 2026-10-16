@@ -11,6 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build structural and source-category audit report
+        run: node scripts/v41-ipo-audit.cjs --output=.reports/v41-ipo-audit.json
+      - name: Preserve review audit artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipo-governance-audit
+          path: .reports/v41-ipo-audit.json
+          if-no-files-found: warn
+          retention-days: 30
       - name: Check that IPO editorial review is fresh
         uses: actions/github-script@v7
         with:
@@ -18,14 +31,14 @@ jobs:
             const fs=require('fs');
             const file=fs.readFileSync('ipo-market-data.js','utf8');
             const date=file.match(/checkedAt:'([^']+)'/);
-            if(!date)core.setFailed('IPO market review timestamp missing');
+            if(!date){core.setFailed('IPO market review timestamp missing');return;}
             const hours=(Date.now()-Date.parse(date[1]))/36e5;
             const title='IPO editorial review is stale — refresh exchange and issuer terms';
             const {data:issues}=await github.rest.issues.listForRepo({...context.repo,state:'all',per_page:100});
             const previous=issues.find(x=>x.title===title&&!x.pull_request);
             core.info('Editorial data age: '+hours.toFixed(1)+' hours');
             if(hours>=40){
-              const text='The IPO calendar has not been verified for '+hours.toFixed(1)+' hours. Review live issuer and exchange documents before advertising any new offer terms.\n\nChecklist:\n- [ ] Check NSE/BSE offer notices and SEBI documents\n- [ ] Check issue dates, bands and lot sizes\n- [ ] Update ipo-market-data.js and Jio page if needed\n- [ ] Change checkedAt only after sources are verified\n- [ ] Run V3.9 prelaunch QA\n\nSources: https://www.nseindia.com/market-data/all-upcoming-issues-ipo and https://groww.in/ipo';
+              const text='The IPO calendar has not received a new manual editorial review for '+hours.toFixed(1)+' hours. Review live issuer and exchange documents before advertising any new offer terms.\n\nChecklist:\n- [ ] Check NSE/BSE offer notices and SEBI documents\n- [ ] Check issue dates, bands and lot sizes\n- [ ] Record source URLs and source tiers in the IPO evidence ledger\n- [ ] Update ipo-market-data.js and issuer details only after checking official/secondary sources\n- [ ] Change checkedAt only after sources are verified\n- [ ] Run V3.9 prelaunch QA\n\nSources: https://www.nseindia.com/market-data/all-upcoming-issues-ipo and https://groww.in/ipo';
               if(previous&&previous.state==='open')await github.rest.issues.update({...context.repo,issue_number:previous.number,body:text});
               else if(previous)await github.rest.issues.update({...context.repo,issue_number:previous.number,state:'open',body:text});
               else await github.rest.issues.create({...context.repo,title,body:text,labels:[]});

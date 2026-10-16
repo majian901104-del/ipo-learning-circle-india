@@ -8,7 +8,7 @@ const base='http://127.0.0.1:4173';
 const out='v40-preview';
 fs.mkdirSync(out,{recursive:true});
 const routes=[
- ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html'],['research','research.html']
+ ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html'],['research','research.html'],['source-ledger','ipo-data-quality.html'],['issuer-profile','ipo-company.html?issue=hd-fire-protect'],['research-framework','research-framework.html']
 ];
 let errors=[];
 for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
@@ -53,6 +53,22 @@ if(label==='research'){
   await page.locator('.dbchip[data-filter="WEEKLY"]').click();
   const weekly=await page.locator('.research-visual-card:visible').count();
   if(weekly!==1)errors.push('research weekly filter expected one report; got '+weekly);
+}
+if(label==='research-framework'){
+  const sections=await page.locator('.v41-framework-grid article').count();
+  if(sections!==9)errors.push('Research framework should contain nine quality controls, got '+sections);
+}
+if(label==='source-ledger'){
+  const entries=await page.locator('#evidence-rows tr').count();
+  if(entries<8)errors.push('Evidence ledger displayed too few IPO records: '+entries);
+  const dates=await page.locator('#evidence-date').innerText();
+  if(!dates.includes('15 Oct 2026'))errors.push('Missing manual review date in evidence ledger');
+}
+if(label==='issuer-profile'){
+  const title=await page.locator('#issuer-detail h1').innerText();
+  if(!title.includes('HD Fire Protect'))errors.push('IPO issuer detail failed to render: '+title);
+  const sources=await page.locator('#issuer-detail .v41-issuer-evidence a').count();
+  if(sources<2)errors.push('Issuer profile missing source/evidence drill-down links');
 }
 if(label==='ipo-calendar'){
   await page.locator('[data-stage-filter="upcoming"]').click();
