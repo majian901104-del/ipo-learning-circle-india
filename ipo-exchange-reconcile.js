@@ -39,7 +39,7 @@ function classify(snapshot, now, registry){
  for(var key of Object.keys(snapshot.terms)){
   if(!fields.includes(key))return {ok:false,reason:'unknown-field-'+key};
   var v=snapshot.terms[key];
-  if(numeric.has(key)&&!(typeof v==='number'&&Number.isFinite(v)&&v>0))return {ok:false,reason:'invalid-'+key};
+  if(numeric.has(key)&&!(typeof v==='number'&&Number.isFinite(v)&&(key==='subscriptionTimes'?v>=0:v>0)))return {ok:false,reason:'invalid-'+key};
   if((key==='open'||key==='close')&&!iso(v))return {ok:false,reason:'invalid-'+key};
   if(key==='lot'&&!Number.isInteger(v))return {ok:false,reason:'invalid-lot'};
  }
@@ -78,7 +78,7 @@ function reconcile(issue,exchangeRows,sebi,now,registry){
   var agree=values.length>1&&values.every(function(v){return v===values[0]});
   var status=values.length===0?'not-verified':
       agree&&uniqExchanges.size>=2&&uniqProviders.size>=2?'verified':
-      !agree&&uniqExchanges.size>=2?'conflict':'single-source';
+      !agree&&candidates.length>1?'conflict':'single-source';
   // Never expose disputed values as the winner.
   comparison[field]={status:status,
    value:status==='verified'?values[0]:null,
