@@ -15,6 +15,16 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wid
 const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height},deviceScaleFactor:1});
 for(const [label,route] of routes){
 try{
+if(label==='ipo-calendar'){
+  await page.route('**/data/sebi-public-issue-filings.json',async route=>{
+    const feed={schemaVersion:'4.2',feedType:'official-public-document-index',publisher:'Securities and Exchange Board of India (SEBI)',sourceUrl:'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15',fetchedAtUtc:new Date().toISOString(),recordCount:2,records:[
+      {filingDate:'2026-10-15',title:'Jio Platforms Limited – RHP',documentType:'rhp',sebiPageUrl:'https://www.sebi.gov.in/filings/public-issues/oct-2026/jio-platforms-limited-rhp_105274.html',evidenceType:'official-filing-index'},
+      {filingDate:'2026-10-13',title:'Zetwerk Manufacturing Businesses Limited – RHP',documentType:'rhp',sebiPageUrl:'https://www.sebi.gov.in/filings/public-issues/oct-2026/zetwerk-manufacturing-businesses-limited-rhp_105195.html',evidenceType:'official-filing-index'}]
+    };
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(feed)});
+  });
+  console.log('IPO watch preview uses a mocked two-record SEBI response; live fetch is tested separately by source QA');
+}
 const resp=await page.goto(base+'/'+route,{waitUntil:'domcontentloaded',timeout:25000});
 if(!resp||resp.status()!==200)throw Error('HTTP '+resp?.status());
 await page.locator('.v40-header').waitFor({state:'visible',timeout:10000});
@@ -71,6 +81,11 @@ if(label==='issuer-profile'){
   if(sources<2)errors.push('Issuer profile missing source/evidence drill-down links');
 }
 if(label==='ipo-calendar'){
+  await page.locator('.v42-filing-card').first().waitFor({state:'visible',timeout:8500});
+  const filings=await page.locator('.v42-filing-card').count();
+  if(filings!==2)errors.push('SEBI source watch expected 2 simulated filings, got '+filings);
+  const matches=await page.locator('.v42-crosscheck').count();
+  if(matches<2)errors.push('SEBI RHP matching badges not rendered (expected 2), got '+matches);
   await page.locator('[data-stage-filter="upcoming"]').click();
   const cards=await page.locator('#ipo-issues .ipo-card').count();
   const filtered=await page.locator('#ipo-issues .ipo-card[data-stage="upcoming"]').count();
