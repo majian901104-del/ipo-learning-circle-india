@@ -28,7 +28,7 @@ var evidence=document.createElement('aside');evidence.className='v41-issuer-evid
 evidence.appendChild(p('strong','Evidence classification · '+audit.label));
 evidence.appendChild(p('p','Reference: '+audit.publisher+'. These reported figures are a dated editorial snapshot, not a primary filing verification certificate or a live exchange feed.'));
 if(audit.url){var a=document.createElement('a');a.href=audit.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Read the recorded source ↗';evidence.appendChild(a)}
-var quality=document.createElement('a');quality.href='ipo-data-quality.html';quality.textContent='Browse source and review ledger →';evidence.appendChild(quality);
+var quality=document.createElement('a');quality.href='ipo-data-quality.html';quality.textContent='Browse source and review ledger →';evidence.appendChild(quality);var framework=document.createElement('a');framework.href='research-framework.html';framework.textContent='Research dossier standards →';evidence.appendChild(framework);
 root.appendChild(evidence);
 var state=E.freshness(m.checkedAt);var alert=p('div','Important: '+state.text+'. Last manual editorial review: '+m.verifiedDate+'. Final prices, bid windows, allocations and listing outcomes must be reconfirmed using issuer documents and NSE/BSE or SEBI information.','issuer-warning');root.appendChild(alert);
 var source=document.createElement('section');source.className='issuer-source-box';source.appendChild(p('h2','Verify this issue'));if(v.filing)source.appendChild(p('p',v.filing));[
