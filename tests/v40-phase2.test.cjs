@@ -1,0 +1,43 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const read=f=>fs.readFileSync(path.join(root,f),'utf8');
+test('IPO intelligence filters distinguish segments and dated stages',()=>{
+ const js=read('ipo-market-ui.js');
+ assert.match(js,/data-stage-filter="upcoming"/);
+ assert.match(js,/data-stage-filter="window"/);
+ assert.match(js,/data-stage-filter="elapsed"/);
+ assert.match(js,/data-filter="Mainboard"/);
+ assert.match(js,/data-filter="SME"/);
+ assert.match(js,/ipo-results-count/);
+ assert.match(js,/SOURCE: /);
+ assert.match(js,/m\.sources\[v\.source\]/);
+ assert.match(js,/rel="noopener noreferrer"/);
+ assert.match(js,/Date\.parse\(m\.checkedAt\)/);
+ assert.match(js,/Date\.now\(\)>lastChecked\+2\*24/);
+});
+test('Research archive has indexed categories and keyboard searchable report titles',()=>{
+ const html=read('research.html');
+ const js=read('site.js');
+ const cats=[...html.matchAll(/<article class="research-visual-card" data-category="([^"]+)"/g)].map(x=>x[1]);
+ assert.equal(cats.length,6);
+ assert.deepEqual(cats,['WEEKLY','IPO MONITOR','IPO MONITOR','LISTING REVIEW','LISTING REVIEW','LISTING REVIEW']);
+ assert.match(html,/id="research-query"/);
+ assert.match(html,/aria-controls="research-results"/);
+ assert.match(html,/id="research-results"/);
+ assert.match(js,/item\.dataset\.category === category/);
+ assert.match(js,/input\.addEventListener\('input', updateResearch\)/);
+ assert.match(html,/Research content is informational/);
+});
+test('IPO editorial metadata remains source-dated and no unverified live values are injected',()=>{
+ const ipo=read('ipo-current.html'),data=read('ipo-market-data.js');
+ assert.match(ipo,/Editorially reviewed 15 October 2026 IST/);
+ assert.match(ipo,/not a live exchange feed/);
+ assert.match(data,/checkedAt:'2026-10-15T12:15:00\+05:30'/);
+ assert.match(ipo,/v40-intelligence\.css/);
+ assert.match(read('index.html'),/v40-intelligence\.css/);
+ assert.match(read('research.html'),/v40-intelligence\.css/);
+});
