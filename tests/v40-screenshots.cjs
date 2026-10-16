@@ -8,7 +8,7 @@ const base='http://127.0.0.1:4173';
 const out='v40-preview';
 fs.mkdirSync(out,{recursive:true});
 const routes=[
- ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html']
+ ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html'],['research','research.html']
 ];
 let errors=[];
 for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
@@ -44,6 +44,25 @@ console.log(label,viewport.name,JSON.stringify(metrics));
 if(!metrics.hasMain||!metrics.hasJoin)errors.push(label+' '+viewport.name+': missing main or registration CTA');
 if(metrics.scrollWidth>metrics.viewport+4)errors.push(label+' '+viewport.name+': horizontal overflow by '+(metrics.scrollWidth-metrics.viewport)+'px');
 if(viewport.name==='mobile'&&metrics.mobileMenu==='none')errors.push(label+': mobile nav hidden');
+if(label==='research'){
+  const input=page.locator('#research-query');
+  await input.fill('SRIT');
+  const shown=await page.locator('.research-visual-card:visible').count();
+  if(shown!==1)errors.push('research search expected one SRIT report; got '+shown);
+  await input.fill('');
+  await page.locator('.dbchip[data-filter="WEEKLY"]').click();
+  const weekly=await page.locator('.research-visual-card:visible').count();
+  if(weekly!==1)errors.push('research weekly filter expected one report; got '+weekly);
+}
+if(label==='ipo-calendar'){
+  await page.locator('[data-stage-filter="upcoming"]').click();
+  const cards=await page.locator('#ipo-issues .ipo-card').count();
+  const filtered=await page.locator('#ipo-issues .ipo-card[data-stage="upcoming"]').count();
+  if(cards!==filtered)errors.push('IPO stage filter mismatch');
+  await page.locator('[data-stage-filter="all"]').click();
+  const sources=await page.locator('#ipo-issues .ipo-card-actions .ipo-original-source').count();
+  if(sources<1)errors.push('IPO issue source links not rendered');
+}
 }catch(e){errors.push(label+' '+viewport.name+': '+e.message);}
 }
 await page.close();
