@@ -1,0 +1,55 @@
+name: Collect SEBI Public Filing Index
+on:
+  schedule:
+    - cron: '10 6 * * 1-5' # weekday ~11:40 India Standard Time
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+  issues: write
+concurrency:
+  group: official-sebi-index-collector
+  cancel-in-progress: false
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch real public SEBI filing index
+        id: fetch
+        run: |
+          python3 scripts/v42-sebi-public-filings.py --output=data/sebi-public-issue-filings.json
+      - name: Safeguard public feed before writing
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path('data/sebi-public-issue-filings.json').read_text())
+          assert j['publisher']=='Securities and Exchange Board of India (SEBI)'
+          assert j['feedType']=='official-public-document-index'
+          assert j['recordCount']>=1
+          assert not j['hasLivePriceOrSubscriptionData']
+          assert all(x['sebiPageUrl'].startswith('https://www.sebi.gov.in/filings/public-issues/') for x in j['records'])
+          PY
+      - name: Commit official-source metadata only
+        id: commit
+        run: |
+          git config user.name "angel-research-filing-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/sebi-public-issue-filings.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "data: refresh real SEBI public filings index"
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Rebuild GitHub Pages after bot's push
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: gh workflow run pages.yml --ref main
