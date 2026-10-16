@@ -162,9 +162,14 @@ def main():
     a.add_argument("--input-html", type=Path, help="parse a test HTML fixture offline")
     a.add_argument("--output", type=Path, default=Path("data/sebi-public-issue-filings.json"))
     a.add_argument("--dry-run", action="store_true", help="validate fetch but do not overwrite published file")
+    a.add_argument("--diagnose", action="store_true", help="print truncated public table structure on parser failure")
     args = a.parse_args()
     raw = args.input_html.read_text(encoding="utf-8") if args.input_html else get_html()
     records, rows = parse(raw)
+    if args.diagnose:
+        obj = PublicIssues()
+        obj.feed(raw)
+        print(json.dumps({'debug': [{'cells': r['cells'][:3], 'links': r['links'][:4]} for r in obj.rows[:5]]}, indent=2)[:3000], file=sys.stderr)
     # When the SEBI index changes markup or becomes a block/challenge page,
     # fail: NEVER replace a working snapshot with fabricated/empty data.
     if not records:
