@@ -1,0 +1,32 @@
+name: V4.2 SEBI Official Source Integration QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/v42-*"
+      - "tests/v42-*"
+      - "tests/fixtures/sebi-*"
+      - "ipo-current.html"
+      - "sebi-filings-watch.js"
+      - "v42-source-watch.css"
+      - ".github/workflows/v42-*.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source adapter, runtime and fixture
+        run: |
+          python3 -m py_compile scripts/v42-sebi-public-filings.py
+          node --check sebi-filings-watch.js
+          node --test tests/v42-sebi-feed.test.cjs
+      - name: Test real SEBI public index access and extraction
+        run: |
+          python3 scripts/v42-sebi-public-filings.py --dry-run
