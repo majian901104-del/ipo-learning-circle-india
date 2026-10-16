@@ -1,0 +1,32 @@
+name: V4.3 Mobile Consent UI Regression
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ga4-analytics.js"
+      - "tests/v43-consent-mobile.cjs"
+      - ".github/workflows/v43-consent-ui.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  consent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build exactly as GitHub Pages publishes
+        run: node build-ga4.cjs
+      - name: Install mobile Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Serve local preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/v43-consent-http.log 2>&1 &
+          sleep 2
+      - name: Check compact consent and decline action without any tracking
+        run: node tests/v43-consent-mobile.cjs
