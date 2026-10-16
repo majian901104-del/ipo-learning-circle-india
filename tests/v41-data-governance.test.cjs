@@ -38,6 +38,7 @@ test('Issuer details inline script parses and provides data provenance',()=>{
  assert.match(html,/ipo-evidence\.js/);
  assert.match(html,/v41-issuer-evidence/);
  assert.match(html,/ipo-data-quality\.html/);
+ assert.match(html,/research-framework\.html/);
  assert.match(html,/community-entry-v39\.js/);
 });
 test('Public source ledger clearly distinguishes reported evidence from official primary facts',()=>{
@@ -58,4 +59,13 @@ test('V4.1 linked across IPO, disclosure and research while preserving older con
  for(const p of ['ipo-current.html','disclosures.html','research.html'])assert.match(read(p),/ipo-data-quality\.html/);
  assert.match(read('ipo-market-ui.js'),/v41-board-status/);
  assert.match(read('ipo-market-ui.js'),/v41-source-tier/);
+});
+
+test('Institutional nine-section report template refuses to invent missing data',()=>{
+const page=read('research-framework.html');
+assert.match(page,/Nine required sections/);
+assert.match(page,/FINANCIALS/);
+assert.match(page,/CONFLICTS|Conflicts/);
+assert.match(page,/not automatically upgraded/);
+assert.match(read('research.html'),/research-framework.html/);
 });
