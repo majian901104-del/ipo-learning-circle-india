@@ -11,7 +11,7 @@ const pages=[
  ['home','/','Institutional thinking'],
  ['research','/research.html','Research'],
  ['ipo','/ipo-current.html','IPO'],
- ['contact','/contact.html','Contact'],
+ ['contact','/contact.html','Explore investing'],
  ['community','/ipo-community.html','IPO'],
  ['privacy','/privacy.html','Privacy'],
  ['request','/apply.html','research updates']
@@ -40,7 +40,18 @@ function short(e){return String(e?.message||e).slice(0,300)}
     const uri=site+route+(name==='home'?'?utm_source=facebook&utm_campaign=prelaunch_qa&utm_medium=paid_social':'');
     response=await page.goto(uri,{waitUntil:'domcontentloaded',timeout:22000});
     const status=response?.status()||0;
-    await page.waitForTimeout(1100);
+    await page.waitForTimeout(700);
+    await page.evaluate(async()=>{
+      const imgs=Array.from(document.querySelectorAll('main img')).filter(i=>i.getBoundingClientRect().top<innerHeight+500);
+      await Promise.race([
+        Promise.all(imgs.map(img=>new Promise(resolve=>{
+          if(img.complete)return resolve();
+          img.addEventListener('load',resolve,{once:true});
+          img.addEventListener('error',resolve,{once:true});
+        }))),
+        new Promise(resolve=>setTimeout(resolve,8500))
+      ]);
+    });
     const details=await page.evaluate(()=>({
      title:document.title,heading:document.querySelector('h1')?.innerText||'',
      viewport:innerWidth,scroll:document.documentElement.scrollWidth,
