@@ -1,0 +1,262 @@
+{
+  "schemaVersion": "4.2",
+  "feedType": "official-public-document-index",
+  "publisher": "Securities and Exchange Board of India (SEBI)",
+  "sourceUrl": "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15",
+  "fetchedAtUtc": "2026-10-16T07:23:11Z",
+  "hasLivePriceOrSubscriptionData": false,
+  "officialIndexRetrieved": true,
+  "recordCount": 25,
+  "records": [
+    {
+      "filingDate": "2026-10-15",
+      "title": "Paras Healthcare Limited – RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/paras-healthcare-limited-rhp_105284.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-15",
+      "title": "Jio Platforms Limited – RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/jio-platforms-limited-rhp_105274.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-13",
+      "title": "Zetwerk Manufacturing Businesses Limited – RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/zetwerk-manufacturing-businesses-limited-rhp_105195.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-12",
+      "title": "Tonbo Imaging India Limited- RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/tonbo-imaging-india-limited-rhp_105141.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-10",
+      "title": "Sahajanand Medical technologies Limited – RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/sahajanand-medical-technologies-limited-rhp_105149.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-09",
+      "title": "Fusion CX Limited – RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/fusion-cx-limited-rhp_105257.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-05",
+      "title": "HD Fire Protect Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/hd-fire-protect-limited-rhp_105058.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-25",
+      "title": "Nityas Gems and Jewellery Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/nityas-gems-and-jewellery-limited-rhp_105033.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-24",
+      "title": "Runwal Enterprises Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/runwal-enterprises-limited-rhp_104683.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-23",
+      "title": "Shah Investor's Home Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/shah-investor-s-home-limited-rhp_104660.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-23",
+      "title": "SRIT India Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/srit-india-limited-rhp_104744.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-23",
+      "title": "Moneyview Limited - Corrigendum to RHP and Price Band",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/moneyview-limited-corrigendum-to-rhp-and-price-band_104667.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-22",
+      "title": "A One Steel Limited",
+      "documentType": "other-public-issue-filing",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/a-one-steel-limited_104624.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-21",
+      "title": "Orient Cables (India) Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/orient-cables-india-limited-rhp_104663.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-21",
+      "title": "Moneyview Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/moneyview-limited-rhp_104597.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-21",
+      "title": "German Green Steel and Power Ltd. - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/german-green-steel-and-power-ltd-rhp_104626.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-21",
+      "title": "Adroit Industries Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/adroit-industries-limited-rhp_104607.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-21",
+      "title": "Acevector Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/acevector-limited-rhp_104628.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-17",
+      "title": "Swastika Infra Ltd. - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/swastika-infra-ltd-rhp_104573.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-16",
+      "title": "Varmora Granito Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/varmora-granito-limited-rhp_104681.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-16",
+      "title": "ArMee Infotech Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/armee-infotech-limited-rhp_104661.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-11",
+      "title": "NATIONAL STOCK EXCHANGE OF INDIA LIMITED - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/national-stock-exchange-of-india-limited-rhp_104428.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-10",
+      "title": "HERO MOTORS LIMITED - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/hero-motors-limited-rhp_104395.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-09",
+      "title": "SS RETAIL LIMITED - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/ss-retail-limited-rhp_104355.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-09-09",
+      "title": "SONASELECTION INDIA LIMITED - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/sonaselection-india-limited-rhp_104393.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    }
+  ]
+}
