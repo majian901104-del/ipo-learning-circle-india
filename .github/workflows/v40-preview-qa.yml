@@ -1,0 +1,45 @@
+name: V4.0 Institutional Preview QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "*.html"
+      - "v40-institutional.css"
+      - "tests/v40-*"
+      - ".github/workflows/v40-preview-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate V4.0 structure and legacy critical JS
+        run: |
+          node --test tests/v40-institutional.test.cjs
+          node --check community-entry-v39.js
+          node --check ipo-market-data.js
+          node --check ipo-market-ui.js
+      - name: Install headless browser
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Start local static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/angel-v40-http.log 2>&1 &
+          sleep 2
+      - name: Capture desktop/mobile screenshots and check page overflow
+        run: node tests/v40-screenshots.cjs
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v40-phase1-desktop-mobile-previews
+          path: v40-preview/
+          if-no-files-found: warn
+          retention-days: 7
