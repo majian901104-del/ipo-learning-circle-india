@@ -44,6 +44,9 @@ class PublicIssues(HTMLParser):
             self.row_depth += 1
             if self.row_depth == 1:
                 self.current = {"cells": [], "links": []}
+                self.in_cell = 0
+                self.seen_cell = []
+                self.active_link = None
         if self.current is None:
             return
         if tag in ("td", "th"):
@@ -51,7 +54,17 @@ class PublicIssues(HTMLParser):
             if self.in_cell == 1:
                 self.seen_cell = []
         if tag == "a":
-            self.active_link = {"href": attrs.get("href", ""), "label": []}
+            href = attrs.get("href", "")
+            # SEBI's current HTML embeds an *inner <a>* in the title attribute
+            # of the actual filing anchor. Capture that verified outer href
+            # immediately; ordinary nested-anchor parsing would lose it.
+            if valid_filing_url(urljoin(SOURCE, href)):
+                title = clean(attrs.get("title", "").split("<br")[0].split("<a ")[0])
+                if not title:
+                    title = href.rsplit("/", 1)[-1].split("_")[0].replace("-", " ")
+                self.current["links"].append({"label": title, "href": href})
+            else:
+                self.active_link = {"href": href, "label": []}
     def handle_data(self, data):
         if self.current is not None:
             if self.in_cell:
@@ -74,6 +87,10 @@ class PublicIssues(HTMLParser):
             if self.in_cell == 0:
                 self.current["cells"].append(clean("".join(self.seen_cell)))
         if tag == "tr" and self.row_depth:
+            if self.in_cell and self.seen_cell:
+                self.current["cells"].append(clean("".join(self.seen_cell)))
+            self.in_cell = 0
+            self.seen_cell = []
             self.row_depth -= 1
             if self.row_depth == 0:
                 self.rows.append(self.current)
@@ -109,10 +126,10 @@ def parse(html: str):
             lower = title.casefold()
             if "abridged" in lower:
                 document_type = "abridged-prospectus"
-            elif "rhp" in lower or "red herring" in lower:
-                document_type = "rhp"
             elif "drhp" in lower or "draft" in lower:
                 document_type = "drhp"
+            elif "rhp" in lower or "red herring" in lower:
+                document_type = "rhp"
             elif "prospectus" in lower:
                 document_type = "prospectus"
             else:
