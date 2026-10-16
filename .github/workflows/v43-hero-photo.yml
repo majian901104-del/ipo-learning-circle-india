@@ -1,0 +1,32 @@
+name: V4.3 Live Hero Photo Reliability
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "tests/v43-hero-photo.cjs"
+      - ".github/workflows/v43-hero-photo.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Verify both externally hosted hero photos actually decode
+        run: node tests/v43-hero-photo.cjs
+      - name: Upload real mobile first-screen screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v43-mobile-live-hero-previews
+          path: hero-qa/
+          if-no-files-found: warn
