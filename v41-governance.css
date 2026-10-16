@@ -56,3 +56,14 @@
 .v40-ipo .ipo-card-actions .v41-source-tier{order:1}
 .v40-ipo .ipo-card-actions .ipo-original-source{order:2}
 @media(max-width:750px){.v41-calendar-bar a{width:100%;margin-left:0}.v41-calendar-bar{font-size:13px;padding:13px 15px}}
+
+.v41-framework-title{font-size:clamp(27px,3vw,39px);color:#12394c;line-height:1.2;margin:10px 0 24px}
+.v41-framework-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.v41-framework-grid article{border:1px solid #d8e3e7;background:#fff;border-radius:9px;padding:26px 25px}
+.v41-framework-grid small{display:block;color:#98764c;letter-spacing:.13em;font-size:11px;font-weight:800}
+.v41-framework-grid h3{font-size:20px;line-height:1.32;margin:11px 0;color:#153f53}
+.v41-framework-grid p,.v41-principles p,.v41-footnote{font-size:15px;line-height:1.8;color:#4c6774}
+.v41-principles h3{font-size:19px;color:#174053}
+.v41-footnote{padding:16px 18px;background:#f4f7f7;border-left:4px solid #b79c72;margin:30px 0 17px}
+@media(max-width:1020px){.v41-framework-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:660px){.v41-framework-grid{grid-template-columns:1fr}.v41-framework-grid article{padding:22px 20px}}
