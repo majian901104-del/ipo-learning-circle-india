@@ -8,7 +8,7 @@ const base='http://127.0.0.1:4173';
 const out='v40-preview';
 fs.mkdirSync(out,{recursive:true});
 const routes=[
- ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html'],['research','research.html'],['source-ledger','ipo-data-quality.html'],['issuer-profile','ipo-company.html?issue=hd-fire-protect']
+ ['home','index.html'],['collaboration','company-background.html'],['ipo-calendar','ipo-current.html'],['about','about.html'],['research','research.html'],['source-ledger','ipo-data-quality.html'],['issuer-profile','ipo-company.html?issue=hd-fire-protect'],['research-framework','research-framework.html']
 ];
 let errors=[];
 for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}]){
@@ -53,6 +53,10 @@ if(label==='research'){
   await page.locator('.dbchip[data-filter="WEEKLY"]').click();
   const weekly=await page.locator('.research-visual-card:visible').count();
   if(weekly!==1)errors.push('research weekly filter expected one report; got '+weekly);
+}
+if(label==='research-framework'){
+  const sections=await page.locator('.v41-framework-grid article').count();
+  if(sections!==9)errors.push('Research framework should contain nine quality controls, got '+sections);
 }
 if(label==='source-ledger'){
   const entries=await page.locator('#evidence-rows tr').count();
