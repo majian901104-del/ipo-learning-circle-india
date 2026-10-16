@@ -43,3 +43,16 @@
 .v41-site-link{display:inline-block;font-size:13px;font-weight:760;color:#235b72;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:800px){.v41-split,.v41-principles{grid-template-columns:1fr}.v41-summary{grid-template-columns:1fr 1fr}.v41-summary>div:last-child{grid-column:1/-1}}
 @media(max-width:560px){.v41-container{width:calc(100% - 34px)}.v41-head{padding:45px 0}.v41-head p{font-size:16px}.v41-summary{grid-template-columns:1fr}.v41-summary>div:last-child{grid-column:auto}.v41-section{padding:35px 0}.v41-source-footer{padding:23px 17px}.v41-table td{padding:13px}.v41-source-footer a{width:100%;text-align:center}}
+
+/* V4.1 compact data-quality and provenance indicators in IPO cards. */
+.v41-calendar-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 17px;background:#eef4f6;border:1px solid #d7e4e8;border-radius:9px;padding:15px 20px;margin:0 auto 28px;color:#3a5d70;font-size:14px;line-height:1.55}
+.v41-calendar-bar strong{color:#1b4558;font-weight:780}
+.v41-calendar-bar a{color:#176079;font-weight:760;margin-left:auto;white-space:normal;text-decoration:underline;text-underline-offset:3px}
+.v41-board-status{margin-top:8px!important;font-size:12px!important;font-weight:750!important;color:#416574!important;line-height:1.6!important}
+.v41-board-status a{color:#185774!important;text-decoration:underline;text-underline-offset:2px}
+.v41-board-status[data-review-status="stale"],.v41-board-status[data-review-status="invalid"]{color:#945b23!important}
+.v41-source-tier{display:inline-flex;align-items:center;padding:6px 8px;background:#eaf1f4;color:#31586a;border-radius:4px;font-size:10px;line-height:1.4;font-weight:800;letter-spacing:.05em}
+.v40-ipo .ipo-card-actions{align-items:center}
+.v40-ipo .ipo-card-actions .v41-source-tier{order:1}
+.v40-ipo .ipo-card-actions .ipo-original-source{order:2}
+@media(max-width:750px){.v41-calendar-bar a{width:100%;margin-left:0}.v41-calendar-bar{font-size:13px;padding:13px 15px}}
