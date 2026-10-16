@@ -18,6 +18,19 @@ try{
 const resp=await page.goto(base+'/'+route,{waitUntil:'domcontentloaded',timeout:25000});
 if(!resp||resp.status()!==200)throw Error('HTTP '+resp?.status());
 await page.locator('.v40-header').waitFor({state:'visible',timeout:10000});
+await page.evaluate(async()=>{
+  const imgs=[...document.images].filter(img=>img.getBoundingClientRect().top<window.innerHeight+400);
+  await Promise.race([
+    Promise.all(imgs.map(img=>new Promise(resolve=>{
+      if(img.complete)return resolve();
+      img.addEventListener('load',resolve,{once:true});
+      img.addEventListener('error',resolve,{once:true});
+    }))),
+    new Promise(resolve=>setTimeout(resolve,9000))
+  ]);
+});
+const imgStats=await page.evaluate(()=>[...document.images].filter(img=>img.getBoundingClientRect().top<window.innerHeight+400).map(img=>({alt:img.alt,loaded:img.complete&&img.naturalWidth>0})));
+console.log('visible images:',label,viewport.name,JSON.stringify(imgStats));
 await page.screenshot({path:path.join(out,label+'-'+viewport.name+'.png'),fullPage:true,animations:'disabled',timeout:25000});
 const metrics=await page.evaluate(()=>({
  scrollWidth:document.documentElement.scrollWidth,
