@@ -4,20 +4,48 @@ const filterButtons = [...document.querySelectorAll('[data-filter]')];
 if (filterButtons.length) {
   const isResearch = Boolean(document.querySelector('.research-visual-grid'));
   const items = [...document.querySelectorAll(isResearch ? '.research-visual-card' : '.issuer-line:not(.head)')];
-  const categories = isResearch ? ['WEEKLY','IPO MONITOR','IPO MONITOR','LISTING REVIEW','LISTING REVIEW','LISTING REVIEW'] : ['SME','MAINBOARD','MAINBOARD','MAINBOARD','MAINBOARD','SME','MAINBOARD'];
-  items.forEach((item,i) => { item.dataset.category = categories[i]; });
-  filterButtons.forEach(button => button.addEventListener('click', () => {
-    const choice = button.dataset.filter;
-    filterButtons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
-    items.forEach(item => {
-      const text = item.textContent.toUpperCase();
-      const show = choice.startsWith('ALL') || item.dataset.category === choice ||
-        (choice === 'UPCOMING' && /OPENS|MONITOR/.test(text)) ||
-        (choice === 'LISTED' && /LISTED|05 OCT LISTING/.test(text));
-      item.hidden = !show;
-    });
-    document.getElementById('filter-status').textContent = `${items.filter(i => !i.hidden).length} items shown · ${choice.toLowerCase()}`;
-  }));
+  if (isResearch) {
+    const input = document.getElementById('research-query');
+    const status = document.getElementById('filter-status');
+    let category = 'ALL RESEARCH';
+    // Use explicit report metadata so rearranging cards cannot silently change a report's type.
+    function updateResearch() {
+      const tokens = (input?.value || '').toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+      let shown = 0;
+      items.forEach(item => {
+        const isCategory = category.startsWith('ALL') || item.dataset.category === category;
+        const searchable = item.textContent.toLocaleLowerCase();
+        const found = tokens.every(token => searchable.includes(token));
+        item.hidden = !(isCategory && found);
+        if (!item.hidden) shown++;
+      });
+      if (status) status.textContent = shown
+        ? shown + ' of ' + items.length + ' dated reports shown.'
+        : 'No dated reports match. Change your search or report type.';
+    }
+    filterButtons.forEach(button => button.addEventListener('click', () => {
+      category = button.dataset.filter || 'ALL RESEARCH';
+      filterButtons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      updateResearch();
+    }));
+    if (input) input.addEventListener('input', updateResearch);
+    updateResearch();
+  } else {
+    const categories = ['SME','MAINBOARD','MAINBOARD','MAINBOARD','MAINBOARD','SME','MAINBOARD'];
+    items.forEach((item,i) => { item.dataset.category = categories[i]; });
+    filterButtons.forEach(button => button.addEventListener('click', () => {
+      const choice = button.dataset.filter;
+      filterButtons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      items.forEach(item => {
+        const text = item.textContent.toUpperCase();
+        item.hidden = !(choice.startsWith('ALL') || item.dataset.category === choice ||
+          (choice === 'UPCOMING' && /OPENS|MONITOR/.test(text)) ||
+          (choice === 'LISTED' && /LISTED|05 OCT LISTING/.test(text)));
+      });
+      const status = document.getElementById('filter-status');
+      if (status) status.textContent = items.filter(i => !i.hidden).length + ' items shown · ' + choice.toLowerCase();
+    }));
+  }
 }
 const searchInput = document.getElementById('q');
 if (searchInput) {
