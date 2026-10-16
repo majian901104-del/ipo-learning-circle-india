@@ -159,3 +159,10 @@ body.v40-site :where(.clean-hero,.wealth-hero) h1{letter-spacing:-.03em!importan
  body.v40-site .clean-hero h1{font-size:clamp(32px,8vw,41px)!important;line-height:1.12!important}
  body.v40-site :where(.clean-hero,.wealth-hero,.pagehead) .inner{padding-left:20px!important;padding-right:20px!important}
 }
+/* Visual QA corrections after real 1440px and 390px screenshots. */
+body.v40-site{margin:0!important}
+.v40-company .v40-company-layout{padding-left:28px!important;padding-right:28px!important}
+@media(max-width:760px){
+ .v40-company .v40-company-layout{padding-left:20px!important;padding-right:20px!important}
+ .v40-ipo .v40-ipo-hero{margin:0!important}
+}
