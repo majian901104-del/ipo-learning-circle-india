@@ -1,0 +1,43 @@
+name: V4.2.1 Exchange Source Reconciliation QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ipo-exchange-*.js"
+      - "v421-*.css"
+      - "ipo-data-quality.html"
+      - "data/approved-exchange-*.json"
+      - "tests/v421-*"
+      - "scripts/v421-*"
+      - ".github/workflows/v421-ipo-crosscheck-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source policy, field reconciliation and older IPO QA
+        run: |
+          node --check ipo-exchange-reconcile.js
+          node --check ipo-exchange-status.js
+          node --check scripts/v421-ipo-verify.cjs
+          node --test tests/v421-ipo-reconcile.test.cjs tests/v41-data-governance.test.cjs tests/v40-phase2.test.cjs
+      - name: Generate honest cross-source audit without unlicensed values
+        run: node scripts/v421-ipo-verify.cjs --output=.reports/v421-ipo-audit.json
+      - name: Assert no manufactured verified exchange prices
+        run: |
+          node -e "const r=require('./.reports/v421-ipo-audit.json'); if(r.verifiedFields!==0||r.licensingState!=='no-approved-exchange-data')process.exit(1)"
+      - name: Preserve audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v421-cross-source-ipo-audit
+          path: .reports/v421-ipo-audit.json
+          if-no-files-found: error
+          retention-days: 14

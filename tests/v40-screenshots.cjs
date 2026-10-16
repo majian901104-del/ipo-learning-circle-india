@@ -69,6 +69,16 @@ if(label==='research-framework'){
   if(sections!==9)errors.push('Research framework should contain nine quality controls, got '+sections);
 }
 if(label==='source-ledger'){
+  await page.locator('.v421-company').first().waitFor({state:'visible',timeout:8500});
+  const crosscheck=await page.locator('.v421-company').count();
+  if(crosscheck!==10)errors.push('Expected 10 independently labelled IPO crosscheck cards, got '+crosscheck);
+  const realMatches=await page.locator('.v421-sebi').count();
+  if(realMatches<6)errors.push('Expected at least 6 real SEBI filings matched to issue cards, got '+realMatches);
+  const pending=await page.locator('[data-exchange-status]').innerText();
+  if(!pending.includes('No licensed NSE/BSE feed connected'))errors.push('Exchange permission status not clearly disclosed');
+  const jio=await page.locator('.v421-company').filter({hasText:'Jio Platforms'}).innerText();
+  if(!jio.includes('SEBI DOCUMENT FOUND'))errors.push('Jio actual SEBI RHP index filing not matched');
+  if(!jio.includes('Not verified'))errors.push('Unlicensed Jio offer terms incorrectly shown as confirmed');
   const entries=await page.locator('#evidence-rows tr').count();
   if(entries<8)errors.push('Evidence ledger displayed too few IPO records: '+entries);
   const dates=await page.locator('#evidence-date').innerText();
@@ -93,6 +103,7 @@ if(label==='ipo-calendar'){
   await page.locator('[data-stage-filter="all"]').click();
   const sources=await page.locator('#ipo-issues .ipo-card-actions .ipo-original-source').count();
   if(sources<1)errors.push('IPO issue source links not rendered');
+  await page.unroute('**/data/sebi-public-issue-filings.json');
 }
 }catch(e){errors.push(label+' '+viewport.name+': '+e.message);}
 }
