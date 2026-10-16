@@ -29,4 +29,4 @@ jobs:
           node --test tests/v42-sebi-feed.test.cjs
       - name: Test real SEBI public index access and extraction
         run: |
-          python3 scripts/v42-sebi-public-filings.py --dry-run
+          python3 scripts/v42-sebi-public-filings.py --dry-run --diagnose
