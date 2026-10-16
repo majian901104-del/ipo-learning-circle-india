@@ -1,0 +1,34 @@
+name: V4.3 Fast Domain and Worker Reachability
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/v43-external-health.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  external-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Inspect public endpoint HTTP responses with strict network timeout
+        run: |
+          set +e
+          echo "## Production domain" >> "$GITHUB_STEP_SUMMARY"
+          curl --max-time 12 --connect-timeout 5 -sS -o /tmp/angel-home.html -w 'Home: HTTP %{http_code}, remote IP %{remote_ip}, total %{time_total}s\n' https://angelresearchindia.com/
+          HOME=$?
+          echo "## Registration Worker health" >> "$GITHUB_STEP_SUMMARY"
+          curl --max-time 12 --connect-timeout 5 -sS -o /tmp/angel-health.json -w 'Worker health: HTTP %{http_code}, remote IP %{remote_ip}, total %{time_total}s\n' https://angel-research-conversion-v31.majian901104.workers.dev/health
+          WORKER=$?
+          if [ -f /tmp/angel-health.json ]; then
+            python3 - <<'PY'
+          import json
+          try:
+              j=json.load(open('/tmp/angel-health.json'))
+              print({k:j.get(k) for k in ['status','linkDatabaseConnected','routeMode','leadFormEnabled','inviteIndiaOnly','ipDedupReady','socialSourcePolicy']})
+          except Exception as exc: print('Health response is not valid JSON: '+str(exc))
+          PY
+          fi
+          echo "curl statuses home=$HOME worker=$WORKER"
+          if [ "$HOME" -ne 0 ] || [ "$WORKER" -ne 0 ]; then exit 1; fi
