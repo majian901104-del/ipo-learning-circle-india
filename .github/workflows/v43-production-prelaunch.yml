@@ -1,0 +1,40 @@
+name: V4.3 Real Production Prelaunch Acceptance
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "tests/v43-production-acceptance.cjs"
+      - ".github/workflows/v43-production-prelaunch.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  read-only-live-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify previous registration and admin functionality without production writes
+        run: |
+          node --test conversion-worker/test/lead-gate.test.mjs
+          node --test conversion-worker/test/admin-session.test.mjs
+          node --test conversion-worker/test/ip-dedup.test.mjs
+          node --test tests/v39-prelaunch.test.cjs
+          node --check tests/v43-production-acceptance.cjs
+      - name: Install real Chromium test browser
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Read-only live production mobile and backend smoke test
+        run: node tests/v43-production-acceptance.cjs
+      - name: Upload findings, screenshots and HTTP proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v43-real-production-acceptance
+          path: prelaunch-report/
+          if-no-files-found: warn
+          retention-days: 14
