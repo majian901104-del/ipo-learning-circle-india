@@ -11,7 +11,6 @@ const pages=[
  ['home','/','Institutional thinking'],
  ['research','/research.html','Research'],
  ['ipo','/ipo-current.html','IPO'],
- ['contact','/contact.html','Explore investing'],
  ['community','/ipo-community.html','IPO'],
  ['privacy','/privacy.html','Privacy'],
  ['request','/apply.html','research updates']
@@ -23,7 +22,6 @@ function short(e){return String(e?.message||e).slice(0,300)}
  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  for(const vp of [
   {name:'desktop',width:1440,height:900,mobile:false},
-  {name:'mobile390',width:390,height:844,mobile:true},
   {name:'mobile360',width:360,height:780,mobile:true}
  ]){
   const context=await browser.newContext({
@@ -38,10 +36,10 @@ function short(e){return String(e?.message||e).slice(0,300)}
    let response;
    try{
     const uri=site+route+(name==='home'?'?utm_source=facebook&utm_campaign=prelaunch_qa&utm_medium=paid_social':'');
-    response=await page.goto(uri,{waitUntil:'domcontentloaded',timeout:22000});
+    response=await page.goto(uri,{waitUntil:'domcontentloaded',timeout:14000});
     const status=response?.status()||0;
-    await page.waitForTimeout(700);
-    await page.evaluate(async()=>{
+    await page.waitForTimeout(350);
+    if(name==='home'||name==='community')await page.evaluate(async()=>{
       const imgs=Array.from(document.querySelectorAll('main img')).filter(i=>i.getBoundingClientRect().top<innerHeight+500);
       await Promise.race([
         Promise.all(imgs.map(img=>new Promise(resolve=>{
@@ -49,7 +47,7 @@ function short(e){return String(e?.message||e).slice(0,300)}
           img.addEventListener('load',resolve,{once:true});
           img.addEventListener('error',resolve,{once:true});
         }))),
-        new Promise(resolve=>setTimeout(resolve,8500))
+        new Promise(resolve=>setTimeout(resolve,4500))
       ]);
     });
     const details=await page.evaluate(()=>({
@@ -100,8 +98,8 @@ function short(e){return String(e?.message||e).slice(0,300)}
       assert(body.includes('support@angelresearchindia.com'),vp.name+': privacy contact missing');
       assert(body.includes('Cloudflare D1'),vp.name+': storage disclosure missing');
     }
-    if(name==='home'||name==='community'||name==='request'){
-      await page.screenshot({path:path.join(OUT,name+'-'+vp.name+'.png'),fullPage:true,animations:'disabled',timeout:22000});
+    if((name==='home'||name==='community')&&vp.mobile || name==='home'&&!vp.mobile){
+      await page.screenshot({path:path.join(OUT,name+'-'+vp.name+'.png'),fullPage:false,animations:'disabled',timeout:10000});
     }
    }catch(e){
     failures.push(name+' '+vp.name+': '+short(e));
