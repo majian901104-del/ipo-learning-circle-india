@@ -12,7 +12,7 @@ test('Homepage: evidence-first structure and genuine distinct visitor pathways',
  'data-v43-review-label','ipo-data-quality.html','research-framework.html']){
   assert.ok(html.includes(marker), 'Missing '+marker);
  }
- assert.equal((html.match(/class="v43-path/g)||[]).length,3);
+ assert.equal((html.match(/<a class="v43-path(?: v43-path-primary)?"/g)||[]).length,3);
  assert.match(html,/apply\.html/);
  assert.match(html,/data-conversion-join="true"/);
  assert.match(html,/No assured allotment or returns/);
