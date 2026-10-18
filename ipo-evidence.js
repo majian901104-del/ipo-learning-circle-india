@@ -9,6 +9,7 @@
     calendar:{type:'aggregator',name:'Groww IPO calendar'},
     reuters:{type:'media',name:'Reuters reporting'},
     jioReuters:{type:'media',name:'Reuters reporting'},
+    parasRhp:{type:'official-directory',name:'SEBI (RHP filing)'},
     financialExpress:{type:'media',name:'Financial Express reporting'},
     expressHealth:{type:'media',name:'Express Healthcare reporting'},
     sebiConsultation:{type:'media',name:'Reuters reporting'}
