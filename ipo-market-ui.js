@@ -9,7 +9,7 @@ if(!m){return}
 var today=dayIST();
 function stage(v){return today<v.open?'upcoming':today>v.close?'elapsed':'window'}
 function status(v){var k=stage(v);return k==='upcoming'?'Scheduled upcoming':k==='elapsed'?'Scheduled window elapsed':'Scheduled bid window'}
-function srcName(id){return ({sebi:'SEBI',exchange:'NSE',bse:'BSE',groww:'Groww',calendar:'IPO calendar',reuters:'Reuters',jioReuters:'Reuters',financialExpress:'Financial Express',expressHealth:'Express Healthcare',sebiConsultation:'Reuters'})[id]||'Reported source'}
+function srcName(id){return ({sebi:'SEBI',exchange:'NSE',bse:'BSE',groww:'Groww',calendar:'IPO calendar',reuters:'Reuters',jioReuters:'Reuters',parasRhp:'SEBI RHP',financialExpress:'Financial Express',expressHealth:'Express Healthcare',sebiConsultation:'Reuters'})[id]||'Reported source'}
 function sortItems(items){return items.slice().sort(function(a,b){return a.open.localeCompare(b.open)||a.name.localeCompare(b.name)})}
 function item(v){
  var href=v.detail||'ipo-company.html?issue='+encodeURIComponent(v.id);
