@@ -1,13 +1,13 @@
-/* Manually verified India IPO editorial schedule, 15 Oct 2026 IST.
+/* Manually reviewed India IPO editorial schedule, 18 Oct 2026 IST.
  * These are dated offer terms, NOT a live BSE/NSE subscription feed.
  * No direct subscription/grey-market data displayed without a timestamp.
  */
 (function(root){
 'use strict';
 root.AngelIPOData={
-  checkedAt:'2026-10-15T12:15:00+05:30',
-  verifiedDate:'15 Oct 2026 (IST)',
-  notice:'Editorial review: 15 Oct 2026 IST. Schedules reflect announced dates; not a live exchange feed. Verify RHP, issuer updates, exchanges, and registrar before applying. No allotment or gains are assured.',
+  checkedAt:'2026-10-18T13:55:00+05:30',
+  verifiedDate:'18 Oct 2026 (IST)',
+  notice:'Editorial review: 18 Oct 2026 IST. Schedules reflect announced dates; not a live exchange feed. Verify RHP, issuer updates, exchanges, and registrar before applying. No allotment or gains are assured.',
   sources:{
     sebi:'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15',
     exchange:'https://www.nseindia.com/market-data/all-upcoming-issues-ipo',
@@ -15,12 +15,14 @@ root.AngelIPOData={
     groww:'https://groww.in/ipo/mainboard',
     calendar:'https://groww.in/ipo',
     reuters:'https://www.reuters.com/world/india/indias-zetwerk-sets-price-band-143-151-rupees-per-share-518-million-ipo-2026-10-12/',
-    jioReuters:'https://www.reuters.com/world/india/mukesh-ambanis-jio-sets-price-band-india-ipo-2026-10-15/',
+    jioReuters:'https://www.reuters.com/world/india/mukesh-ambanis-jio-files-updated-prospectus-record-india-ipo-2026-10-14/',
+    parasRhp:'https://www.sebi.gov.in/filings/public-issues/oct-2026/paras-healthcare-limited-rhp_105284.html',
     financialExpress:'https://www.financialexpress.com/market/ipo-news-zetwerk-to-tonbo-imaging-4-mainboard-ipos-launching-oct-15-to-raise-rs-8870-crore-4360067/',
     expressHealth:'https://www.expresshealthcare.in/news/smt-ipo-to-open-on-october-15-price-band-set-at-rs-327-344-per-share/455532/',
     sebiConsultation:'https://www.reuters.com/legal/government/india-proposes-small-firm-ipo-overhaul-expands-role-institutional-investors-2026-10-14/'
   },
   issues:[
+    {id:'paras-healthcare',name:'Paras Healthcare',segment:'Mainboard',open:'2026-10-21',close:'2026-10-23',low:660,high:693,lot:21,size:'Up to ₹1,450 Cr',source:'parasRhp',filing:'RHP indexed by SEBI on 15 Oct 2026; published issue terms checked against Zerodha on 18 Oct',notes:'Multispecialty hospitals. Reported fresh issue up to ₹500 Cr and offer for sale up to ₹950 Cr; listing tentatively scheduled for 28 October. Final issuer and exchange notices prevail.'},
     {id:'jio-platforms',featured:true,name:'Jio Platforms',segment:'Mainboard',open:'2026-10-21',close:'2026-10-23',low:1065,high:1119,lot:12,size:'Up to ₹30,213 Cr',source:'jioReuters',filing:'Price band announced 14 Oct 2026; scheduled anchor bidding 19 Oct',notes:'Reliance Industries digital business. Planned fresh issue up to 270 million shares. Listing expected 28 Oct, subject to the issuer and exchange schedule.',detail:'ipo-jio-platforms.html'},
     {id:'hd-fire-protect',name:'HD Fire Protect',segment:'Mainboard',open:'2026-10-13',close:'2026-10-15',low:258,high:271,lot:55,size:'Approx. ₹712 Cr',source:'groww',notes:'Closing-window mainboard issue. Verify final bid closure time and terms in the exchange notice.'},
     {id:'fusion-cx',name:'Fusion CX',segment:'Mainboard',open:'2026-10-14',close:'2026-10-16',low:275,high:289,lot:51,size:'Approx. ₹702 Cr',source:'groww',notes:'Customer experience services; subscription window shown for 14–16 Oct, subject to offer terms.'},
@@ -33,9 +35,10 @@ root.AngelIPOData={
     {id:'shellz-india',name:'Shellz India',segment:'SME',open:'2026-10-15',close:'2026-10-19',low:170,high:179,lot:null,size:'Check prospectus',source:'calendar',notes:'SME offering; confirm lot size, price band and subscription window with BSE before action.'}
   ],
   briefing:[
-    {date:'15 Oct 2026',topic:'Major upcoming IPO',title:'Jio Platforms publishes indicative offer band',summary:'Reliance digital business Jio Platforms is preparing an offering with a reported ₹1,065–₹1,119 band and a scheduled 21–23 October bidding window. Verify the final RHP and exchange timetable.',source:'jioReuters',detail:'ipo-jio-platforms.html',tag:'ANNOUNCED OFFER TERMS'},
-    {date:'15 Oct 2026',topic:'Open issue',title:'Zetwerk subscription window opens',summary:'The manufacturing platform’s ₹143–₹151 public offer is scheduled for 15–19 October. Reported offer proceeds and valuation are subject to final offer documents.',source:'reuters',detail:'ipo-current.html#zetwerk',tag:'SOURCE-DATED'},
-    {date:'14 Oct 2026',topic:'IPO regulations',title:'SEBI consults on SME IPO rule changes',summary:'A proposal, not a final rule: the regulator is considering stricter profitability criteria and a broader role for qualified institutional buyers in some SME offerings.',source:'sebiConsultation',detail:'ipo-current.html',tag:'PROPOSAL — NOT LAW'}
+    {date:'18 Oct 2026',topic:'New RHP filings',title:'Jio Platforms and Paras Healthcare prepare for 21–23 October offers',summary:'SEBI indexed both RHPs on 15 October. Jio has a reported ₹1,065–₹1,119 band and 12-share lot; Paras has a reported ₹660–₹693 band and 21 shares. Check final issuer and exchange notices before applying.',source:'parasRhp',detail:'ipo-current.html#paras-healthcare',tag:'SEBI FILING + DATED OFFER TERMS'},
+    {date:'18 Oct 2026',topic:'Upcoming IPO',title:'Jio Platforms anchor bidding scheduled for 19 October',summary:'Reuters reports 270 million fresh shares, with up to ₹30,213 crore at the upper band. Public subscription is scheduled for 21–23 October. SEBI indexed the RHP on 15 October.',source:'jioReuters',detail:'ipo-jio-platforms.html',tag:'RHP FILED — SCHEDULED'},
+    {date:'16 Oct 2026',topic:'Closing windows',title:'Four IPOs have reported 19 October closing dates',summary:'Zetwerk, Bonfiglioli Transmissions, Tonbo Imaging and Sahajanand Medical Technologies have scheduled deadlines on 19 October. These are calendar dates, not live bid activity.',source:'reuters',detail:'ipo-current.html',tag:'EXCHANGE NOTICES PREVAIL'},
+    {date:'14 Oct 2026',topic:'SEBI consultation',title:'SME IPO framework revisions proposed',summary:'SEBI has proposed tighter profitability criteria and a wider role for institutional investors. This remains a consultation, not an operative regulatory change.',source:'sebiConsultation',detail:'research-weekly.html',tag:'PROPOSAL — NOT LAW'}
   ],
   archived:[
     {name:'R.K. Fashion Accessories',detail:'NSE SME listing review dated 12 Oct 2026. Dated price record, not a live quote.',link:'ipo-rk-fashion-accessories.html',official:'https://www.nseindia.com/get-quote/equity/RKFAL/R.K.-Fashion-Accessories-Limited'},
