@@ -3,11 +3,31 @@
   "feedType": "official-public-document-index",
   "publisher": "Securities and Exchange Board of India (SEBI)",
   "sourceUrl": "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15",
-  "fetchedAtUtc": "2026-10-16T07:23:11Z",
+  "fetchedAtUtc": "2026-10-19T12:59:18Z",
   "hasLivePriceOrSubscriptionData": false,
   "officialIndexRetrieved": true,
   "recordCount": 25,
   "records": [
+    {
+      "filingDate": "2026-10-19",
+      "title": "Zetwerk Manufacturing Businesses Limited : Addendum to RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/zetwerk-manufacturing-businesses-limited-addendum-to-rhp_105325.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-19",
+      "title": "BLS Polymers Limited – RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/bls-polymers-limited-rhp_105327.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
     {
       "filingDate": "2026-10-15",
       "title": "Paras Healthcare Limited – RHP",
@@ -233,26 +253,6 @@
       "title": "HERO MOTORS LIMITED - RHP",
       "documentType": "rhp",
       "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/hero-motors-limited-rhp_104395.html",
-      "publisher": "SEBI",
-      "evidenceType": "official-filing-index",
-      "dataVerified": false,
-      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
-    },
-    {
-      "filingDate": "2026-09-09",
-      "title": "SS RETAIL LIMITED - RHP",
-      "documentType": "rhp",
-      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/ss-retail-limited-rhp_104355.html",
-      "publisher": "SEBI",
-      "evidenceType": "official-filing-index",
-      "dataVerified": false,
-      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
-    },
-    {
-      "filingDate": "2026-09-09",
-      "title": "SONASELECTION INDIA LIMITED - RHP",
-      "documentType": "rhp",
-      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/sonaselection-india-limited-rhp_104393.html",
       "publisher": "SEBI",
       "evidenceType": "official-filing-index",
       "dataVerified": false,
