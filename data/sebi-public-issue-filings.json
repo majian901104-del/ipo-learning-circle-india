@@ -3,11 +3,21 @@
   "feedType": "official-public-document-index",
   "publisher": "Securities and Exchange Board of India (SEBI)",
   "sourceUrl": "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15",
-  "fetchedAtUtc": "2026-10-22T11:42:17Z",
+  "fetchedAtUtc": "2026-10-23T11:30:47Z",
   "hasLivePriceOrSubscriptionData": false,
   "officialIndexRetrieved": true,
   "recordCount": 25,
   "records": [
+    {
+      "filingDate": "2026-10-22",
+      "title": "SFC Environmental Technologies Ltd.- RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/sfc-environmental-technologies-ltd-rhp_105380.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
     {
       "filingDate": "2026-10-19",
       "title": "Zetwerk Manufacturing Businesses Limited : Addendum to RHP",
@@ -243,16 +253,6 @@
       "title": "NATIONAL STOCK EXCHANGE OF INDIA LIMITED - RHP",
       "documentType": "rhp",
       "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/national-stock-exchange-of-india-limited-rhp_104428.html",
-      "publisher": "SEBI",
-      "evidenceType": "official-filing-index",
-      "dataVerified": false,
-      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
-    },
-    {
-      "filingDate": "2026-09-10",
-      "title": "HERO MOTORS LIMITED - RHP",
-      "documentType": "rhp",
-      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/hero-motors-limited-rhp_104395.html",
       "publisher": "SEBI",
       "evidenceType": "official-filing-index",
       "dataVerified": false,
