@@ -3,11 +3,31 @@
   "feedType": "official-public-document-index",
   "publisher": "Securities and Exchange Board of India (SEBI)",
   "sourceUrl": "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15",
-  "fetchedAtUtc": "2026-10-23T11:30:47Z",
+  "fetchedAtUtc": "2026-10-26T12:49:47Z",
   "hasLivePriceOrSubscriptionData": false,
   "officialIndexRetrieved": true,
   "recordCount": 25,
   "records": [
+    {
+      "filingDate": "2026-10-26",
+      "title": "SFC Environmental Technologies Ltd. - Addendum to RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/sfc-environmental-technologies-ltd-addendum-to-rhp_105430.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
+    {
+      "filingDate": "2026-10-26",
+      "title": "BLS Polymers Limited - Addendum to RHP and Price Band",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2026/bls-polymers-limited-addendum-to-rhp-and-price-band_105419.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
     {
       "filingDate": "2026-10-22",
       "title": "SFC Environmental Technologies Ltd.- RHP",
@@ -233,26 +253,6 @@
       "title": "Varmora Granito Limited - RHP",
       "documentType": "rhp",
       "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/varmora-granito-limited-rhp_104681.html",
-      "publisher": "SEBI",
-      "evidenceType": "official-filing-index",
-      "dataVerified": false,
-      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
-    },
-    {
-      "filingDate": "2026-09-16",
-      "title": "ArMee Infotech Limited - RHP",
-      "documentType": "rhp",
-      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/armee-infotech-limited-rhp_104661.html",
-      "publisher": "SEBI",
-      "evidenceType": "official-filing-index",
-      "dataVerified": false,
-      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
-    },
-    {
-      "filingDate": "2026-09-11",
-      "title": "NATIONAL STOCK EXCHANGE OF INDIA LIMITED - RHP",
-      "documentType": "rhp",
-      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/national-stock-exchange-of-india-limited-rhp_104428.html",
       "publisher": "SEBI",
       "evidenceType": "official-filing-index",
       "dataVerified": false,
