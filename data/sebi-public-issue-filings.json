@@ -3,11 +3,21 @@
   "feedType": "official-public-document-index",
   "publisher": "Securities and Exchange Board of India (SEBI)",
   "sourceUrl": "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15",
-  "fetchedAtUtc": "2026-11-12T15:03:36Z",
+  "fetchedAtUtc": "2026-11-13T14:28:34Z",
   "hasLivePriceOrSubscriptionData": false,
   "officialIndexRetrieved": true,
   "recordCount": 25,
   "records": [
+    {
+      "filingDate": "2026-11-12",
+      "title": "Crystal Crop Protection Limited– RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/nov-2026/crystal-crop-protection-limited-rhp_105734.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
     {
       "filingDate": "2026-10-26",
       "title": "SFC Environmental Technologies Ltd. - Addendum to RHP",
@@ -243,16 +253,6 @@
       "title": "Acevector Limited - RHP",
       "documentType": "rhp",
       "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/acevector-limited-rhp_104628.html",
-      "publisher": "SEBI",
-      "evidenceType": "official-filing-index",
-      "dataVerified": false,
-      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
-    },
-    {
-      "filingDate": "2026-09-17",
-      "title": "Swastika Infra Ltd. - RHP",
-      "documentType": "rhp",
-      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/swastika-infra-ltd-rhp_104573.html",
       "publisher": "SEBI",
       "evidenceType": "official-filing-index",
       "dataVerified": false,
