@@ -3,11 +3,21 @@
   "feedType": "official-public-document-index",
   "publisher": "Securities and Exchange Board of India (SEBI)",
   "sourceUrl": "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15",
-  "fetchedAtUtc": "2026-11-19T15:39:03Z",
+  "fetchedAtUtc": "2026-11-20T15:19:59Z",
   "hasLivePriceOrSubscriptionData": false,
   "officialIndexRetrieved": true,
   "recordCount": 25,
   "records": [
+    {
+      "filingDate": "2026-11-19",
+      "title": "Foodlink F&B Holdings India Limited - RHP",
+      "documentType": "rhp",
+      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/nov-2026/foodlink-fandb-holdings-india-limited-rhp_105865.html",
+      "publisher": "SEBI",
+      "evidenceType": "official-filing-index",
+      "dataVerified": false,
+      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
+    },
     {
       "filingDate": "2026-11-13",
       "title": "Mahanadi Coalfields Limited - RHP",
@@ -233,16 +243,6 @@
       "title": "German Green Steel and Power Ltd. - RHP",
       "documentType": "rhp",
       "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/german-green-steel-and-power-ltd-rhp_104626.html",
-      "publisher": "SEBI",
-      "evidenceType": "official-filing-index",
-      "dataVerified": false,
-      "meaning": "SEBI listing existence; IPO issue terms not extracted or independently authenticated"
-    },
-    {
-      "filingDate": "2026-09-21",
-      "title": "Adroit Industries Limited - RHP",
-      "documentType": "rhp",
-      "sebiPageUrl": "https://www.sebi.gov.in/filings/public-issues/sep-2026/adroit-industries-limited-rhp_104607.html",
       "publisher": "SEBI",
       "evidenceType": "official-filing-index",
       "dataVerified": false,
