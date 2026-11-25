@@ -1,49 +1,52 @@
-/* Manually reviewed India IPO editorial schedule, 18 Oct 2026 IST.
- * These are dated offer terms, NOT a live BSE/NSE subscription feed.
- * No direct subscription/grey-market data displayed without a timestamp.
+/* Manually reviewed India IPO editorial schedule, 25 Nov 2026 IST.
+ * Dated calendar compiled from SEBI / exchange references and cross-checked
+ * against current public IPO calendars. NOT a live exchange subscription feed.
+ * GMP is intentionally not published following SEBI PR 75/2026 (23 Nov 2026).
  */
 (function(root){
 'use strict';
 root.AngelIPOData={
-  checkedAt:'2026-10-18T13:55:00+05:30',
-  verifiedDate:'18 Oct 2026 (IST)',
-  notice:'Editorial review: 18 Oct 2026 IST. Schedules reflect announced dates; not a live exchange feed. Verify RHP, issuer updates, exchanges, and registrar before applying. No allotment or gains are assured.',
+  checkedAt:'2026-11-25T20:30:00+05:30',
+  verifiedDate:'25 Nov 2026 (IST)',
+  notice:'Editorial review: 25 Nov 2026 IST. Schedules and reported offer terms are dated snapshots, not a live exchange feed. Confirm final price band, lot size, issue size, dates and allotment with the issuer RHP and NSE/BSE notices. Following SEBI advisory PR 75/2026 dated 23 Nov 2026, this platform does not publish or circulate IPO grey-market premium (GMP) figures. No allotment or gains are assured.',
   sources:{
     sebi:'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=11&ssid=15',
     exchange:'https://www.nseindia.com/market-data/all-upcoming-issues-ipo',
     bse:'https://www.bseindia.com/markets/PublicIssues/IPOIssues_new.aspx',
-    groww:'https://groww.in/ipo/mainboard',
-    calendar:'https://groww.in/ipo',
-    reuters:'https://www.reuters.com/world/india/indias-zetwerk-sets-price-band-143-151-rupees-per-share-518-million-ipo-2026-10-12/',
-    jioReuters:'https://www.reuters.com/world/india/mukesh-ambanis-jio-files-updated-prospectus-record-india-ipo-2026-10-14/',
-    parasRhp:'https://www.sebi.gov.in/filings/public-issues/oct-2026/paras-healthcare-limited-rhp_105284.html',
-    financialExpress:'https://www.financialexpress.com/market/ipo-news-zetwerk-to-tonbo-imaging-4-mainboard-ipos-launching-oct-15-to-raise-rs-8870-crore-4360067/',
-    expressHealth:'https://www.expresshealthcare.in/news/smt-ipo-to-open-on-october-15-price-band-set-at-rs-327-344-per-share/455532/',
-    sebiConsultation:'https://www.reuters.com/legal/government/india-proposes-small-firm-ipo-overhaul-expands-role-institutional-investors-2026-10-14/'
+    businessStandard:'https://www.business-standard.com/markets/ipo',
+    zerodha:'https://zerodha.com/ipo/',
+    sebiGmpAdvisory:'https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/advisory-regarding-unregulated-pre-listing-premium-often-called-as-grey-market-premium-gmp-for-upcoming-initial-public-offers-ipos-_105942.html',
+    monomarkRhp:'https://www.sebi.gov.in/filings/public-issues/nov-2026/monomark-engineering-india-limited-rhp_105932.html',
+    matangiRhp:'https://www.sebi.gov.in/filings/public-issues/nov-2026/matangi-rubber-limited-rhp_105931.html',
+    foodlinkRhp:'https://www.sebi.gov.in/filings/public-issues/nov-2026/foodlink-fandb-holdings-india-limited-rhp_105865.html',
+    mahanadiProspectus:'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&smid=12&ssid=15'
   },
   issues:[
-    {id:'paras-healthcare',name:'Paras Healthcare',segment:'Mainboard',open:'2026-10-21',close:'2026-10-23',low:660,high:693,lot:21,size:'Up to ₹1,450 Cr',source:'parasRhp',filing:'RHP indexed by SEBI on 15 Oct 2026; published issue terms checked against Zerodha on 18 Oct',notes:'Multispecialty hospitals. Reported fresh issue up to ₹500 Cr and offer for sale up to ₹950 Cr; listing tentatively scheduled for 28 October. Final issuer and exchange notices prevail.'},
-    {id:'jio-platforms',featured:true,name:'Jio Platforms',segment:'Mainboard',open:'2026-10-21',close:'2026-10-23',low:1065,high:1119,lot:12,size:'Up to ₹30,213 Cr',source:'jioReuters',filing:'Price band announced 14 Oct 2026; scheduled anchor bidding 19 Oct',notes:'Reliance Industries digital business. Planned fresh issue up to 270 million shares. Listing expected 28 Oct, subject to the issuer and exchange schedule.',detail:'ipo-jio-platforms.html'},
-    {id:'hd-fire-protect',name:'HD Fire Protect',segment:'Mainboard',open:'2026-10-13',close:'2026-10-15',low:258,high:271,lot:55,size:'Approx. ₹712 Cr',source:'groww',notes:'Closing-window mainboard issue. Verify final bid closure time and terms in the exchange notice.'},
-    {id:'fusion-cx',name:'Fusion CX',segment:'Mainboard',open:'2026-10-14',close:'2026-10-16',low:275,high:289,lot:51,size:'Approx. ₹702 Cr',source:'groww',notes:'Customer experience services; subscription window shown for 14–16 Oct, subject to offer terms.'},
-    {id:'zetwerk',name:'Zetwerk Manufacturing Businesses',segment:'Mainboard',open:'2026-10-15',close:'2026-10-19',low:143,high:151,lot:99,size:'Approx. ₹5,012 Cr',source:'reuters',notes:'Manufacturing platform. Fresh issue and offer-for-sale reported by Reuters; refer to current RHP for complete risk factors.'},
-    {id:'bonfiglioli',name:'Bonfiglioli Transmissions',segment:'Mainboard',open:'2026-10-15',close:'2026-10-19',low:558,high:586,lot:25,size:'Approx. ₹2,534 Cr',source:'financialExpress',notes:'Transmission and industrial drives. Indicative schedule of 15–19 Oct; verify with final filings.'},
-    {id:'tonbo-imaging',name:'Tonbo Imaging India',segment:'Mainboard',open:'2026-10-15',close:'2026-10-19',low:665,high:700,lot:21,size:'Approx. ₹852 Cr',source:'financialExpress',notes:'Electro-optical and imaging technology. Expected to list 23 Oct; verify in official issue documents.'},
-    {id:'sahajanand-medical',name:'Sahajanand Medical Technologies',segment:'Mainboard',open:'2026-10-15',close:'2026-10-19',low:327,high:344,lot:43,size:'Approx. ₹475 Cr',source:'expressHealth',notes:'Medical devices. All-offer-for-sale issue; company does not receive fresh proceeds from this offer.'},
-    {id:'vaibhav-vyapaar',name:'Vaibhav Vyapaar',segment:'SME',open:'2026-10-13',close:'2026-10-15',low:51,high:54,lot:null,size:'Approx. ₹42 Cr',source:'calendar',notes:'SME offering. Lot size and final timings must be confirmed in the exchange notice.'},
-    {id:'ravita-engineering',name:'Ravita Engineering Services',segment:'SME',open:'2026-10-14',close:'2026-10-16',low:105,high:112,lot:null,size:'Approx. ₹116 Cr',source:'calendar',notes:'SME offering. Opening revised to 14 Oct in current public calendars; verify exchange notice.'},
-    {id:'shellz-india',name:'Shellz India',segment:'SME',open:'2026-10-15',close:'2026-10-19',low:170,high:179,lot:null,size:'Check prospectus',source:'calendar',notes:'SME offering; confirm lot size, price band and subscription window with BSE before action.'}
+    {id:'shree-siddhivinayak-greentech',name:'Shree Siddhivinayak Greentech Industries',segment:'SME',open:'2026-11-25',close:'2026-11-27',low:130,high:142,lot:1000,size:'See final RHP; public calendars differ',source:'exchange',filing:'Offer window and price band cross-checked against public IPO calendars on 25 Nov 2026; verify final exchange notice and RHP.',notes:'NSE SME issue. Scheduled to close 27 Nov 2026. Reported lot size is 1,000 shares; confirm the final application lot and issue terms in the exchange notice.'},
+    {id:'foodlink-fb-holdings',name:'Foodlink F&B Holdings (India)',segment:'Mainboard',open:'2026-11-26',close:'2026-11-30',low:181,high:191,lot:78,size:'₹351.92–₹360.76 Cr (reported range)',source:'sebi',filing:'SEBI indexed the RHP on 19 Nov 2026; issue dates and terms cross-checked against public IPO calendars on 25 Nov.',notes:'Mainboard issue. SEBI RHP filing confirms the document exists; confirm final issue size, lot size and dates against the prospectus and exchange notice.'},
+    {id:'airpro-technology-india',name:'Airpro Technology India',segment:'SME',open:'2026-11-27',close:'2026-12-01',low:99,high:99,lot:1200,size:'Approx. ₹35.64 Cr (reported)',source:'exchange',filing:'Price and scheduled window cross-checked against public IPO calendars on 25 Nov 2026; verify final exchange notice.',notes:'SME fixed-price issue reported at ₹99 per share. Public calendars report a 1,200-share lot; confirm in the final offer document.'},
+    {id:'matangi-rubber',name:'Matangi Rubber',segment:'Mainboard',open:'2026-12-01',close:'2026-12-03',low:163,high:172,lot:87,size:'₹118.61–₹125.16 Cr (reported range)',source:'sebi',filing:'SEBI indexed the RHP on 20 Nov 2026; offer terms cross-checked against public IPO calendars on 25 Nov.',notes:'Mainboard issue. SEBI RHP filing confirms document existence; confirm final issue size, lot size and dates against the prospectus and exchange notice.'},
+    {id:'a-j-packaging',name:'A J Packaging',segment:'SME',open:'2026-12-01',close:'2026-12-03',low:175,high:180,lot:800,size:'₹52.50–₹54.00 Cr (reported range)',source:'exchange',filing:'Price band and scheduled window cross-checked against public IPO calendars on 25 Nov 2026; confirm final exchange notice.',notes:'SME issue. Public calendars report an 800-share lot; verify the final lot size and issue structure in the offer document.'},
+    {id:'monomark-engineering',name:'Monomark Engineering (India)',segment:'Mainboard',open:'2026-12-02',close:'2026-12-04',low:60,high:65,lot:225,size:'₹162–₹175.50 Cr (reported range)',source:'sebi',filing:'SEBI indexed the RHP on 23 Nov 2026; offer terms cross-checked against public IPO calendars on 25 Nov.',notes:'Mainboard issue. SEBI RHP filing confirms document existence; confirm final issue size, lot size and dates against the prospectus and exchange notice.'},
+    {id:'crystal-crop-protection',name:'Crystal Crop Protection',segment:'Mainboard',open:'2026-11-18',close:'2026-11-20',low:259,high:272,lot:null,size:'Approx. ₹455.72 Cr (reported)',source:'exchange',filing:'Closed 20 Nov 2026; final issue terms and listing schedule should be checked against exchange disclosures.',notes:'Bid window elapsed. Scheduled listing date reported as 26 Nov 2026; actual listing notice and opening price take precedence.'},
+    {id:'mahanadi-coalfields',name:'Mahanadi Coalfields',segment:'Mainboard',open:'2026-11-19',close:'2026-11-23',low:129,high:136,lot:null,size:'Approx. ₹9,000.97 Cr (reported)',source:'sebi',filing:'SEBI indexed the prospectus on 23 Nov 2026; bid window closed 23 Nov.',notes:'Bid window closed. Scheduled listing date reported as 27 Nov 2026; refer to exchange notice for final status.'},
+    {id:'watrana-rentals',name:'Watrana Rentals',segment:'SME',open:'2026-11-19',close:'2026-11-23',low:232,high:245,lot:null,size:'Approx. ₹120.10 Cr (reported)',source:'exchange',filing:'Bid window closed 23 Nov 2026; verify final allotment and listing disclosures.',notes:'NSE SME issue. Bid window elapsed; scheduled listing date reported as 27 Nov 2026.'}
   ],
   briefing:[
-    {date:'18 Oct 2026',topic:'New RHP filings',title:'Jio Platforms and Paras Healthcare prepare for 21–23 October offers',summary:'SEBI indexed both RHPs on 15 October. Jio has a reported ₹1,065–₹1,119 band and 12-share lot; Paras has a reported ₹660–₹693 band and 21 shares. Check final issuer and exchange notices before applying.',source:'parasRhp',detail:'ipo-current.html#paras-healthcare',tag:'SEBI FILING + DATED OFFER TERMS'},
-    {date:'18 Oct 2026',topic:'Upcoming IPO',title:'Jio Platforms anchor bidding scheduled for 19 October',summary:'Reuters reports 270 million fresh shares, with up to ₹30,213 crore at the upper band. Public subscription is scheduled for 21–23 October. SEBI indexed the RHP on 15 October.',source:'jioReuters',detail:'ipo-jio-platforms.html',tag:'RHP FILED — SCHEDULED'},
-    {date:'16 Oct 2026',topic:'Closing windows',title:'Four IPOs have reported 19 October closing dates',summary:'Zetwerk, Bonfiglioli Transmissions, Tonbo Imaging and Sahajanand Medical Technologies have scheduled deadlines on 19 October. These are calendar dates, not live bid activity.',source:'reuters',detail:'ipo-current.html',tag:'EXCHANGE NOTICES PREVAIL'},
-    {date:'14 Oct 2026',topic:'SEBI consultation',title:'SME IPO framework revisions proposed',summary:'SEBI has proposed tighter profitability criteria and a wider role for institutional investors. This remains a consultation, not an operative regulatory change.',source:'sebiConsultation',detail:'research-weekly.html',tag:'PROPOSAL — NOT LAW'}
+    {date:'25 Nov 2026',topic:'IPO calendar',title:'Shree Siddhivinayak Greentech issue opens; Foodlink follows on 26 November',summary:'Shree Siddhivinayak Greentech is scheduled for 25–27 November at ₹130–₹142. Foodlink F&B Holdings is scheduled for 26–30 November at ₹181–₹191. Treat these as dated calendar terms and confirm final notices with the issuer and exchange.',source:'exchange',detail:'ipo-current.html',tag:'DATED SCHEDULE · VERIFY EXCHANGE NOTICE'},
+    {date:'25 Nov 2026',topic:'Upcoming issues',title:'Five further IPO windows are scheduled into early December',summary:'Airpro Technology India is scheduled for 27 Nov–1 Dec; Matangi Rubber and A J Packaging for 1–3 Dec; and Monomark Engineering for 2–4 Dec. Price bands are shown where publicly reported; offer documents and exchange notices prevail.',source:'sebi',detail:'ipo-current.html',tag:'RHP / EXCHANGE CHECK REQUIRED'},
+    {date:'25 Nov 2026',topic:'Closed issues',title:'Mahanadi Coalfields, Watrana Rentals and Crystal Crop Protection have closed bidding',summary:'The three November issues have passed their reported bid windows. Their allotment and listing milestones must be updated from registrar and exchange notices rather than inferred from calendar dates.',source:'sebi',detail:'ipo-dashboard.html',tag:'CLOSED WINDOW · OUTCOME PENDING'},
+    {date:'23 Nov 2026',topic:'Investor protection',title:'SEBI issues advisory on unregulated pre-listing premiums (GMP)',summary:'SEBI cautioned that grey-market premium figures are unofficial, unverified and outside the exchange framework, and advised relevant registered intermediaries and market participants to refrain from publishing or circulating them. Angel Research has removed current GMP publication from its IPO coverage.',source:'sebiGmpAdvisory',detail:'disclosures.html',tag:'SEBI PR 75/2026 · REGULATORY UPDATE'}
   ],
   archived:[
-    {name:'R.K. Fashion Accessories',detail:'NSE SME listing review dated 12 Oct 2026. Dated price record, not a live quote.',link:'ipo-rk-fashion-accessories.html',official:'https://www.nseindia.com/get-quote/equity/RKFAL/R.K.-Fashion-Accessories-Limited'},
-    {name:'VANS Electroengineerings',detail:'Historical listing review recorded 07 Oct 2026.',link:'ipo-vans-electroengineerings.html'},
-    {name:'SRIT India',detail:'Historical GMP versus actual listing-price comparison.',link:'ipo-srit-india.html'}
+    {name:'Antala Industries',detail:'SME IPO closed 05 Nov 2026; listed 11 Nov 2026. Listing outcome should be sourced to the exchange.',link:'track-record.html',official:'https://www.nseindia.com/'},
+    {name:'Vedant Poly Fabs',detail:'SME IPO closed 04 Nov 2026; listed 09 Nov 2026. Listing outcome should be sourced to the exchange.',link:'track-record.html',official:'https://www.nseindia.com/'},
+    {name:'Maxwell Engineering Solutions',detail:'SME IPO listed 06 Nov 2026; preserve issue price and actual exchange opening as separate fields.',link:'track-record.html',official:'https://www.nseindia.com/'},
+    {name:'Vectras Enprocon',detail:'SME IPO listed 06 Nov 2026; preserve issue price and actual exchange opening as separate fields.',link:'track-record.html',official:'https://www.nseindia.com/'},
+    {name:'HGS (India)',detail:'SME IPO listed 06 Nov 2026; preserve issue price and actual exchange opening as separate fields.',link:'track-record.html',official:'https://www.nseindia.com/'},
+    {name:'R.K. Fashion Accessories',detail:'Historical NSE SME listing review; retain original dated coverage.',link:'ipo-rk-fashion-accessories.html',official:'https://www.nseindia.com/'},
+    {name:'VANS Electroengineerings',detail:'Historical listing review; retain original dated coverage.',link:'ipo-vans-electroengineerings.html'},
+    {name:'SRIT India',detail:'Historical listing review; retain original dated coverage.',link:'ipo-srit-india.html'}
   ]
 };
 })(window);
