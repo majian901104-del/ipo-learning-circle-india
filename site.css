@@ -1103,3 +1103,11 @@ img{max-width:100%}.button,.mast-actions>a,.about-actions>a{white-space:normal!i
  .institutional-hero .ih-photo img,
  .institutional-hero .ih-photo figcaption{max-width:100%}
 }
+
+/* V5.1 accessibility hotfix */
+body.v40-site :is(.clean-hero,.wealth-hero,.v40-company-hero,.v40-ipo-hero,.ipo-page-header) h1 {color:#fff!important}
+body.v40-site :is(.clean-hero,.wealth-hero,.v40-company-hero,.v40-ipo-hero,.ipo-page-header) p {color:#dbe5eb!important}
+body.v40-site .v43-journey .v43-path-primary strong {color:#142f40!important}
+body.v40-site .v43-journey .v43-path-primary small {color:#435b69!important}
+body.v40-site .v40-hero .v40-hero-meta span {color:#dbe5eb!important}
+a:focus-visible,button:focus-visible,summary:focus-visible {outline:3px solid #b58c45;outline-offset:3px}
