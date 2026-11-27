@@ -24,7 +24,7 @@ function params(){
   };
 }
 function track(eventName,properties){
-  if(!accepted||!valid||typeof w.gtag!=='function')return false;
+  if(!accepted||!valid||w.navigator?.globalPrivacyControl===true||w.navigator?.doNotTrack==='1'||typeof w.gtag!=='function')return false;
   if(!/^[a-z][a-z0-9_]{1,38}$/.test(eventName))return false;
   // No user names, phone numbers, emails, text input, full URLs or referral query strings.
   var safe=Object.assign(params(),properties||{});
@@ -46,6 +46,16 @@ function start(){
   var tag=d.createElement('script');tag.async=true;tag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(id);
   tag.onerror=function(){tagLoaded=false};
   d.head.appendChild(tag);
+  // Load the owner's GTM container only after optional analytics consent.
+  // Advertising consent remains denied; do not configure duplicate GA4 tags in GTM.
+  if(!d.getElementById('angel-gtm-container')){
+    w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+    var gtm=d.createElement('script');
+    gtm.id='angel-gtm-container';gtm.async=true;
+    gtm.src='https://www.googletagmanager.com/gtm.js?id=GTM-P795QL3K';
+    gtm.onerror=function(){gtm.remove()};
+    d.head.appendChild(gtm);
+  }
 }
 function setChoice(value){
   remember(value);accepted=value==='granted';
@@ -55,7 +65,7 @@ function setChoice(value){
   if(accepted){if(valid)w['ga-disable-'+id]=false;start();}
   else if(valid){
     w['ga-disable-'+id]=true;
-    if(typeof w.gtag==='function')w.gtag('consent','update',{analytics_storage:'denied'});
+    if(typeof w.gtag==='function')w.gtag('consent','update',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
   }
   var banner=d.getElementById('angel-consent-banner');if(banner)banner.remove();
 }
@@ -67,7 +77,7 @@ function makeBanner(){
   d.head.appendChild(style);
   var block=d.createElement('div');block.id='angel-consent-banner';block.setAttribute('role','region');block.setAttribute('aria-label','Optional website analytics');
   var title=d.createElement('strong');title.textContent='Optional analytics';
-  var p=d.createElement('p');p.appendChild(d.createTextNode('Allow optional analytics for site visits and community-link clicks? Names and WhatsApp numbers are not sent to Google Analytics. '));
+  var p=d.createElement('p');p.appendChild(d.createTextNode('Allow optional analytics for site visits and community-link clicks? Google Analytics and Google Tag Manager are used for optional measurement. Names and WhatsApp numbers are not sent by this site’s analytics code. '));
   var link=d.createElement('a');link.href='privacy.html';link.textContent='Privacy details';p.appendChild(link);
   var actions=d.createElement('div');actions.id='angel-consent-actions';
   var yes=d.createElement('button');yes.type='button';yes.textContent='Allow analytics';yes.addEventListener('click',function(){setChoice('granted')});
