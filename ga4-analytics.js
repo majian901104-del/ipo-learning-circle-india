@@ -30,21 +30,24 @@ function track(eventName,properties){
   var safe=Object.assign(params(),properties||{});
   w.gtag('event',eventName,safe);return true;
 }
-var adKey='angelresearch_ads_measurement_v1',ads=false,gtmLoaded=false;
+var adKey='angelresearch_ads_measurement_v1',ads=false,gtmLoaded=false,consentInitialized=false;
 function adChoice(){try{return w.localStorage.getItem(adKey)||''}catch(e){return ''}}
 function blocked(){return w.navigator?.globalPrivacyControl===true||w.navigator?.doNotTrack==='1'||w.doNotTrack==='1'}
 function consentState(){return {analytics_storage:accepted&&!blocked()?'granted':'denied',ad_storage:ads&&!blocked()?'granted':'denied',ad_user_data:ads&&!blocked()?'granted':'denied',ad_personalization:'denied'}}
 function start(){
   if(!valid||blocked()||(!accepted&&!ads))return;
-  if(!gtmLoaded){
+  if(!consentInitialized){
     w.dataLayer=w.dataLayer||[];
     w.gtag=w.gtag||function(){w.dataLayer.push(arguments)};
     w.gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
-    w.gtag('consent','update',consentState());
+    consentInitialized=true;
+  }
+  w.gtag('consent','update',consentState());
+  if(ads&&!gtmLoaded){
     w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
     var gtm=d.createElement('script');gtm.id='angel-gtm-container';gtm.async=true;gtm.src='https://www.googletagmanager.com/gtm.js?id=GTM-P795QL3K';
     gtmLoaded=true;gtm.onerror=function(){gtmLoaded=false;gtm.remove()};d.head.appendChild(gtm);
-  }else w.gtag('consent','update',consentState());
+  }
   if(accepted&&!tagLoaded){
     tagLoaded=true;w['ga-disable-'+id]=false;w.gtag('js',new Date());
     w.gtag('config',id,{send_page_view:true,allow_google_signals:false,allow_ad_personalization_signals:false});
@@ -66,7 +69,7 @@ function preferences(){
   panel.setAttribute('aria-label','Privacy settings');
   panel.innerHTML='<h2 style="margin-top:0;font-size:23px">Privacy settings</h2><p>Optional measurement is off unless you choose to allow it. You can change your choices at any time.</p><label style="display:block;padding:10px 0"><input type="checkbox" id="ar-consent-analytics"> Website analytics (Google Analytics and optional site measurement)</label><label style="display:block;padding:10px 0"><input type="checkbox" id="ar-consent-ads"> Google Ads conversion measurement (advertising cookies and measurement data; no personalized advertising)</label><p><a href="/privacy.html">Privacy notice</a></p><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" data-save style="padding:12px;background:#143d50;color:white;border:0;border-radius:4px;cursor:pointer">Save preferences</button><button type="button" data-reject style="padding:12px;cursor:pointer">Reject all</button><button type="button" data-close style="padding:12px;cursor:pointer">Cancel</button></div><p role="status" data-status></p>';
   var an=panel.querySelector('#ar-consent-analytics'),ad=panel.querySelector('#ar-consent-ads');
-  function apply(a,b){if(blocked()){a=false;b=false}ads=b;try{w.localStorage.setItem(adKey,b?'granted':'denied')}catch(e){}setChoice(a?'granted':'denied');panel.close();w.location.reload()}
+  function apply(a,b){if(blocked()){a=false;b=false}ads=b;try{w.localStorage.setItem(adKey,b?'granted':'denied')}catch(e){}remember(a?'granted':'denied');accepted=a;w['ga-disable-'+id]=!a;if(typeof w.gtag==='function')w.gtag('consent','update',consentState());panel.close();w.location.reload()}
   open.addEventListener('click',function(){an.checked=accepted&&!blocked();ad.checked=ads&&!blocked();an.disabled=ad.disabled=blocked();panel.querySelector('[data-status]').textContent=blocked()?'Your browser privacy signal disables optional measurement.':'';panel.showModal()});
   panel.querySelector('[data-save]').addEventListener('click',function(){apply(an.checked,ad.checked)});
   panel.querySelector('[data-reject]').addEventListener('click',function(){apply(false,false)});
