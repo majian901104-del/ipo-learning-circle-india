@@ -20,7 +20,7 @@ style.textContent=`
 #ar-ipo-popup .ar-submit,#ar-ipo-popup .ar-next{width:100%;display:block;text-decoration:none;color:#fff!important}
 #ar-ipo-popup button:disabled{opacity:.6;cursor:wait}
 #ar-ipo-popup .ar-close{position:absolute;right:9px;top:9px;width:36px;height:36px;border:0;background:transparent;color:white;font:26px Arial;cursor:pointer}
-#ar-ipo-popup .ar-note{font:12px/1.5 Arial;color:#526875;text-align:center;margin:12px 0 0}
+#ar-ipo-popup .ar-benefits{padding-left:22px;line-height:1.65;margin:10px 0 16px;color:#17394a}#ar-ipo-popup .ar-benefits li{margin:5px 0}#ar-ipo-popup .ar-note{font:12px/1.5 Arial;color:#526875;text-align:center;margin:12px 0 0}
 #ar-ipo-float{position:fixed;right:16px;bottom:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:90000;box-shadow:0 5px 20px #0003;display:flex;gap:8px;align-items:center;max-width:calc(100% - 32px);border-radius:40px;padding:12px 18px}
 #ar-ipo-float svg{width:23px;height:23px;flex:none}
 #ar-ipo-float:focus-visible,#ar-ipo-popup :focus-visible{outline:3px solid #bd923d;outline-offset:3px}
@@ -37,7 +37,7 @@ body:has(#angel-consent-banner) #ar-ipo-float{bottom:180px}
 `;
 document.head.appendChild(style);
 const dialog=document.createElement('dialog');dialog.id='ar-ipo-popup';dialog.setAttribute('aria-labelledby','ar-ipo-title');
-dialog.innerHTML=`<header><small>ANGEL RESEARCH</small><button type="button" class="ar-close" aria-label="Close invitation">×</button><h2 id="ar-ipo-title">Join India's Free IPO Community</h2><p>IPO research · Market insights · Investor education</p></header><div class="ar-invite-content"><p>Join our free educational community for Indian IPO calendars, research and market insights.</p><p>Complete one short registration on our community invitation page. Available to visitors in India.</p><a class="ar-next" rel="noopener noreferrer">CONTINUE TO FREE REGISTRATION →</a><p class="ar-note">Free to join. Education only; no guaranteed returns or allocations. <a href="/privacy.html">Privacy Notice</a></p></div>`;
+dialog.innerHTML=`<header><small>ANGEL RESEARCH</small><button type="button" class="ar-close" aria-label="Close invitation">×</button><h2 id="ar-ipo-title">Stay informed about India's IPO market.</h2><p>IPO research · Market insights · Investor education</p></header><div class="ar-invite-content"><p>Join our free WhatsApp investor education community.</p><ul class="ar-benefits"><li>IPO calendars and upcoming offer information</li><li>Market research and risk context</li><li>Investor education resources</li></ul><p>Complete one short registration on our community invitation page. Available to visitors in India.</p><a class="ar-next" rel="noopener noreferrer">CONTINUE TO FREE REGISTRATION →</a><p class="ar-note">Free to join. Education only; no guaranteed returns or allocations. <a href="/privacy.html">Privacy Notice</a></p></div>`;
 document.body.appendChild(dialog);
 const float=document.createElement('button');float.id='ar-ipo-float';float.type='button';float.setAttribute('aria-label','Open free IPO community invitation');float.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a9 9 0 0 1-9 9 9 9 0 0 1-4-.9L3 21l1.4-4.8a9 9 0 1 1 16.6-4.7Z"/><path d="M8 11h8M8 15h5"/></svg><span>Join Free IPO Group</span>';document.body.appendChild(float);
 const next=dialog.querySelector('.ar-next');
