@@ -1,4 +1,4 @@
-/* Angel Research site analytics V1.
+/* Angel Research site analytics V2 — explicit independent choices; no automatic modal.
  * Uses GA4 only after visitor consent AND after a valid G- measurement ID
  * has been configured; no PII or WhatsApp number is transmitted.
  * Cookie consent is stored per browser/origin, not cross-device.
@@ -30,75 +30,53 @@ function track(eventName,properties){
   var safe=Object.assign(params(),properties||{});
   w.gtag('event',eventName,safe);return true;
 }
+var adKey='angelresearch_ads_measurement_v1',ads=false,gtmLoaded=false;
+function adChoice(){try{return w.localStorage.getItem(adKey)||''}catch(e){return ''}}
+function blocked(){return w.navigator?.globalPrivacyControl===true||w.navigator?.doNotTrack==='1'||w.doNotTrack==='1'}
+function consentState(){return {analytics_storage:accepted&&!blocked()?'granted':'denied',ad_storage:ads&&!blocked()?'granted':'denied',ad_user_data:ads&&!blocked()?'granted':'denied',ad_personalization:'denied'}}
 function start(){
-  if(!valid||tagLoaded||!accepted||w.navigator?.globalPrivacyControl===true||w.navigator?.doNotTrack==='1')return;
-  tagLoaded=true;
-  w.dataLayer=w.dataLayer||[];
-  w.gtag=function(){w.dataLayer.push(arguments)};
-  w.gtag('js',new Date());
-  w.gtag('consent','default',{
-    analytics_storage:'granted',
-    ad_storage:'denied',
-    ad_user_data:'denied',
-    ad_personalization:'denied'
-  });
-  w.gtag('config',id,{send_page_view:true,allow_google_signals:false,allow_ad_personalization_signals:false});
-  var tag=d.createElement('script');tag.async=true;tag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(id);
-  tag.onerror=function(){tagLoaded=false};
-  d.head.appendChild(tag);
-  // Load the owner's GTM container only after optional analytics consent.
-  // Advertising consent remains denied; do not configure duplicate GA4 tags in GTM.
-  if(!d.getElementById('angel-gtm-container')){
+  if(!valid||blocked()||(!accepted&&!ads))return;
+  if(!gtmLoaded){
+    w.dataLayer=w.dataLayer||[];
+    w.gtag=w.gtag||function(){w.dataLayer.push(arguments)};
+    w.gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+    w.gtag('consent','update',consentState());
     w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-    var gtm=d.createElement('script');
-    gtm.id='angel-gtm-container';gtm.async=true;
-    gtm.src='https://www.googletagmanager.com/gtm.js?id=GTM-P795QL3K';
-    gtm.onerror=function(){gtm.remove()};
-    d.head.appendChild(gtm);
+    var gtm=d.createElement('script');gtm.id='angel-gtm-container';gtm.async=true;gtm.src='https://www.googletagmanager.com/gtm.js?id=GTM-P795QL3K';
+    gtmLoaded=true;gtm.onerror=function(){gtmLoaded=false;gtm.remove()};d.head.appendChild(gtm);
+  }else w.gtag('consent','update',consentState());
+  if(accepted&&!tagLoaded){
+    tagLoaded=true;w['ga-disable-'+id]=false;w.gtag('js',new Date());
+    w.gtag('config',id,{send_page_view:true,allow_google_signals:false,allow_ad_personalization_signals:false});
+    var tag=d.createElement('script');tag.async=true;tag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(id);
+    tag.onerror=function(){tagLoaded=false;tag.remove()};d.head.appendChild(tag);
   }
 }
 function setChoice(value){
-  remember(value);accepted=value==='granted';
-  // Inform the cookieless conversion module of explicit acceptance/rejection.
-  // A rejection disables both optional GA4 and independent aggregate events.
-  try{w.dispatchEvent(new Event('angel-analytics-choice'))}catch(_e){}
-  if(accepted){if(valid)w['ga-disable-'+id]=false;start();}
-  else if(valid){
-    w['ga-disable-'+id]=true;
-    if(typeof w.gtag==='function')w.gtag('consent','update',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
-  }
-  var banner=d.getElementById('angel-consent-banner');if(banner)banner.remove();
+  remember(value);accepted=value==='granted';w['ga-disable-'+id]=!accepted;
+  if(typeof w.gtag==='function')w.gtag('consent','update',consentState());
+  start();
+  try{w.dispatchEvent(new Event('angel-analytics-choice'))}catch(e){}
 }
-function makeBanner(){
-  if(!valid||choice()||d.getElementById('angel-consent-banner'))return;
-  var style=d.createElement('style');
-  style.id='angel-consent-style';
-  style.textContent='#angel-consent-banner{position:fixed;z-index:99999;left:12px;right:12px;bottom:80px;max-width:600px;margin:0 auto;box-sizing:border-box;background:#fff;color:#17394a;padding:17px 20px;border:1px solid #c9d7dc;border-radius:8px;box-shadow:0 12px 36px #001c3040;font:14px/1.55 Arial,Helvetica,sans-serif}#angel-consent-banner p{font:14px/1.55 Arial,Helvetica,sans-serif;margin:5px 0 12px;color:#536976}#angel-consent-banner a{text-decoration:underline}#angel-consent-actions{display:flex;gap:10px;flex-wrap:wrap}#angel-consent-actions button{border:1px solid #143d50;background:#143d50;color:#fff;padding:11px 17px;border-radius:4px;cursor:pointer;font:700 13px Arial;min-height:42px}#angel-consent-actions button:last-child{background:white;color:#143d50}@media(min-width:760px){#angel-consent-banner{left:24px;right:auto;bottom:24px}}@media(max-width:700px){#angel-consent-banner{left:12px;right:12px;bottom:12px;padding:12px 15px;max-width:500px}#angel-consent-banner p{font:13px/1.45 Arial,Helvetica,sans-serif;margin:5px 0 9px}#angel-consent-actions{gap:8px}#angel-consent-actions button{flex:1;min-width:110px;min-height:44px;padding:9px 11px}}';
-  d.head.appendChild(style);
-  var block=d.createElement('div');block.id='angel-consent-banner';block.setAttribute('role','region');block.setAttribute('aria-label','Optional website analytics');
-  var title=d.createElement('strong');title.textContent='Optional analytics';
-  var p=d.createElement('p');p.appendChild(d.createTextNode('Allow optional analytics for site visits and community-link clicks? Google Analytics and Google Tag Manager are used for optional measurement. Names and WhatsApp numbers are not sent by this site’s analytics code. '));
-  var link=d.createElement('a');link.href='privacy.html';link.textContent='Privacy details';p.appendChild(link);
-  var actions=d.createElement('div');actions.id='angel-consent-actions';
-  var yes=d.createElement('button');yes.type='button';yes.textContent='Allow analytics';yes.addEventListener('click',function(){setChoice('granted')});
-  var no=d.createElement('button');no.type='button';no.textContent='No thanks';no.addEventListener('click',function(){setChoice('denied')});
-  actions.appendChild(yes);actions.appendChild(no);block.appendChild(title);block.appendChild(p);block.appendChild(actions);d.body.appendChild(block);
-}
-function optOutControl(){
-  // On privacy page, let returning users withdraw earlier permission.
-  if(!/\/privacy\.html$/.test(w.location.pathname))return;
-  var main=d.querySelector('main .article')||d.querySelector('main');if(!main)return;
-  var wrap=d.createElement('p');wrap.style.padding='14px';wrap.style.background='#f2f6f6';
-  var label=d.createElement('strong');label.textContent='Analytics preferences: ';wrap.appendChild(label);
-  var b=d.createElement('button');b.type='button';b.textContent='Reject optional analytics';b.style.cssText='padding:8px 13px;cursor:pointer;border:1px solid #1c485a;background:#fff;color:#1c485a;font:700 13px Arial';
-  b.addEventListener('click',function(){setChoice('denied');b.textContent='Analytics disabled in this browser';});
-  wrap.appendChild(b);main.appendChild(wrap);
+function preferences(){
+  var footer=d.querySelector('footer')||d.querySelector('main')||d.body;
+  var wrap=d.createElement('div');wrap.style.cssText='padding:12px 20px;text-align:center;background:#f1f5f5;color:#17394a;font:14px/1.5 Arial,sans-serif';
+  var open=d.createElement('button');open.type='button';open.textContent='Privacy settings';open.style.cssText='background:transparent;color:#17394a;border:0;text-decoration:underline;cursor:pointer;padding:10px;font:inherit;min-height:44px';
+  var panel=d.createElement('dialog');panel.style.cssText='width:min(440px,calc(100% - 32px));box-sizing:border-box;border:1px solid #b8cbd2;border-radius:10px;padding:22px;color:#17394a;background:#fff;font:16px/1.5 Arial,sans-serif';
+  panel.setAttribute('aria-label','Privacy settings');
+  panel.innerHTML='<h2 style="margin-top:0;font-size:23px">Privacy settings</h2><p>Optional measurement is off unless you choose to allow it. You can change your choices at any time.</p><label style="display:block;padding:10px 0"><input type="checkbox" id="ar-consent-analytics"> Website analytics (Google Analytics and optional site measurement)</label><label style="display:block;padding:10px 0"><input type="checkbox" id="ar-consent-ads"> Google Ads conversion measurement (advertising cookies and measurement data; no personalized advertising)</label><p><a href="/privacy.html">Privacy notice</a></p><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" data-save style="padding:12px;background:#143d50;color:white;border:0;border-radius:4px;cursor:pointer">Save preferences</button><button type="button" data-reject style="padding:12px;cursor:pointer">Reject all</button><button type="button" data-close style="padding:12px;cursor:pointer">Cancel</button></div><p role="status" data-status></p>';
+  var an=panel.querySelector('#ar-consent-analytics'),ad=panel.querySelector('#ar-consent-ads');
+  function apply(a,b){if(blocked()){a=false;b=false}ads=b;try{w.localStorage.setItem(adKey,b?'granted':'denied')}catch(e){}setChoice(a?'granted':'denied');panel.close();w.location.reload()}
+  open.addEventListener('click',function(){an.checked=accepted&&!blocked();ad.checked=ads&&!blocked();an.disabled=ad.disabled=blocked();panel.querySelector('[data-status]').textContent=blocked()?'Your browser privacy signal disables optional measurement.':'';panel.showModal()});
+  panel.querySelector('[data-save]').addEventListener('click',function(){apply(an.checked,ad.checked)});
+  panel.querySelector('[data-reject]').addEventListener('click',function(){apply(false,false)});
+  panel.querySelector('[data-close]').addEventListener('click',function(){panel.close()});
+  wrap.appendChild(open);footer.appendChild(wrap);d.body.appendChild(panel);
 }
 function init(){
-  if(valid&&choice()==='granted'){accepted=true;start();}
-  else if(valid&&choice()==='denied'){accepted=false;}
-  else{makeBanner();}
-  optOutControl();
+  accepted=valid&&choice()==='granted'&&!blocked();ads=valid&&adChoice()==='granted'&&!blocked();
+  w['ga-disable-'+id]=!accepted;
+  start();preferences();
   d.addEventListener('click',function(e){
     var anchor=e.target&&e.target.closest?e.target.closest('a[href]'):null;
     if(!anchor)return;
