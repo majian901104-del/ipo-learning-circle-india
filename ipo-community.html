@@ -206,6 +206,7 @@
   if(submitted){e.preventDefault();return}
   if(!token.value||Date.now()-issued>17*60*1000){e.preventDefault();if(await prepare())form.requestSubmit();return}
   form.action=base+'/join?'+params();
+  try{if(localStorage.getItem('angelresearch_ads_measurement_v1')==='granted'&&navigator.globalPrivacyControl!==true&&navigator.doNotTrack!=='1'&&window.doNotTrack!=='1'&&Array.isArray(window.dataLayer))window.dataLayer.push({event:'ipo_join_button_click'});}catch(_e){}
   if(metaAllowed()){
    e.preventDefault();
    submitted=true;button.disabled=true;status.textContent='Submitting securely…';
@@ -222,14 +223,15 @@
     const next=document.createElement('a');next.className='join-button';next.href=dest.href;next.textContent='OPEN WHATSAPP GROUP →';
     next.addEventListener('click',()=>metaTrack('Contact'),{once:true});
     form.replaceWith(status,next);
+    setTimeout(()=>{location.assign(dest.href)},1500);
     return;
    }catch(_e){
-    status.textContent='Confirmation unavailable. Please use the separate registration page if needed.';
+    status.textContent='Confirmation unavailable. Your registration may already be saved. Please contact support or use the separate registration page if needed.';
     return;
    }
   }
   submitted=true;button.disabled=true;status.textContent='Submitting securely…';
-  try{if(localStorage.getItem('angelresearch_ads_measurement_v1')==='granted'&&navigator.globalPrivacyControl!==true&&navigator.doNotTrack!=='1'&&window.doNotTrack!=='1'&&Array.isArray(window.dataLayer))window.dataLayer.push({event:'ipo_join_button_click'});}catch(_e){}
+
  });
  window.addEventListener('pageshow',e=>{if(e.persisted){submitted=false;prepare()}});
  prepare();
