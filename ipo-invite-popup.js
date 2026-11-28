@@ -17,7 +17,7 @@ style.textContent=`
 #ar-ipo-popup .ar-consent input{flex:none;width:18px;height:18px;margin:2px 0}
 #ar-ipo-popup a{color:#174e69;text-decoration:underline}
 #ar-ipo-popup .ar-submit,#ar-ipo-float,#ar-ipo-popup .ar-next{border:0;background:#146b47;color:white;font:700 15px/1.35 Arial;cursor:pointer;border-radius:8px;padding:14px;text-align:center}
-#ar-ipo-popup .ar-submit,#ar-ipo-popup .ar-next{width:100%;display:block;text-decoration:none}
+#ar-ipo-popup .ar-submit,#ar-ipo-popup .ar-next{width:100%;display:block;text-decoration:none;color:#fff!important}
 #ar-ipo-popup button:disabled{opacity:.6;cursor:wait}
 #ar-ipo-popup .ar-close{position:absolute;right:9px;top:9px;width:36px;height:36px;border:0;background:transparent;color:white;font:26px Arial;cursor:pointer}
 #ar-ipo-popup .ar-note{font:12px/1.5 Arial;color:#526875;text-align:center;margin:12px 0 0}
@@ -26,7 +26,7 @@ style.textContent=`
 #ar-ipo-float:focus-visible,#ar-ipo-popup :focus-visible{outline:3px solid #bd923d;outline-offset:3px}
 #ar-ipo-popup [hidden]{display:none!important}
 body:has(#angel-consent-banner) #ar-ipo-float{bottom:180px}
-@media(max-width:520px){#ar-ipo-popup header{padding:20px}#ar-ipo-popup form{padding:18px 20px}#ar-ipo-popup h2{font-size:24px}#ar-ipo-float{font-size:13px;padding:10px 14px;right:12px}}
+@media(max-width:520px){#ar-ipo-popup header{padding:20px}#ar-ipo-popup .ar-invite-content{padding:18px 20px}#ar-ipo-popup h2{font-size:24px}#ar-ipo-float{font-size:13px;padding:10px 14px;right:12px}}
 @media(prefers-reduced-motion:no-preference){#ar-ipo-float{animation:ar-invite-pulse 3s ease-in-out 3}@keyframes ar-invite-pulse{50%{box-shadow:0 0 0 5px #146b4726}}}
 `;
 document.head.appendChild(style);
@@ -42,12 +42,12 @@ next.href=dest.href;
 let shown=false;
 function mark(){shown=true;try{localStorage.setItem(key,String(Date.now()))}catch(e){}}
 function recent(){try{return Date.now()-Number(localStorage.getItem(key)||0)<86400000}catch(e){return false}}
-function open(){if(dialog.open)return;mark();dialog.showModal();float.hidden=true;}
+function open(){if(dialog.open)return;mark();dialog.showModal();float.hidden=true;try{window.AngelAnalytics?.track('ipo_invitation_open',{button_location:'homepage_popup'})}catch(e){}}
 dialog.querySelector('.ar-close').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('close',()=>{float.hidden=false;float.focus({preventScroll:true})});
 float.addEventListener('click',open);
 function auto(){if(!shown&&!recent()&&!document.getElementById('angel-consent-banner')&&!document.querySelector('dialog[open]'))open()}
 setTimeout(auto,3000);
 window.addEventListener('angel-analytics-choice',()=>setTimeout(auto,3000));
-next.addEventListener('click',()=>{try{window.AngelAnalytics?.track('request_updates_click',{button_location:'ipo_popup_registration'})}catch(e){}});
+next.addEventListener('click',()=>{try{window.AngelAnalytics?.track('ipo_invitation_click',{button_location:'ipo_popup_registration'})}catch(e){}});
 })();
