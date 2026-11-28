@@ -84,6 +84,16 @@ function init(){
     var anchor=e.target&&e.target.closest?e.target.closest('a[href]'):null;
     if(!anchor)return;
     var raw=anchor.getAttribute('href')||'';
+    // Measure only trusted user activation of a direct community registration link.
+    // Opening the invitation dialog, auto-popup and page views are not conversions.
+    try{
+      var destination=new URL(anchor.href,w.location.href);
+      var isJoin=destination.origin==='https://angel-research-conversion-v31.majian901104.workers.dev'&&destination.pathname==='/join';
+      if(e.isTrusted&&e.button===0&&isJoin&&ads&&adChoice()==='granted'&&!blocked()&&gtmLoaded&&Array.isArray(w.dataLayer)){
+        w.dataLayer.push({event:'ipo_join_button_click'});
+      }
+    }catch(_e){}
+
     if(anchor.hasAttribute('data-conversion-join') || /^https:\/\/cc\.stockscode\.click\/?([?#].*)?$/i.test(raw)){
       track('join_community_click',{button_location:(anchor.getAttribute('data-cta')||anchor.getAttribute('data-community')||'site_link').slice(0,50),destination_type:'community_link'});
     }else if(/(?:^|\/)apply\.html(?:[?#]|$)/i.test(raw)){
