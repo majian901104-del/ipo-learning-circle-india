@@ -5,7 +5,7 @@ const status = document.getElementById('setupNote');
 function adsAllowed(){try{return localStorage.getItem('angelresearch_ads_measurement_v1')==='granted'&&window.doNotTrack!=='1'}catch(e){return false}}
 const params = new URLSearchParams(location.search);
 for (const key of ['utm_source','utm_campaign']) {
-  document.getElementById(key).value = (params.get(key) || '').slice(0,120);
+  document.getElementById(key).value = (window.AngelCampaign?.get(key) || params.get(key) || '').slice(0,120);
 }
 button.addEventListener('click',()=>{window.AngelAnalytics?.track('research_form_button_click',{form_type:'research_updates'});if(adsAllowed()&&navigator.globalPrivacyControl!==true&&navigator.doNotTrack!=='1'&&window.google_tag_manager){window.dataLayer?.push({event:'research_form_button_click',form_type:'research_updates'});}});
 button.disabled = false;
