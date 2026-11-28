@@ -122,17 +122,17 @@
   </section></section>
 <section id="panel-leads" class="admin-view-panel" data-admin-panel="leads" aria-label="社区登记用户" hidden>
  <div class="section-heading"><div><span class="section-index">08 / CONTACT REGISTRATION</span><h2>社区用户登记</h2>
- <p>用户填写姓名和 WhatsApp 手机号并同意收集后，提交成功才会打开群邀请。</p></div><span class="section-side-note">V3.7 · PROTECTED CONTACTS</span></div>
+ <p>用户填写姓名、年龄范围和 WhatsApp 手机号并同意收集后，提交成功才会打开群邀请。</p></div><span class="section-side-note">V4.1 · PROTECTED CONTACTS</span></div>
  <div class="notice accounting-note"><b>隐私提示：</b>只有完成统一管理员登录才能读取登记记录。登记不等于已经加入群组；公开统计报表不显示姓名和电话。资料只为邀请处理及单独同意的更新使用，90 天自动清理。</div>
  <div class="panel" style="padding:22px;margin:16px 0"><div class="section-top"><div><div class="kicker">私人登记记录 · CLOUDFlARE D1</div>
  <h2>最新登记（每页最多 50 条）</h2><p class="section-sub" id="leads-mode">正在检查登记服务状态…</p></div>
  <div style="display:flex;gap:10px;flex-wrap:wrap">
  <button type="button" id="leads-reload" class="action outline">刷新记录</button>
- <button type="button" id="leads-export" class="action outline" disabled>导出当前页 CSV</button>
+ <button type="button" id="leads-export" class="action outline" disabled>导出筛选结果 CSV</button>
  </div></div>
- <p id="leads-message" role="status" aria-live="polite" style="color:#527082;font-size:13px">登录后读取记录。</p>
+ <div class="table-toolbar" style="display:flex;flex-wrap:wrap;gap:12px;margin:12px 0"><label>搜索客户 <input id="leads-search" type="search" placeholder="姓名、号码或活动"></label><label>年龄 <select id="leads-age"><option value="">全部</option><option>18–24</option><option>25–34</option><option>35–44</option><option>45–54</option><option>55+</option><option value="unknown">未记录</option></select></label><label>渠道 <input id="leads-source" type="search" placeholder="来源"></label><label>时间 <select id="leads-days"><option value="">不限</option><option value="1">24小时</option><option value="7">7天</option><option value="30">30天</option></select></label></div><p class="helper">仅筛选当前已加载记录，点击加载更早记录扩大范围。请勿将登记人数视为实际入群人数。</p><p id="leads-message" role="status" aria-live="polite" style="color:#527082;font-size:13px">登录后读取记录。</p>
  <div style="overflow-x:auto"><table style="width:100%;min-width:760px;border-collapse:collapse;font-size:13px;text-align:left">
- <thead><tr><th>提交时间 (UTC)</th><th>姓名</th><th>WhatsApp 手机号</th><th>来源</th><th>活动</th><th>更新同意</th><th>操作</th></tr></thead>
+ <thead><tr><th>提交时间 (UTC)</th><th>姓名</th><th>年龄范围</th><th>WhatsApp 手机号</th><th>来源</th><th>活动</th><th>更新同意</th><th>操作</th></tr></thead>
  <tbody id="leads-body"></tbody></table></div>
  <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center">
  <small id="leads-page-count">尚无可查看的记录</small><button type="button" id="leads-more" class="action outline" hidden>加载更早 50 条</button>
@@ -172,5 +172,5 @@
 <script src="analytics-dashboard-v323.js?v=20261014-v33" defer></script>
 <script src="link-management.js?v=20261015-v36" defer></script>
 <script src="ops-health-v34.js?v=20261015-v38" defer></script>
-<script src="leads-admin-v37.js?v=20261015-v37" defer></script>
+<script src="leads-admin-v37.js?v=20261128-v41" defer></script>
 </body></html>
