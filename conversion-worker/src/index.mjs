@@ -97,7 +97,18 @@ export default {
   if(secureLinkResponse)return secureLinkResponse;
   if(url.pathname==='/report')return handleReport(request,env);
   if(url.pathname==='/health' && request.method==='GET'){
-    return reply(JSON.stringify({status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy',leadFormEnabled:env.JOIN_LEAD_FORM_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only',inviteIndiaOnly:env.JOIN_INDIA_ONLY_ENABLED==='true',socialSourcePolicy:env.JOIN_SOURCE_POLICY||'observe'}),
+    const started=Date.now();
+    let databaseCheck='unbound',registrationCheck='unavailable',primaryCheck='unknown';
+    if(env.LINK_DB){
+      try{await env.LINK_DB.prepare('SELECT 1 AS ready').first();databaseCheck='ok'}catch(_e){databaseCheck='error'}
+      if(databaseCheck==='ok'){
+        try{await env.LINK_DB.prepare('SELECT age_range FROM community_leads LIMIT 0').all();registrationCheck='ok'}catch(_e){registrationCheck='schema_or_query_error'}
+        if(env.LINK_DYNAMIC_TARGET_ENABLED==='true'){
+          try{primaryCheck=await dynamicPrimaryUrl(env)?'configured':'missing'}catch(_e){primaryCheck='error'}
+        }
+      }
+    }
+    return reply(JSON.stringify({version:'4.4',checkedAt:new Date().toISOString(),checkDurationMs:Date.now()-started,databaseCheck,registrationCheck,primaryCheck,status:'ok',aggregate:!!env.ANALYTICS,linkDatabaseConnected:!!env.LINK_DB,routeMode:env.LINK_MODE_ENABLED==='true'?'protected':env.LINK_DYNAMIC_TARGET_ENABLED==='true'?'dynamic_primary':'legacy',leadFormEnabled:env.JOIN_LEAD_FORM_ENABLED==='true',ipDedupEnabled:dedupEnabled(env),ipDedupWindowHours:dedupHours(env),ipDedupReady:dedupReady(env),ipDedupScope:'statistics_only',inviteIndiaOnly:env.JOIN_INDIA_ONLY_ENABLED==='true',socialSourcePolicy:env.JOIN_SOURCE_POLICY||'observe'}),
       200,{'Content-Type':'application/json',...cors(origin)});
   }
   if(url.pathname==='/collect'){
