@@ -143,7 +143,7 @@ test('V3.2 report aggregates source campaign daily and countries with owner key'
  assert.equal(body.regions[0].region,'MH');
  assert.equal(body.devices[0].os,'android');
  assert.equal(body.models[0].model,'pixel_8');
- assert.equal(queries.length,5);
+ assert.equal(queries.length,6);
  assert.ok(queries.every(q=>q.query.includes('events.analyticsEngine.angel_research_conversion_v31')));
  assert.ok(queries.every(q=>q.params.start.endsWith('Z')));
 });
@@ -213,7 +213,7 @@ test('V3.2.2 exclusion is a fixed SQL clause applied consistently across all rep
  assert.equal(res.status,200);
  const data=await res.json();
  assert.equal(data.excludeTest,true);
- assert.equal(queries.length,5);
+ assert.equal(queries.length,6);
  assert.ok(queries.every(q=>q.query.includes("blob3 NOT LIKE 'test%'")));
  assert.ok(queries.some(q=>q.query.includes("blob6 = 'in'")));
  const {env:other,queries:queriesAll}=reportEnv();
@@ -241,4 +241,11 @@ test('V3.4 health is accessible only as non-secret status and CORS for official 
  assert.equal(body.routeMode,'legacy');
  assert.equal(body.linkDatabaseConnected,true);
  assert.equal(Object.prototype.hasOwnProperty.call(body,'LINK_ADMIN_KEY'),false);
+});
+
+test('V7.2 channel device report suppresses low counts',async()=>{
+ const {env}=reportEnv(); const original=env.ANALYTICS_SQL.query;
+ env.ANALYTICS_SQL.query=async opts=>opts.query.includes("community_form_success")?{data:[{source:'google_ads',device:'mobile',os:'android',event:'page_view',total:12},{source:'google_ads',device:'mobile',os:'android',event:'community_form_success',total:1}]}:original(opts);
+ const body=await (await worker.fetch(reportRequest(reportSecret),env)).json();
+ assert.deepEqual(body.channelDevices,[{source:'google_ads',device:'mobile',os:'android',views:12,registrations:null}]);
 });
