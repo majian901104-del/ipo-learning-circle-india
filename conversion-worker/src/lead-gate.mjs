@@ -54,15 +54,6 @@ async function storage(env){
 async function metadataReady(env){
  try{await env.LINK_DB.prepare('SELECT device_type, operating_system, country_code, region_code, metadata_opt_in FROM community_leads LIMIT 0').all();return true}catch(_e){return false}
 }
-function leadMetadata(request,body){
- if(body.get('metadata_opt_in')!=='yes'||request.headers.get('DNT')==='1'||request.headers.get('Sec-GPC')==='1')return [null,null,null,null,0];
- const ua=request.headers.get('User-Agent')||'';
- const os=/iPhone|iPad|iPod/i.test(ua)?'ios':/Android/i.test(ua)?'android':/Windows/i.test(ua)?'windows':/CrOS/i.test(ua)?'chromeos':/Macintosh|Mac OS/i.test(ua)?'macos':/Linux/i.test(ua)?'linux':'unknown';
- const device=/iPad|Tablet|Android(?!.*Mobile)/i.test(ua)?'tablet':/iPhone|iPod|Mobile/i.test(ua)?'mobile':os==='unknown'?'unknown':'desktop';
- const country=String(request.cf?.country||'').toUpperCase();
- const region=String(request.cf?.regionCode||'').toUpperCase();
- return [device,os,/^[A-Z]{2}$/.test(country)?country:null,/^[A-Z0-9-]{1,12}$/.test(region)?region:null,1];
-}
 
 function render({formToken='',data={},message='',unavailable=false}={}){
  const qs=new URLSearchParams({s:data.source||'direct',c:data.campaign||'direct',m:data.medium||'direct'}).toString();
@@ -78,8 +69,7 @@ function render({formToken='',data={},message='',unavailable=false}={}){
  '<small>Indian number only. Enter 10 digits beginning with 6, 7, 8 or 9; do not repeat +91.</small>'+
  '<label class="check"><input type="checkbox" name="consent" value="yes" required><span>I agree to provide these details for my community invitation as explained in the <a href="'+HOME+'/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Notice</a>. This is not an investment account application.</span></label>'+
  '<label class="check"><input type="checkbox" name="updates_opt_in" value="yes"><span>Optional: I would like to receive IPO and market research updates via WhatsApp. I can withdraw my consent.</span></label>'+
- '<label class="check"><input type="checkbox" name="ads_measurement" value="yes"><span>Optional: allow additional registration conversion measurement for this request. No name, phone number or age is sent in the measurement event.</span></label>'+
- '<label class="check"><input type="checkbox" name="metadata_opt_in" value="yes"><span>Optional: allow us to save your broad device category, operating system, country and state/region with your registration for channel reporting and technical support. You can register without agreeing. No precise location or exact device model is saved.</span></label>'+
+ '<p class="note">Basic service statistics use broad device and region categories without adding them to your contact record. Browser privacy signals are respected. See our <a href="'+HOME+'/privacy.html">Privacy Notice</a>.</p>'+
  '<div class="honeypot" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>'+
  '<button type="submit">SUBMIT &amp; OPEN WHATSAPP →</button>'+
  '<p class="note">Your phone number and name are never placed in the WhatsApp URL. Submitting does not guarantee group admission. We never request banking passwords, trading credentials or OTPs. For privacy requests, data deletion or withdrawing updates consent, email <a href="mailto:support@angelresearchindia.com">support@angelresearchindia.com</a>.</p>'+
@@ -170,7 +160,7 @@ export async function handleLeadGate(request,env,record){
  let result;try{
   const values=[nonce,name,phone,meta.source,meta.campaign,meta.medium,body.get('updates_opt_in')==='yes'?1:0,Math.floor(Date.now()/1000),age];
   if(await metadataReady(env)){
-   result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range,device_type,operating_system,country_code,region_code,metadata_opt_in) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(...values,...leadMetadata(request,body)).run();
+   result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range,device_type,operating_system,country_code,region_code,metadata_opt_in) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(...values,null,null,null,null,0).run();
   }else{
    result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range) VALUES(?,?,?,?,?,?,?,?,?)').bind(...values).run();
   }
@@ -187,12 +177,11 @@ export async function handleLeadGate(request,env,record){
   return render({message:'This form was already processed. Please request a new invitation form.',
    data:meta,formToken:await tokenNew(env)});
  }
- if(typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium});
  // Coarse device classification only; never retain the request user agent.
  const ua=request.headers.get('User-Agent')||'';
  const os=/iPhone|iPad|iPod/i.test(ua)?'ios':/Android/i.test(ua)?'android':/Windows/i.test(ua)?'windows':/CrOS/i.test(ua)?'chromeos':/Macintosh|Mac OS/i.test(ua)?'macos':/Linux/i.test(ua)?'linux':'unknown';
  const device=/iPad|Tablet|Android(?!.*Mobile)/i.test(ua)?'tablet':/iPhone|iPod|Mobile/i.test(ua)?'mobile':os==='unknown'?'unknown':'desktop';
- if(body.get('ads_measurement')==='yes'&&request.headers.get('Sec-GPC')!=='1'&&request.headers.get('DNT')!=='1'&&typeof record==='function')await record(env,request,'community_form_success',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium,device,os});
+ if(typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium,device,os});
  return successPage(destination);
 }
 export async function handleLeadAdmin(request,env){
