@@ -56,7 +56,7 @@ async function metadataReady(env){
 }
 
 function render({formToken='',data={},message='',unavailable=false}={}){
- const qs=new URLSearchParams({s:data.source||'direct',c:data.campaign||'direct',m:data.medium||'direct'}).toString();
+ const qs=new URLSearchParams({s:data.source||'direct',c:data.campaign||'direct',m:data.medium||'direct',...(data.stats===false?{stats:'0'}:{})}).toString();
  const notice=message?'<p class="error" role="alert">'+esc(message)+'</p>':'';
  const form=unavailable?'<p class="error" role="alert">Community registration is temporarily unavailable. Please try again later.</p>':
  '<form action="/join?'+esc(qs)+'" method="POST" autocomplete="on">'+
@@ -127,24 +127,41 @@ function successPage(destination,{alreadySaved=false}={}){
 }
 export async function handleLeadGate(request,env,record){
  const url=new URL(request.url);
+ if(url.pathname==='/join-token'){
+  const origin=request.headers.get('Origin')||'';
+  if(origin!==HOME&&origin!=='https://www.angelresearchindia.com')return json({ok:false,error:'origin_denied'},403,origin);
+  if(request.method!=='GET')return json({ok:false,error:'method'},405,origin);
+  if(env.JOIN_LEAD_FORM_ENABLED!=='true'||env.LINK_MODE_ENABLED==='true')return json({ok:false,error:'unavailable'},503,origin);
+  if(env.JOIN_INDIA_ONLY_ENABLED==='true'&&request.cf?.country!=='IN')return json({ok:false,error:'region'},403,origin);
+  if(!await storage(env))return json({ok:false,error:'storage'},503,origin);
+  let destination;try{destination=await dynamicPrimaryUrl(env)}catch(_e){}
+  if(!destination)return json({ok:false,error:'unavailable'},503,origin);
+  if(url.searchParams.get('stats')!=='0'&&typeof record==='function')await record(env,request,'community_form_open',{...campaign(url),path:'/ipo-community.html'});
+  return json({ok:true,token:await tokenNew(env)},200,origin);
+ }
  if(url.pathname!=='/join'||env.JOIN_LEAD_FORM_ENABLED!=='true'||env.LINK_MODE_ENABLED==='true')return null;
  if(!['GET','POST'].includes(request.method))return new Response(null,{status:405,headers:{...HEADERS,Allow:'GET,POST'}});
  const meta=campaign(url);
- if(!await storage(env))return render({unavailable:true});
+ const stats=url.searchParams.get('stats')!=='0';meta.stats=stats;
+ const stage=async kind=>{if(stats&&typeof record==='function')try{await record(env,request,kind,{...meta,path:'/join'})}catch(_e){}};
+ if(!await storage(env)){await stage('community_form_error');return render({unavailable:true})}
  let destination;try{destination=await dynamicPrimaryUrl(env)}catch(_e){}
- if(!destination)return render({unavailable:true});
+ if(!destination){await stage('community_form_error');return render({unavailable:true})}
  if(request.method==='GET'){
   const mode=request.headers.get('Sec-Fetch-Mode');
   if(mode&&mode!=='navigate')return new Response('Navigation only',{status:403,headers:HEADERS});
+  await stage('community_form_open');
   return render({formToken:await tokenNew(env),data:meta});
  }
  // A browser may send Origin: null for a form submitted from a page served
  // with Referrer-Policy: no-referrer (or privacy-enhanced browser settings).
  // Do not reject that legitimate case: signed, short-lived, one-time form
  // tokens are verified below. Still block explicit cross-site form attempts.
+ await stage('community_form_attempt');
  const origin=request.headers.get('Origin');
  const fetchSite=request.headers.get('Sec-Fetch-Site');
- if(fetchSite==='cross-site'||(origin&&origin!=='null'&&origin!==url.origin))
+ const officialLanding=origin===HOME||origin==='https://www.angelresearchindia.com';
+ if(!officialLanding&&(fetchSite==='cross-site'||(origin&&origin!=='null'&&origin!==url.origin)))
   return render({message:'Please open this form from the official invitation page.',data:meta,formToken:await tokenNew(env)});
  if(!/^application\/x-www-form-urlencoded(?:\s*;|$)/i.test(request.headers.get('Content-Type')||''))
   return render({message:'Invalid form format.',data:meta,formToken:await tokenNew(env)});
@@ -154,9 +171,9 @@ export async function handleLeadGate(request,env,record){
  }
  if(body.get('website'))return render({message:'Invalid form details.',data:meta,formToken:await tokenNew(env)});
  const nonce=await tokenNonce(body.get('request_token'),env);
- if(!nonce)return render({message:'Your form has expired. Please use this new form.',data:meta,formToken:await tokenNew(env)});
+ if(!nonce){await stage('community_form_error');return render({message:'Your form has expired. Please use this new form.',data:meta,formToken:await tokenNew(env)})}
  const name=validName(body.get('full_name')),phone=validPhone(body.get('whatsapp')),age=body.get('age_range');
- if(!name||!phone||!['18–24','25–34','35–44','45–54','55+'].includes(age)||body.get('consent')!=='yes')return render({message:'Enter a valid name, age range, 10-digit Indian mobile number and required consent.',data:meta,formToken:await tokenNew(env)});
+ if(!name||!phone||!['18–24','25–34','35–44','45–54','55+'].includes(age)||body.get('consent')!=='yes'){await stage('community_form_error');return render({message:'Enter a valid name, age range, 10-digit Indian mobile number and required consent.',data:meta,formToken:await tokenNew(env)})}
  let result;try{
   const values=[nonce,name,phone,meta.source,meta.campaign,meta.medium,body.get('updates_opt_in')==='yes'?1:0,Math.floor(Date.now()/1000),age];
   if(await metadataReady(env)){
@@ -164,7 +181,7 @@ export async function handleLeadGate(request,env,record){
   }else{
    result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range) VALUES(?,?,?,?,?,?,?,?,?)').bind(...values).run();
   }
- }catch(_e){return render({unavailable:true})}
+ }catch(_e){await stage('community_form_error');return render({unavailable:true})}
  if(result?.meta?.changes!==1){
   // Replaying the exact, signed form after a blocked browser redirect must
   // resume the handoff, not create more rows or force another registration.
@@ -181,7 +198,8 @@ export async function handleLeadGate(request,env,record){
  const ua=request.headers.get('User-Agent')||'';
  const os=/iPhone|iPad|iPod/i.test(ua)?'ios':/Android/i.test(ua)?'android':/Windows/i.test(ua)?'windows':/CrOS/i.test(ua)?'chromeos':/Macintosh|Mac OS/i.test(ua)?'macos':/Linux/i.test(ua)?'linux':'unknown';
  const device=/iPad|Tablet|Android(?!.*Mobile)/i.test(ua)?'tablet':/iPhone|iPod|Mobile/i.test(ua)?'mobile':os==='unknown'?'unknown':'desktop';
- if(typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium,device,os});
+ await stage('community_form_success');
+ if(stats&&typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium,device,os});
  return successPage(destination);
 }
 export async function handleLeadAdmin(request,env){
