@@ -161,6 +161,8 @@ export async function handleLeadGate(request,env,record){
  const origin=request.headers.get('Origin');
  const fetchSite=request.headers.get('Sec-Fetch-Site');
  const officialLanding=origin===HOME||origin==='https://www.angelresearchindia.com';
+ const wantsJson=officialLanding&&request.headers.get('Accept')==='application/json';
+ const finish=(alreadySaved=false)=>wantsJson?json({ok:true,registered:!alreadySaved,destination},200,origin):successPage(destination,{alreadySaved});
  if(!officialLanding&&(fetchSite==='cross-site'||(origin&&origin!=='null'&&origin!==url.origin)))
   return render({message:'Please open this form from the official invitation page.',data:meta,formToken:await tokenNew(env)});
  if(!/^application\/x-www-form-urlencoded(?:\s*;|$)/i.test(request.headers.get('Content-Type')||''))
@@ -190,7 +192,7 @@ export async function handleLeadGate(request,env,record){
    'SELECT full_name,whatsapp_number,age_range FROM community_leads WHERE request_nonce=?'
   ).bind(nonce).first()}catch(_e){return render({unavailable:true})}
   if(previous?.full_name===name&&previous?.whatsapp_number===phone&&previous?.age_range===age)
-   return successPage(destination,{alreadySaved:true});
+   return finish(true);
   return render({message:'This form was already processed. Please request a new invitation form.',
    data:meta,formToken:await tokenNew(env)});
  }
@@ -200,7 +202,7 @@ export async function handleLeadGate(request,env,record){
  const device=/iPad|Tablet|Android(?!.*Mobile)/i.test(ua)?'tablet':/iPhone|iPod|Mobile/i.test(ua)?'mobile':os==='unknown'?'unknown':'desktop';
  await stage('community_form_success');
  if(stats&&typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium,device,os});
- return successPage(destination);
+ return finish();
 }
 export async function handleLeadAdmin(request,env){
  const url=new URL(request.url),p=url.pathname;
