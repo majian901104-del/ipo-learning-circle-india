@@ -36,9 +36,9 @@ function path(){
   return p;
 }
 var qp=new URLSearchParams(w.location.search);
-var campaign=safe(qp.get('utm_campaign')||'direct',48);
-var source=safe(qp.get('utm_source')||'direct',32);
-var medium=safe(qp.get('utm_medium')||'unspecified',32);
+var campaign=safe(w.AngelCampaign?.get('utm_campaign')||qp.get('utm_campaign')||'direct',48);
+var source=safe(w.AngelCampaign?.get('utm_source')||qp.get('utm_source')||'direct',32);
+var medium=safe(w.AngelCampaign?.get('utm_medium')||qp.get('utm_medium')||'unspecified',32);
 function sessionFlag(name){
   // Tab-lifetime booleans only: no visitor ID, fingerprint, cookie or server-side key.
   // More than one tab/browser can belong to one person, so counts are estimates.
