@@ -167,7 +167,11 @@ export async function handleLeadGate(request,env,record){
    data:meta,formToken:await tokenNew(env)});
  }
  if(typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium});
- if(body.get('ads_measurement')==='yes'&&request.headers.get('Sec-GPC')!=='1'&&request.headers.get('DNT')!=='1'&&typeof record==='function')await record(env,request,'community_form_success',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium});
+ // Coarse device classification only; never retain the request user agent.
+ const ua=request.headers.get('User-Agent')||'';
+ const os=/iPhone|iPad|iPod/i.test(ua)?'ios':/Android/i.test(ua)?'android':/Windows/i.test(ua)?'windows':/CrOS/i.test(ua)?'chromeos':/Macintosh|Mac OS/i.test(ua)?'macos':/Linux/i.test(ua)?'linux':'unknown';
+ const device=/iPad|Tablet|Android(?!.*Mobile)/i.test(ua)?'tablet':/iPhone|iPod|Mobile/i.test(ua)?'mobile':os==='unknown'?'unknown':'desktop';
+ if(body.get('ads_measurement')==='yes'&&request.headers.get('Sec-GPC')!=='1'&&request.headers.get('DNT')!=='1'&&typeof record==='function')await record(env,request,'community_form_success',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium,device,os});
  return successPage(destination);
 }
 export async function handleLeadAdmin(request,env){
