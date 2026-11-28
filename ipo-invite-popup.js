@@ -27,7 +27,13 @@ style.textContent=`
 #ar-ipo-popup [hidden]{display:none!important}
 body:has(#angel-consent-banner) #ar-ipo-float{bottom:180px}
 @media(max-width:520px){#ar-ipo-popup header{padding:20px}#ar-ipo-popup .ar-invite-content{padding:18px 20px}#ar-ipo-popup h2{font-size:24px}#ar-ipo-float{font-size:13px;padding:10px 14px;right:12px}}
-@media(prefers-reduced-motion:no-preference){#ar-ipo-float{animation:ar-invite-pulse 3s ease-in-out 3}@keyframes ar-invite-pulse{50%{box-shadow:0 0 0 5px #146b4726}}}
+@media(prefers-reduced-motion:no-preference){
+#ar-ipo-float{animation:ar-invite-pulse 2s ease-in-out infinite;transform-origin:center}
+#ar-ipo-float:hover,#ar-ipo-float:focus-within{animation-play-state:paused}
+@keyframes ar-invite-pulse{0%,100%{transform:scale(1);box-shadow:0 5px 20px #0003,0 0 0 0 rgba(20,107,71,.36)}50%{transform:scale(1.035);box-shadow:0 5px 20px #0003,0 0 0 12px rgba(20,107,71,0),0 0 22px rgba(20,107,71,.24)}}
+}
+@media(prefers-reduced-motion:reduce){#ar-ipo-float{animation:none!important;transform:none!important}}
+#ar-ipo-float[hidden]{animation:none!important;display:none!important}
 `;
 document.head.appendChild(style);
 const dialog=document.createElement('dialog');dialog.id='ar-ipo-popup';dialog.setAttribute('aria-labelledby','ar-ipo-title');
