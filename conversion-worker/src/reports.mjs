@@ -184,6 +184,10 @@ export async function handleReport(request,env){
     FROM ${DATASET}
     WHERE timestamp >= $start${cleanClause} AND blob6 = 'in' AND blob1 IN ('page_view', 'join_click')
     GROUP BY blob3, blob4, blob1 ORDER BY total DESC LIMIT 300`;
+  const byChannelDevice=`SELECT blob4 AS source, blob7 AS device, blob8 AS os, blob1 AS event, COUNT(*) AS total
+    FROM ${DATASET}
+    WHERE timestamp >= $start${cleanClause} AND blob1 IN ('page_view','community_form_success')
+    GROUP BY blob4, blob7, blob8, blob1 ORDER BY total DESC LIMIT 500`;
   try{
     const responses=await Promise.all([
       env.ANALYTICS_SQL.query({query:grouped,params}),
@@ -197,6 +201,25 @@ export async function handleReport(request,env){
     addIndiaBreakdown(campaigns,responses[4].data);
     const geo=countries(responses[2].data);
     const hardware=deviceGroups(responses[3].data);
+    // Optional report extension: a failed extra query must not break the existing dashboard.
+    let channelDevices=null;
+    try{
+      const extra=await env.ANALYTICS_SQL.query({query:byChannelDevice,params});
+      if(Array.isArray(extra?.data)){
+        const groups=new Map();
+        for(const row of extra.data){
+          const source=String(row.source||'direct').slice(0,32);
+          const device=['mobile','tablet','desktop'].includes(row.device)?row.device:'unknown';
+          const os=['android','ios','windows','macos','linux','chromeos','other'].includes(row.os)?row.os:'unknown';
+          const key=source+'|'+device+'|'+os;
+          if(!groups.has(key))groups.set(key,{source,device,os,views:0,registrations:0});
+          const v=groups.get(key);
+          if(row.event==='page_view')v.views+=metric(row);
+          if(row.event==='community_form_success')v.registrations+=metric(row);
+        }
+        channelDevices=[...groups.values()].filter(v=>v.views>=3||v.registrations>=3).map(v=>({...v,views:v.views>=3?v.views:null,registrations:v.registrations>=3?v.registrations:null})).sort((a,b)=>(b.views||0)-(a.views||0));
+      }
+    }catch(_e){}
     return json({ok:true,days,asOf:new Date().toISOString(),start,
       sourceType:'Cloudflare Analytics Engine aggregate events',
       countsAre:env.ANALYTICS_IP_DEDUP_ENABLED==='true'?'Events recorded after enabling are limited to one count per public IP per rolling 24h for each of page_view and join_click. Earlier aggregate events are not recalculated. IPs are not individuals or confirmed WhatsApp joins.':'Event counts include repeats. Browser tab estimates are NOT verified unique visitors or confirmed WhatsApp joins.',
@@ -205,7 +228,7 @@ export async function handleReport(request,env){
       campaigns,totals:totals(campaigns),
       daily:daily(responses[1].data),
       countries:geo.countries,regions:geo.regions,
-      devices:hardware.devices,models:hardware.models
+      devices:hardware.devices,models:hardware.models,channelDevices
     },200,origin);
   }catch(err){
     // Never reflect internal SQL details, credentials, or raw rows to the client.
