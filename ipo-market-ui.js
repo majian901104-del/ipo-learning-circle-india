@@ -7,8 +7,9 @@ function dateFmt(v){return new Date(v+'T12:00:00Z').toLocaleDateString('en-GB',{
 var m=w.AngelIPOData,E=w.AngelIPOEvidence;
 if(!m){return}
 var today=dayIST();
-function stage(v){return today<v.open?'upcoming':today>v.close?'elapsed':'window'}
-function status(v){var k=stage(v);return k==='upcoming'?'Scheduled upcoming':k==='elapsed'?'Scheduled window elapsed':'Scheduled bid window'}
+function stage(v){return today<v.open?'upcoming':today>v.close?'awaiting':'window'}
+function visible(v){return v.listed!==true&&v.status!=='listed'&&(today<=v.close||(v.listingDate&&today<v.listingDate))}
+function status(v){var k=stage(v);return k==='upcoming'?'Scheduled upcoming':k==='awaiting'?'Awaiting scheduled listing':'Scheduled bid window'}
 function srcName(id){return ({ndtvNov27:'NDTV Profit',hdfcNov27:'HDFC SKY',reutersNov27:'Reuters',listingNov27:'Trendlyne',sebi:'SEBI',exchange:'NSE',bse:'BSE',groww:'Groww',calendar:'IPO calendar',reuters:'Reuters',jioReuters:'Reuters',parasRhp:'SEBI RHP',financialExpress:'Financial Express',expressHealth:'Express Healthcare',sebiConsultation:'Reuters'})[id]||'Reported source'}
 function sortItems(items){return items.slice().sort(function(a,b){return a.open.localeCompare(b.open)||a.name.localeCompare(b.name)})}
 function item(v){
@@ -22,20 +23,20 @@ function item(v){
 function briefing(){
  if(!Array.isArray(m.briefing)||!m.briefing.length)return '';
  return '<section class="ipo-briefing" aria-label="Latest editorial IPO updates"><div class="ipo-briefing-title"><span>EDITORIAL MARKET BRIEF · '+esc(m.verifiedDate)+'</span><h2>What investors are watching</h2><p>Source-dated reporting. No unofficial estimates or guaranteed allotment.</p></div><div class="ipo-briefing-grid">'+
-  m.briefing.map(function(v){return '<article class="ipo-brief"><div class="ipo-brief-meta"><span>'+esc(v.topic)+'</span><time>'+esc(v.date)+'</time></div><h3>'+esc(v.title)+'</h3><p>'+esc(v.summary)+'</p><div class="ipo-brief-links"><span>'+esc(v.tag)+'</span><a href="'+esc(m.sources[v.source])+'" target="_blank" rel="noopener noreferrer">VIEW SOURCE ↗</a></div></article>'}).join('')+'</div></section>'
+  m.briefing.filter(function(v){return v.topic!=='Listing review'&&v.topic!=='Closed issues'}).map(function(v){return '<article class="ipo-brief"><div class="ipo-brief-meta"><span>'+esc(v.topic)+'</span><time>'+esc(v.date)+'</time></div><h3>'+esc(v.title)+'</h3><p>'+esc(v.summary)+'</p><div class="ipo-brief-links"><span>'+esc(v.tag)+'</span><a href="'+esc(m.sources[v.source])+'" target="_blank" rel="noopener noreferrer">VIEW SOURCE ↗</a></div></article>'}).join('')+'</div></section>'
 }
 function render(el){
  var type=el.getAttribute('data-ipo-mode')||'compact';
- var data=sortItems(m.issues);
- if(type==='compact') data=data.filter(function(v){return v.segment==='Mainboard'&&today<=v.close}).sort(function(a,b){return Number(!!b.featured)-Number(!!a.featured)||a.open.localeCompare(b.open)}).slice(0,6);
+ var data=sortItems(m.issues.filter(visible));
+ if(type==='compact') data=data.filter(function(v){return visible(v)}).sort(function(a,b){return Number(!!b.featured)-Number(!!a.featured)||a.open.localeCompare(b.open)}).slice(0,6);
  var review=E?E.freshness(m.checkedAt):{code:'unknown',text:'Dated editorial snapshot'};
  var header='<div class="ipo-board-head"><div><div class="ipo-kicker">INDIA PRIMARY MARKETS · EDITORIAL UPDATE</div><h2>'+(type==='compact'?'Latest IPO schedules':'IPO issue calendar &amp; company profiles')+'</h2><p>Last checked: <strong>'+esc(m.verifiedDate)+'</strong> · This schedule is not a real-time data feed.</p><p class="v41-board-status" data-review-status="'+esc(review.code)+'">'+esc(review.text)+' · <a href="ipo-data-quality.html">Evidence &amp; source ledger →</a></p></div>'+(type==='compact'?'<a class="ipo-full-link" href="ipo-current.html">EXPLORE ALL IPOs ↗</a>':'')+'</div>';
  var caut= '<p class="ipo-caution" role="note"><strong>Important:</strong> Open/closed labels describe the calendar window only; they do not confirm real-time subscription activity. All terms should be reconfirmed with official exchange or issuer filings.</p>';
  if(type==='full'){
-   var nav='<div class="ipo-intelligence-controls"><div class="ipo-filters" role="group" aria-label="Filter IPO segment"><button type="button" data-filter="all" aria-pressed="true">All issues</button><button type="button" data-filter="Mainboard" aria-pressed="false">Mainboard</button><button type="button" data-filter="SME" aria-pressed="false">SME</button></div><div class="ipo-filters ipo-stage-filters" role="group" aria-label="Filter scheduled IPO stage"><button type="button" data-stage-filter="all" aria-pressed="true">All dates</button><button type="button" data-stage-filter="upcoming" aria-pressed="false">Upcoming</button><button type="button" data-stage-filter="window" aria-pressed="false">Bid window</button><button type="button" data-stage-filter="elapsed" aria-pressed="false">Elapsed</button></div><p class="ipo-results-count" id="ipo-results-count" aria-live="polite"></p></div>';
+   var nav='<div class="ipo-intelligence-controls"><div class="ipo-filters" role="group" aria-label="Filter IPO segment"><button type="button" data-filter="all" aria-pressed="true">All issues</button><button type="button" data-filter="Mainboard" aria-pressed="false">Mainboard</button><button type="button" data-filter="SME" aria-pressed="false">SME</button></div><div class="ipo-filters ipo-stage-filters" role="group" aria-label="Filter scheduled IPO stage"><button type="button" data-stage-filter="all" aria-pressed="true">All dates</button><button type="button" data-stage-filter="upcoming" aria-pressed="false">Upcoming</button><button type="button" data-stage-filter="window" aria-pressed="false">Bid window</button><button type="button" data-stage-filter="awaiting" aria-pressed="false">Awaiting listing</button></div><p class="ipo-results-count" id="ipo-results-count" aria-live="polite"></p></div>';
    var archived='<section class="ipo-archive" aria-label="Previous IPO research"><h2>Historical IPO coverage</h2><p>Earlier research is retained with its original date and not relabelled as current.</p><div class="ipo-archive-list">'+m.archived.map(function(v){return '<div><b>'+esc(v.name)+'</b><span>'+esc(v.detail)+'</span><a href="'+esc(v.link)+'">Read dated review →</a></div>'}).join('')+'</div></section>';
    var sources='<section class="ipo-sources"><h2>Sources &amp; verification</h2><p>Curated public coverage as of '+esc(m.verifiedDate)+'. Issuer/SEBI/NSE/BSE disclosures override media calendars. Confirm before applying.</p><a href="'+m.sources.sebi+'" target="_blank" rel="noopener noreferrer">SEBI public issues ↗</a><a href="'+m.sources.exchange+'" target="_blank" rel="noopener noreferrer">NSE IPO notices ↗</a><a href="'+esc(m.sources.bse)+'" target="_blank" rel="noopener noreferrer">BSE public issues ↗</a><a href="'+esc(m.sources.ndtvNov27)+'" target="_blank" rel="noopener noreferrer">NDTV Profit · 27 Nov ↗</a><a href="'+esc(m.sources.hdfcNov27)+'" target="_blank" rel="noopener noreferrer">HDFC SKY · Market close ↗</a></section>';
-   el.innerHTML=header+briefing()+nav+'<div class="ipo-card-grid" id="ipo-issues">'+data.map(item).join('')+'</div>'+caut+archived+sources;
+   el.innerHTML=header+briefing()+nav+'<div class="ipo-card-grid" id="ipo-issues">'+data.map(item).join('')+'</div>'+caut+sources;
    var buttons=el.querySelectorAll('[data-filter]');
    var stageButtons=el.querySelectorAll('[data-stage-filter]');
    var segment='all',selectedStage='all';
