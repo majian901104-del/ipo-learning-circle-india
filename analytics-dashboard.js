@@ -169,8 +169,24 @@ function barList(id,rows,labelText,valueText,maxItems){
 function renderCountries(){
  barList('country-list',report?.countries,x=>countryName(x.country)+' ('+x.country+')',null,9);
 }
+function renderChannelDevices(){
+ const host=$('channel-device-body');if(!host)return;host.replaceChildren();
+ const rows=report?.channelDevices;
+ const chosen=$('channel-device-filter')?.value||'all';
+ const sources=$('channel-device-filter');
+ if(sources&&Array.isArray(rows)){
+  sources.replaceChildren();const all=d.createElement('option');all.value='all';all.textContent='全部渠道';sources.appendChild(all);
+  for(const name of [...new Set(rows.map(x=>x.source))].sort()){const o=d.createElement('option');o.value=name;o.textContent=name;sources.appendChild(o)}
+  sources.value=[...sources.options].some(o=>o.value===chosen)?chosen:'all';
+ }
+ const selected=Array.isArray(rows)?rows.filter(x=>!sources||sources.value==='all'||x.source===sources.value):[];
+ if(!selected.length){const tr=d.createElement('tr'),td=d.createElement('td');td.colSpan=5;td.textContent=Array.isArray(rows)?'暂无达到展示门槛的数据':'新报表服务尚未上线或暂不可用';tr.appendChild(td);host.appendChild(tr);return}
+ for(const x of selected){const tr=d.createElement('tr');for(const value of [x.source,deviceNames[x.device]||'未知设备',osNames[x.os]||x.os||'未知系统',x.views==null?'—':fmt(x.views),x.registrations==null?'—':fmt(x.registrations)]){const td=d.createElement('td');td.textContent=value;tr.appendChild(td)}host.appendChild(tr)}
+}
+d.addEventListener('change',e=>{if(e.target.id==='channel-device-filter')renderChannelDevices()});
 function renderDevices(){
  barList('device-list',report?.devices,x=>(deviceNames[x.device]||'其他设备')+' · '+(osNames[x.os]||x.os||'未知系统'),null,10);
+ renderChannelDevices();
  barList('model-list',report?.models,x=>(x.model||'未知').replaceAll('_',' ')+' · '+(osNames[x.os]||x.os),null,7);
 }
 function renderRegions(){
