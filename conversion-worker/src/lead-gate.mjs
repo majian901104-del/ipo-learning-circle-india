@@ -62,6 +62,7 @@ function render({formToken='',data={},message='',unavailable=false}={}){
  '<small>Indian number only. Enter 10 digits beginning with 6, 7, 8 or 9; do not repeat +91.</small>'+
  '<label class="check"><input type="checkbox" name="consent" value="yes" required><span>I agree to provide these details for my community invitation as explained in the <a href="'+HOME+'/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Notice</a>. This is not an investment account application.</span></label>'+
  '<label class="check"><input type="checkbox" name="updates_opt_in" value="yes"><span>Optional: I would like to receive IPO and market research updates via WhatsApp. I can withdraw my consent.</span></label>'+
+ '<label class="check"><input type="checkbox" name="ads_measurement" value="yes"><span>Optional: allow additional registration conversion measurement for this request. No name, phone number or age is sent in the measurement event.</span></label>'+
  '<div class="honeypot" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>'+
  '<button type="submit">SUBMIT &amp; OPEN WHATSAPP →</button>'+
  '<p class="note">Your phone number and name are never placed in the WhatsApp URL. Submitting does not guarantee group admission. We never request banking passwords, trading credentials or OTPs. For privacy requests, data deletion or withdrawing updates consent, email <a href="mailto:support@angelresearchindia.com">support@angelresearchindia.com</a>.</p>'+
@@ -166,6 +167,7 @@ export async function handleLeadGate(request,env,record){
    data:meta,formToken:await tokenNew(env)});
  }
  if(typeof record==='function')await record(env,request,'join_click',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium});
+ if(body.get('ads_measurement')==='yes'&&request.headers.get('Sec-GPC')!=='1'&&request.headers.get('DNT')!=='1'&&typeof record==='function')await record(env,request,'community_form_success',{path:'/join',source:meta.source,campaign:meta.campaign,medium:meta.medium});
  return successPage(destination);
 }
 export async function handleLeadAdmin(request,env){
