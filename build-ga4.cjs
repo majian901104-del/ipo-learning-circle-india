@@ -17,9 +17,24 @@ function visit(dir){
     if(entry.isDirectory()) {visit(full);continue}
     if(!entry.isFile() || !/\.html$/i.test(entry.name))continue;
     found++;
+    let s=fs.readFileSync(full,'utf8');
+    const assetPrefix=path.relative(path.dirname(full),root).replace(/\\/g,'/');
+    const uiPrefix=assetPrefix?assetPrefix+'/':'';
+    // Append the shared UI after page-specific CSS; do not add analytics to private pages.
+    if(/<link\b[^>]*rel=["']stylesheet["']/i.test(s)&&!s.includes('v45-responsive-polish.css')){
+      s=s.replace(/<\/head\s*>/i,'<link rel="stylesheet" href="'+uiPrefix+'v45-responsive-polish.css?v=20261128-v45c">\n</head>');
+    }
+    // Preserve the first image and all explicit loading priorities. Only defer
+    // later images that already declare intrinsic dimensions, reducing layout shift risk.
+    let imageIndex=0;
+    s=s.replace(/<img\b[^>]*>/gi,tag=>{
+      imageIndex++;
+      if(imageIndex===1||/\b(?:loading|fetchpriority)\s*=/i.test(tag)||!(/\bwidth\s*=/.test(tag)&&/\bheight\s*=/.test(tag)))return tag;
+      return tag.replace(/\s*\/?>$/,' loading="lazy"'+(/\bdecoding\s*=/i.test(tag)?'':' decoding="async"')+'>');
+    });
+    fs.writeFileSync(full,s,'utf8');
     // Private reporting pages must not inflate the public marketing funnel.
     if(entry.name==='analytics-dashboard.html'){skipped++;continue}
-    let s=fs.readFileSync(full,'utf8');
     // Rewrite legacy public CTAs to our controlled Cloudflare /join entry.
     // Admission enforcement is deliberately disabled until the rollout is tested.
     const original=s;
