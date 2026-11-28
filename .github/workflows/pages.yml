@@ -32,6 +32,9 @@ jobs:
           node --check conversion-config.js
           node --check conversion-tracker.js
           node --check link-entry-v34.js
+          node --check ipo-invite-popup.js
+          node --check leads-admin-v37.js
+          node --check conversion-worker/src/lead-gate.mjs
           node --check ops-health-v34.js
           node --check link-management.js
           node --check conversion-worker/src/link-management.mjs
