@@ -8,7 +8,8 @@ var m=w.AngelIPOData,E=w.AngelIPOEvidence;
 if(!m){return}
 var today=dayIST();
 function stage(v){return today<v.open?'upcoming':today>v.close?'awaiting':'window'}
-function visible(v){return v.listed!==true&&v.status!=='listed'&&(today<=v.close||(v.listingDate&&today<v.listingDate))}
+function visible(v){return v.listed!==true&&!['listed','cancelled','withdrawn'].includes(v.status)&&(!v.listingDate||today<v.listingDate)&&(today<=v.close||(v.listingDate&&today<v.listingDate))}
+function countdown(v){var k=stage(v),target=k==='upcoming'?v.open:k==='awaiting'?v.listingDate:v.close;if(!target)return '';var days=Math.round((Date.parse(target+'T00:00:00Z')-Date.parse(today+'T00:00:00Z'))/86400000);return (k==='upcoming'?'Scheduled opening':k==='awaiting'?'Scheduled listing':'Scheduled closing')+(days===0?' today':days===1?' tomorrow':' in '+days+' calendar days')+' (IST)';}
 function status(v){var k=stage(v);return k==='upcoming'?'Scheduled upcoming':k==='awaiting'?'Awaiting scheduled listing':'Scheduled bid window'}
 function srcName(id){return ({ndtvNov27:'NDTV Profit',hdfcNov27:'HDFC SKY',reutersNov27:'Reuters',listingNov27:'Trendlyne',sebi:'SEBI',exchange:'NSE',bse:'BSE',groww:'Groww',calendar:'IPO calendar',reuters:'Reuters',jioReuters:'Reuters',parasRhp:'SEBI RHP',financialExpress:'Financial Express',expressHealth:'Express Healthcare',sebiConsultation:'Reuters'})[id]||'Reported source'}
 function sortItems(items){return items.slice().sort(function(a,b){return a.open.localeCompare(b.open)||a.name.localeCompare(b.name)})}
@@ -18,7 +19,7 @@ function item(v){
  var classified=E?E.classify(v,m):null;
  var tier=classified?'<span class="v41-source-tier" title="Source category, not independent verification">'+esc(classified.label)+'</span>':'';
  var sourceLink=/^https:\/\//.test(source)?'<a class="ipo-original-source" href="'+esc(source)+'" target="_blank" rel="noopener noreferrer">SOURCE: '+esc(srcName(v.source))+' ↗</a>':'';
- return '<article class="ipo-card'+(v.featured?' ipo-card-featured':'')+'" id="'+esc(v.id)+'" data-stage="'+stage(v)+'"><div class="ipo-card-top"><span class="ipo-pill">'+esc(v.segment)+'</span><span class="ipo-state">'+esc(status(v))+'</span></div><h3>'+esc(v.name)+'</h3><div class="ipo-band">₹'+esc(v.low)+'–'+esc(v.high)+'</div><div class="ipo-row"><span>Scheduled bid window</span><b>'+esc(dateFmt(v.open))+' – '+esc(dateFmt(v.close))+'</b></div><div class="ipo-row"><span>Reported issue size</span><b>'+esc(v.size)+'</b></div><div class="ipo-row"><span>Reported lot size</span><b>'+esc(v.lot?String(v.lot)+' shares':'See offer document')+'</b></div><p>'+esc(v.notes)+'</p><div class="ipo-card-actions"><a href="'+href+'">ISSUE DETAILS →</a>'+tier+sourceLink+'</div></article>';
+ return '<article class="ipo-card'+(v.featured?' ipo-card-featured':'')+'" id="'+esc(v.id)+'" data-stage="'+stage(v)+'"><div class="ipo-card-top"><span class="ipo-pill">'+esc(v.segment)+'</span><span class="ipo-state">'+esc(status(v))+'</span></div><h3>'+esc(v.name)+'</h3><p class="ar5-count">'+esc(countdown(v))+'</p><div class="ipo-band">₹'+esc(v.low)+'–'+esc(v.high)+'</div><div class="ipo-row"><span>Scheduled bid window</span><b>'+esc(dateFmt(v.open))+' – '+esc(dateFmt(v.close))+'</b></div><div class="ipo-row"><span>Reported issue size</span><b>'+esc(v.size)+'</b></div><div class="ipo-row"><span>Reported lot size</span><b>'+esc(v.lot?String(v.lot)+' shares':'See offer document')+'</b></div><p>'+esc(v.notes)+'</p><div class="ipo-card-actions"><a href="'+href+'">ISSUE DETAILS →</a>'+tier+sourceLink+'</div></article>';
 }
 function briefing(){
  if(!Array.isArray(m.briefing)||!m.briefing.length)return '';
