@@ -2,6 +2,10 @@
 (function(root){
   'use strict';
   var tiers={
+    ndtvNov27:{type:'media',name:'NDTV Profit (27 Nov 2026)'},
+    hdfcNov27:{type:'media',name:'HDFC SKY (27 Nov 2026)'},
+    reutersNov27:{type:'media',name:'Reuters (27 Nov 2026)'},
+    listingNov27:{type:'aggregator',name:'Trendlyne IPO dashboard'},
     sebi:{type:'official-directory',name:'SEBI (official index)'},
     exchange:{type:'official-directory',name:'NSE (official index)'},
     bse:{type:'official-directory',name:'BSE (official index)'},
