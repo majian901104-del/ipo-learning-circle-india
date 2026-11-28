@@ -166,6 +166,22 @@
  const form=document.getElementById('ipo-inline-form'),token=document.getElementById('ipo-form-token'),button=document.getElementById('reg-submit'),status=document.getElementById('reg-status'),fallback=document.getElementById('reg-fallback');
  const base='https://angel-research-conversion-v31.majian901104.workers.dev';
  let issued=0,pending=null,submitted=false;
+ const metaKey='angelresearch_meta_measurement_v1',pixelId='1007713359075189';
+ function metaAllowed(){try{return localStorage.getItem(metaKey)==='granted'&&navigator.globalPrivacyControl!==true&&navigator.doNotTrack!=='1'&&window.doNotTrack!=='1'}catch(e){return false}}
+ let pixelReady=false,issuedView=false;
+ function startPixel(){
+  if(!metaAllowed())return false;
+  if(pixelReady)return true;
+  if(window.fbq)return false;
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=true;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=true;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  window.fbq('set','autoConfig',false,pixelId);
+  window.fbq('init',pixelId);
+  window.fbq('trackSingle',pixelId,'PageView');
+  pixelReady=true;return true;
+ }
+ function metaTrack(event){try{if(startPixel())window.fbq('trackSingle',pixelId,event)}catch(e){}}
+ startPixel();
+
  function params(){
   const q=new URLSearchParams(location.search);
   const clean=(v,n)=>String(v||'').toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,n);
@@ -182,7 +198,7 @@
   button.disabled=true;status.textContent='Connecting securely…';
   pending=fetch(base+'/join-token?'+q,{credentials:'omit',cache:'no-store',mode:'cors'}).then(async r=>{
    const data=await r.json();if(!r.ok||!data.ok||!data.token)throw Error(data.error||'unavailable');
-   token.value=data.token;issued=Date.now();button.disabled=false;status.textContent='';return true;
+   token.value=data.token;issued=Date.now();button.disabled=false;status.textContent='';if(!issuedView){issuedView=true;metaTrack('ViewContent')}return true;
   }).catch(()=>{status.textContent='Unable to connect here. Please use the separate registration page below.';button.disabled=true;return false}).finally(()=>{pending=null});
   return pending;
  }
@@ -190,6 +206,28 @@
   if(submitted){e.preventDefault();return}
   if(!token.value||Date.now()-issued>17*60*1000){e.preventDefault();if(await prepare())form.requestSubmit();return}
   form.action=base+'/join?'+params();
+  if(metaAllowed()){
+   e.preventDefault();
+   submitted=true;button.disabled=true;status.textContent='Submitting securely…';
+   try{
+    const body=new URLSearchParams(new FormData(form));
+    const response=await fetch(form.action,{method:'POST',headers:{Accept:'application/json'},body,credentials:'omit',mode:'cors',cache:'no-store'});
+    if(!response.ok)throw Error('registration');
+    const data=await response.json();
+    if(!data.ok||typeof data.destination!=='string')throw Error('confirmation');
+    const dest=new URL(data.destination);
+    if(dest.protocol!=='https:'||dest.hostname!=='chat.whatsapp.com'||dest.username||dest.password)throw Error('destination');
+    if(data.registered===true)metaTrack('Lead');
+    status.textContent='Registration confirmed. Open WhatsApp below.';
+    const next=document.createElement('a');next.className='join-button';next.href=dest.href;next.textContent='OPEN WHATSAPP GROUP →';
+    next.addEventListener('click',()=>metaTrack('Contact'),{once:true});
+    form.replaceWith(status,next);
+    return;
+   }catch(_e){
+    status.textContent='Confirmation unavailable. Please use the separate registration page if needed.';
+    return;
+   }
+  }
   submitted=true;button.disabled=true;status.textContent='Submitting securely…';
   try{if(localStorage.getItem('angelresearch_ads_measurement_v1')==='granted'&&navigator.globalPrivacyControl!==true&&navigator.doNotTrack!=='1'&&window.doNotTrack!=='1'&&Array.isArray(window.dataLayer))window.dataLayer.push({event:'ipo_join_button_click'});}catch(_e){}
  });
