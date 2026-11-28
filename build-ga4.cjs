@@ -39,7 +39,9 @@ function visit(dir){
     // Admission enforcement is deliberately disabled until the rollout is tested.
     const original=s;
     s=s.replace(/<script\b[^>]*src=["'][^"']*ipo-invite-popup\.js(?:\?[^"']*)?["'][^>]*><\/script>/gi,'');
-    s=s.replace(/<\/body\s*>/i,'<script src="'+uiPrefix+'campaign-attribution-v7.js?v=1" defer></script><script src="'+uiPrefix+'ipo-invite-popup.js?v=20261128-v7" defer></script></body>');
+    s=s.replace(/<\/body\s*>/i,'<script src="'+uiPrefix+'ipo-invite-popup.js?v=20261128-v7" defer></script></body>');
+    s=s.replace(/<script\b[^>]*src=["'][^"']*campaign-attribution-v7\.js(?:\?[^"']*)?["'][^>]*><\/script>/gi,'');
+    s=s.replace(/<\/head\s*>/i,'<script src="'+uiPrefix+'campaign-attribution-v7.js?v=2"></script></head>');
     s=s.replace(/ga4-analytics\.js(?:\?[^"']*)?(?=["'])/g,'ga4-analytics.js?v=20261128-consent2');
     s=s.replace(/href=(["'])https:\/\/cc\.stockscode\.click\/?\1/gi,
        'href="https://angel-research-conversion-v31.majian901104.workers.dev/join" data-conversion-join');
