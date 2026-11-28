@@ -11,6 +11,7 @@ const say=message=>{if($('leads-message'))$('leads-message').textContent=message
 function reset(){
  token='';records=[];nextBefore=null;
  if($('leads-body'))$('leads-body').textContent='';
+ for(const id of ['leads-search','leads-age','leads-source','leads-days'])if($(id))$(id).value='';
  if($('leads-export'))$('leads-export').disabled=true;
  if($('leads-more'))$('leads-more').hidden=true;
  if($('leads-page-count'))$('leads-page-count').textContent='请先登录管理员账号';
@@ -20,30 +21,38 @@ function rowCell(row,text){
  const td=d.createElement('td');td.textContent=String(text??'');td.style.padding='13px 8px';
  td.style.borderBottom='1px solid #e2eaf0';row.appendChild(td);return td
 }
+function filtered(){
+ const q=($('leads-search')?.value||'').trim().toLowerCase(),age=$('leads-age')?.value||'',source=($('leads-source')?.value||'').trim().toLowerCase();
+ const days=Number($('leads-days')?.value||0),cutoff=Date.now()/1000-days*86400;
+ return records.filter(x=>(!q||[x.full_name,x.whatsapp_number,x.campaign].some(v=>String(v||'').toLowerCase().includes(q)))&&(!age||(x.age_range||'unknown')===age)&&(!source||String(x.source||'').toLowerCase().includes(source))&&(!days||Number(x.created_at)>=cutoff));
+}
 function show(){
  const body=$('leads-body');body.textContent='';
- for(const lead of records){
+ const shown=filtered();
+ for(const lead of shown){
   const tr=d.createElement('tr');
   const time=Number(lead.created_at);
   rowCell(tr,Number.isFinite(time)?new Date(time*1000).toISOString().replace('T',' ').slice(0,16):'—');
-  rowCell(tr,lead.full_name);rowCell(tr,lead.whatsapp_number);rowCell(tr,lead.source);
+  rowCell(tr,lead.full_name);rowCell(tr,lead.age_range||'未记录');rowCell(tr,lead.whatsapp_number);rowCell(tr,lead.source);
   rowCell(tr,lead.campaign);rowCell(tr,lead.updates_opt_in?'已单独同意':'未同意');
   const td=rowCell(tr,'');const del=d.createElement('button');del.type='button';del.textContent='删除';
   del.className='action outline';del.style.minHeight='32px';del.style.padding='4px 10px';
   del.addEventListener('click',()=>remove(lead));td.appendChild(del);body.appendChild(tr)
  }
- $('leads-export').disabled=!records.length;
- $('leads-page-count').textContent='当前显示 '+records.length+' 条 · 数据保留上限 90 天 · 并非实际入群人数';
+ $('leads-export').disabled=!shown.length;
+ $('leads-page-count').textContent='筛选显示 '+shown.length+' / 已加载 '+records.length+' 条 · 非全库统计 · 数据保留上限 90 天 · 并非实际入群人数';
  $('leads-more').hidden=!nextBefore;
 }
 async function load(more=false){
  if(loading||!token||!apiBase)return;
+ const requestToken=token;
  loading=true;$('leads-reload').disabled=true;
  say('正在读取受保护的登记记录…');
  try{
   const uri=apiBase+'/admin/leads'+(more&&nextBefore?'?before='+nextBefore:'');
   const res=await w.fetch(uri,{headers:{Authorization:'Bearer '+token},cache:'no-store',mode:'cors'});
   const data=await res.json();
+  if(token!==requestToken)return;
   if(res.status===401){reset();say('会话失效，请重新登录。');return}
   if(!res.ok||!data.ok)throw Error(data.error||'read_failed');
   records=more?records.concat(data.leads):data.leads;
@@ -68,15 +77,16 @@ const csvCell=s=>{
  return '"'+text.replace(/"/g,'""')+'"';
 };
 function exportCurrent(){
- if(!records.length||!token)return;
+ if(!filtered().length||!token)return;
  if(!w.confirm('此 CSV 包含姓名和手机号码。请仅保存到授权设备，并妥善删除不再需要的副本。确认导出？'))return;
- const rows=[['时间 (UTC)','姓名','WhatsApp','来源','活动','同意研究更新'],
- ...records.map(x=>[new Date(x.created_at*1000).toISOString(),x.full_name,x.whatsapp_number,x.source,x.campaign,x.updates_opt_in?'Yes':'No'])];
+ const rows=[['时间 (UTC)','姓名','年龄范围','WhatsApp','来源','活动','同意研究更新'],
+ ...filtered().map(x=>[new Date(x.created_at*1000).toISOString(),x.full_name,x.age_range||'',x.whatsapp_number,x.source,x.campaign,x.updates_opt_in?'Yes':'No'])];
  const blob=new Blob(['\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
  const ref=w.URL.createObjectURL(blob);const a=d.createElement('a');a.href=ref;a.download='angel-community-leads.csv';a.style.display='none';d.body.appendChild(a);a.click();a.remove();
  w.setTimeout(()=>w.URL.revokeObjectURL(ref),1000);
 }
 function init(){
+ for(const id of ['leads-search','leads-age','leads-source','leads-days'])$(id)?.addEventListener('input',()=>{if(token)show()});
  $('leads-reload')?.addEventListener('click',()=>load(false));
  $('leads-more')?.addEventListener('click',()=>load(true));
  $('leads-export')?.addEventListener('click',exportCurrent);
