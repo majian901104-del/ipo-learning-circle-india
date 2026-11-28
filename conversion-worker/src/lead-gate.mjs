@@ -46,7 +46,7 @@ const validName=s=>{
 const validPhone=s=>typeof s==='string'&&/^[6-9][0-9]{9}$/.test(s.trim())?'+91'+s.trim():null;
 async function storage(env){
  if(!env.LINK_DB||!goodSecret(env))return false;
- try{await env.LINK_DB.prepare('SELECT id FROM community_leads LIMIT 1').first();return true}catch(_e){return false}
+ try{await env.LINK_DB.prepare('SELECT id FROM community_leads LIMIT 1').first();try{await env.LINK_DB.prepare('SELECT age_range FROM community_leads LIMIT 1').first()}catch(_missing){try{await env.LINK_DB.prepare('ALTER TABLE community_leads ADD COLUMN age_range TEXT').run()}catch(_race){} await env.LINK_DB.prepare('SELECT age_range FROM community_leads LIMIT 1').first()}return true}catch(_e){return false}
 }
 function render({formToken='',data={},message='',unavailable=false}={}){
  const qs=new URLSearchParams({s:data.source||'direct',c:data.campaign||'direct',m:data.medium||'direct'}).toString();
@@ -56,6 +56,7 @@ function render({formToken='',data={},message='',unavailable=false}={}){
  '<input type="hidden" name="request_token" value="'+esc(formToken)+'">'+
  '<label for="name">Full name *</label>'+
  '<input id="name" name="full_name" type="text" required minlength="2" maxlength="80" autocomplete="name" placeholder="Enter your full name">'+
+ '<label for="age">Age range *</label><select id="age" name="age_range" required><option value="">Select your age range</option><option value="18–24">18–24</option><option value="25–34">25–34</option><option value="35–44">35–44</option><option value="45–54">45–54</option><option value="55+">55+</option></select>'+
  '<label for="phone">WhatsApp mobile number *</label>'+
  '<div class="phone"><span>+91</span><input id="phone" name="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" required pattern="[6-9][0-9]{9}" minlength="10" maxlength="10" placeholder="10-digit mobile number"></div>'+
  '<small>Indian number only. Enter 10 digits beginning with 6, 7, 8 or 9; do not repeat +91.</small>'+
@@ -67,9 +68,9 @@ function render({formToken='',data={},message='',unavailable=false}={}){
  '</form>';
  const doc='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
  '<meta name="theme-color" content="#0b2938"><title>Community Invitation | Angel Research</title>'+
- '<style>:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#163748;background:#edf3f6}*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:clamp(18px,4vw,52px) 16px}main{max-width:930px;margin:auto;display:grid;grid-template-columns:.85fr 1.15fr;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 65px #103b4b20;border:1px solid #d5e1e7}aside{background:#0b2b3c;color:#f3fafc;padding:44px 35px}aside .brand{color:#e5c698;font-weight:850;letter-spacing:.13em;font-size:13px}h1{font-size:34px;line-height:1.16;margin:42px 0 18px}aside p{font-size:15px;color:#c3d7e0;line-height:1.75}article{padding:40px 42px}h2{font-size:25px;line-height:1.25;margin:0 0 8px}article>p{color:#687e8d;line-height:1.6;font-size:14px}label:not(.check){display:block;font-size:13px;font-weight:800;margin:21px 0 8px}input[type=text],input[type=tel]{width:100%;font:inherit;font-size:16px;border:1px solid #b9cdd7;border-radius:6px;min-height:51px;padding:12px 14px}input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #14876f;outline-offset:3px}.phone{display:flex;align-items:center;border:1px solid #b9cdd7;border-radius:6px}.phone span{background:#edf3f6;padding:14px 13px;font-weight:800;color:#22546c}.phone input{border:0;min-width:0}small{display:block;font-size:12px;color:#61798a;margin:7px 0;line-height:1.5}.check{display:flex;gap:10px;margin-top:21px;font-size:13px;line-height:1.6;color:#405b6c;align-items:start}.check input{margin-top:4px;min-width:18px;min-height:18px}.check a{color:#086d76}.honeypot{position:absolute;left:-9999px;opacity:0;pointer-events:none}button{width:100%;margin-top:22px;border:0;border-radius:7px;min-height:54px;background:#0b7c69;color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer}button:hover{background:#086454}.note{font-size:12px;color:#657c89;line-height:1.65;margin-top:15px}.error{padding:13px;background:#fff0eb;border-left:3px solid #c65a38;color:#9f3b26;margin:17px 0}footer{text-align:center;margin:23px auto;font-size:12px;color:#6c8292}footer a{color:#1d647e}@media(max-width:700px){main{grid-template-columns:1fr}aside{padding:24px}h1{font-size:27px;margin:20px 0 12px}article{padding:25px 21px}}</style></head><body>'+
+ '<style>:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#163748;background:#edf3f6}*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:clamp(18px,4vw,52px) 16px}main{max-width:930px;margin:auto;display:grid;grid-template-columns:.85fr 1.15fr;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 65px #103b4b20;border:1px solid #d5e1e7}aside{background:#0b2b3c;color:#f3fafc;padding:44px 35px}aside .brand{color:#e5c698;font-weight:850;letter-spacing:.13em;font-size:13px}h1{font-size:34px;line-height:1.16;margin:42px 0 18px}aside p{font-size:15px;color:#c3d7e0;line-height:1.75}article{padding:40px 42px}h2{font-size:25px;line-height:1.25;margin:0 0 8px}article>p{color:#687e8d;line-height:1.6;font-size:14px}label:not(.check){display:block;font-size:13px;font-weight:800;margin:21px 0 8px}input[type=text],input[type=tel],select{width:100%;font:inherit;font-size:16px;border:1px solid #b9cdd7;border-radius:6px;min-height:51px;padding:12px 14px}input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #14876f;outline-offset:3px}.phone{display:flex;align-items:center;border:1px solid #b9cdd7;border-radius:6px}.phone span{background:#edf3f6;padding:14px 13px;font-weight:800;color:#22546c}.phone input{border:0;min-width:0}small{display:block;font-size:12px;color:#61798a;margin:7px 0;line-height:1.5}.check{display:flex;gap:10px;margin-top:21px;font-size:13px;line-height:1.6;color:#405b6c;align-items:start}.check input{margin-top:4px;min-width:18px;min-height:18px}.check a{color:#086d76}.honeypot{position:absolute;left:-9999px;opacity:0;pointer-events:none}button{width:100%;margin-top:22px;border:0;border-radius:7px;min-height:54px;background:#0b7c69;color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer}button:hover{background:#086454}.note{font-size:12px;color:#657c89;line-height:1.65;margin-top:15px}.error{padding:13px;background:#fff0eb;border-left:3px solid #c65a38;color:#9f3b26;margin:17px 0}footer{text-align:center;margin:23px auto;font-size:12px;color:#6c8292}footer a{color:#1d647e}@media(max-width:700px){main{grid-template-columns:1fr}aside{padding:24px}h1{font-size:27px;margin:20px 0 12px}article{padding:25px 21px}}</style></head><body>'+
  '<main><aside><div class="brand">AR · ANGEL RESEARCH</div><h1>Join the market learning community.</h1><p>Complete a short registration to receive your WhatsApp group invitation.</p><p>Indian stock markets · IPO education · independent community</p></aside>'+
- '<article><h2>Your WhatsApp invitation</h2><p>Two required fields. No investment account is created and no investment returns are promised.</p>'+notice+form+'</article></main>'+
+ '<article><h2>Your WhatsApp invitation</h2><p>Three required fields. No investment account is created and no investment returns are promised.</p>'+notice+form+'</article></main>'+
  '<footer>ANGEL RESEARCH · <a href="'+HOME+'/privacy.html">Privacy</a> · <a href="'+HOME+'/terms.html">Terms</a> · <a href="mailto:support@angelresearchindia.com">Privacy &amp; support</a> · Securities involve risk.</footer></body></html>';
  return html(doc,unavailable?503:message?400:200);
 }
@@ -146,20 +147,20 @@ export async function handleLeadGate(request,env,record){
  if(body.get('website'))return render({message:'Invalid form details.',data:meta,formToken:await tokenNew(env)});
  const nonce=await tokenNonce(body.get('request_token'),env);
  if(!nonce)return render({message:'Your form has expired. Please use this new form.',data:meta,formToken:await tokenNew(env)});
- const name=validName(body.get('full_name')),phone=validPhone(body.get('whatsapp'));
- if(!name||!phone||body.get('consent')!=='yes')return render({message:'Enter a valid name, 10-digit Indian mobile number and required consent.',data:meta,formToken:await tokenNew(env)});
+ const name=validName(body.get('full_name')),phone=validPhone(body.get('whatsapp')),age=body.get('age_range');
+ if(!name||!phone||!['18–24','25–34','35–44','45–54','55+'].includes(age)||body.get('consent')!=='yes')return render({message:'Enter a valid name, age range, 10-digit Indian mobile number and required consent.',data:meta,formToken:await tokenNew(env)});
  let result;try{
-  result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at) VALUES(?,?,?,?,?,?,?,?)')
-   .bind(nonce,name,phone,meta.source,meta.campaign,meta.medium,body.get('updates_opt_in')==='yes'?1:0,Math.floor(Date.now()/1000)).run();
+  result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range) VALUES(?,?,?,?,?,?,?,?,?)')
+   .bind(nonce,name,phone,meta.source,meta.campaign,meta.medium,body.get('updates_opt_in')==='yes'?1:0,Math.floor(Date.now()/1000),age).run();
  }catch(_e){return render({unavailable:true})}
  if(result?.meta?.changes!==1){
   // Replaying the exact, signed form after a blocked browser redirect must
   // resume the handoff, not create more rows or force another registration.
   let previous;
   try{previous=await env.LINK_DB.prepare(
-   'SELECT full_name,whatsapp_number FROM community_leads WHERE request_nonce=?'
+   'SELECT full_name,whatsapp_number,age_range FROM community_leads WHERE request_nonce=?'
   ).bind(nonce).first()}catch(_e){return render({unavailable:true})}
-  if(previous?.full_name===name&&previous?.whatsapp_number===phone)
+  if(previous?.full_name===name&&previous?.whatsapp_number===phone&&previous?.age_range===age)
    return successPage(destination,{alreadySaved:true});
   return render({message:'This form was already processed. Please request a new invitation form.',
    data:meta,formToken:await tokenNew(env)});
@@ -180,7 +181,7 @@ export async function handleLeadAdmin(request,env){
   const before=url.searchParams.get('before')||'';
   if(before&&!/^[1-9][0-9]{0,11}$/.test(before))return json({ok:false,error:'invalid_cursor'},400,origin);
   try{
-   const q='SELECT id,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at FROM community_leads';
+   const q='SELECT id,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range FROM community_leads';
    const rows=before?
     await env.LINK_DB.prepare(q+' WHERE id < ? ORDER BY id DESC LIMIT 51').bind(Number(before)).all():
     await env.LINK_DB.prepare(q+' ORDER BY id DESC LIMIT 51').all();
