@@ -17,9 +17,9 @@ function params(){
   var q=new URLSearchParams(w.location.search);
   function clean(s){return String(s||'').slice(0,100)}
   return {
-    campaign_source:clean(q.get('utm_source')||q.get('source')||'direct'),
-    campaign_medium:clean(q.get('utm_medium')||''),
-    campaign_name:clean(q.get('utm_campaign')||''),
+    campaign_source:clean(w.AngelCampaign?.get('utm_source')||q.get('utm_source')||q.get('source')||'direct'),
+    campaign_medium:clean(w.AngelCampaign?.get('utm_medium')||q.get('utm_medium')||''),
+    campaign_name:clean(w.AngelCampaign?.get('utm_campaign')||q.get('utm_campaign')||''),
     campaign_content:clean(q.get('utm_content')||'')
   };
 }
