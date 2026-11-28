@@ -48,6 +48,22 @@ async function storage(env){
  if(!env.LINK_DB||!goodSecret(env))return false;
  try{await env.LINK_DB.prepare('SELECT id FROM community_leads LIMIT 1').first();try{await env.LINK_DB.prepare('SELECT age_range FROM community_leads LIMIT 1').first()}catch(_missing){try{await env.LINK_DB.prepare('ALTER TABLE community_leads ADD COLUMN age_range TEXT').run()}catch(_race){} await env.LINK_DB.prepare('SELECT age_range FROM community_leads LIMIT 1').first()}return true}catch(_e){return false}
 }
+
+// Optional lead metadata is isolated from mandatory registration. If the schema
+// has not yet been migrated, the original registration flow remains available.
+async function metadataReady(env){
+ try{await env.LINK_DB.prepare('SELECT device_type, operating_system, country_code, region_code, metadata_opt_in FROM community_leads LIMIT 0').all();return true}catch(_e){return false}
+}
+function leadMetadata(request,body){
+ if(body.get('metadata_opt_in')!=='yes'||request.headers.get('DNT')==='1'||request.headers.get('Sec-GPC')==='1')return [null,null,null,null,0];
+ const ua=request.headers.get('User-Agent')||'';
+ const os=/iPhone|iPad|iPod/i.test(ua)?'ios':/Android/i.test(ua)?'android':/Windows/i.test(ua)?'windows':/CrOS/i.test(ua)?'chromeos':/Macintosh|Mac OS/i.test(ua)?'macos':/Linux/i.test(ua)?'linux':'unknown';
+ const device=/iPad|Tablet|Android(?!.*Mobile)/i.test(ua)?'tablet':/iPhone|iPod|Mobile/i.test(ua)?'mobile':os==='unknown'?'unknown':'desktop';
+ const country=String(request.cf?.country||'').toUpperCase();
+ const region=String(request.cf?.regionCode||'').toUpperCase();
+ return [device,os,/^[A-Z]{2}$/.test(country)?country:null,/^[A-Z0-9-]{1,12}$/.test(region)?region:null,1];
+}
+
 function render({formToken='',data={},message='',unavailable=false}={}){
  const qs=new URLSearchParams({s:data.source||'direct',c:data.campaign||'direct',m:data.medium||'direct'}).toString();
  const notice=message?'<p class="error" role="alert">'+esc(message)+'</p>':'';
@@ -63,6 +79,7 @@ function render({formToken='',data={},message='',unavailable=false}={}){
  '<label class="check"><input type="checkbox" name="consent" value="yes" required><span>I agree to provide these details for my community invitation as explained in the <a href="'+HOME+'/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Notice</a>. This is not an investment account application.</span></label>'+
  '<label class="check"><input type="checkbox" name="updates_opt_in" value="yes"><span>Optional: I would like to receive IPO and market research updates via WhatsApp. I can withdraw my consent.</span></label>'+
  '<label class="check"><input type="checkbox" name="ads_measurement" value="yes"><span>Optional: allow additional registration conversion measurement for this request. No name, phone number or age is sent in the measurement event.</span></label>'+
+ '<label class="check"><input type="checkbox" name="metadata_opt_in" value="yes"><span>Optional: allow us to save your broad device category, operating system, country and state/region with your registration for channel reporting and technical support. You can register without agreeing. No precise location or exact device model is saved.</span></label>'+
  '<div class="honeypot" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>'+
  '<button type="submit">SUBMIT &amp; OPEN WHATSAPP →</button>'+
  '<p class="note">Your phone number and name are never placed in the WhatsApp URL. Submitting does not guarantee group admission. We never request banking passwords, trading credentials or OTPs. For privacy requests, data deletion or withdrawing updates consent, email <a href="mailto:support@angelresearchindia.com">support@angelresearchindia.com</a>.</p>'+
@@ -151,8 +168,12 @@ export async function handleLeadGate(request,env,record){
  const name=validName(body.get('full_name')),phone=validPhone(body.get('whatsapp')),age=body.get('age_range');
  if(!name||!phone||!['18–24','25–34','35–44','45–54','55+'].includes(age)||body.get('consent')!=='yes')return render({message:'Enter a valid name, age range, 10-digit Indian mobile number and required consent.',data:meta,formToken:await tokenNew(env)});
  let result;try{
-  result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range) VALUES(?,?,?,?,?,?,?,?,?)')
-   .bind(nonce,name,phone,meta.source,meta.campaign,meta.medium,body.get('updates_opt_in')==='yes'?1:0,Math.floor(Date.now()/1000),age).run();
+  const values=[nonce,name,phone,meta.source,meta.campaign,meta.medium,body.get('updates_opt_in')==='yes'?1:0,Math.floor(Date.now()/1000),age];
+  if(await metadataReady(env)){
+   result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range,device_type,operating_system,country_code,region_code,metadata_opt_in) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(...values,...leadMetadata(request,body)).run();
+  }else{
+   result=await env.LINK_DB.prepare('INSERT OR IGNORE INTO community_leads(request_nonce,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range) VALUES(?,?,?,?,?,?,?,?,?)').bind(...values).run();
+  }
  }catch(_e){return render({unavailable:true})}
  if(result?.meta?.changes!==1){
   // Replaying the exact, signed form after a blocked browser redirect must
@@ -187,12 +208,13 @@ export async function handleLeadAdmin(request,env){
   const before=url.searchParams.get('before')||'';
   if(before&&!/^[1-9][0-9]{0,11}$/.test(before))return json({ok:false,error:'invalid_cursor'},400,origin);
   try{
-   const q='SELECT id,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range FROM community_leads';
+   const ready=await metadataReady(env);
+   const q='SELECT id,full_name,whatsapp_number,source,campaign,medium,updates_opt_in,created_at,age_range'+(ready?',device_type,operating_system,country_code,region_code,metadata_opt_in':'')+' FROM community_leads';
    const rows=before?
     await env.LINK_DB.prepare(q+' WHERE id < ? ORDER BY id DESC LIMIT 51').bind(Number(before)).all():
     await env.LINK_DB.prepare(q+' ORDER BY id DESC LIMIT 51').all();
    const items=rows?.results||[],shown=items.slice(0,50);
-   return json({ok:true,leads:shown,nextBefore:items.length>50?shown[shown.length-1].id:null,retentionDays:90},200,origin);
+   return json({ok:true,leads:shown,nextBefore:items.length>50?shown[shown.length-1].id:null,retentionDays:90,metadataReady:ready},200,origin);
   }catch(_e){return json({ok:false,error:'lead_storage_unavailable'},503,origin)}
  }
  if(request.method==='DELETE'){
