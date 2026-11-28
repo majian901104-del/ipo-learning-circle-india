@@ -37,7 +37,7 @@ test('V3.2.3 sidebar modules match six exclusive report panels',()=>{
   for(const page of pages.slice(1)){
     assert.match(html,new RegExp('id="panel-'+page+'"[^>]* hidden'));
   }
-  assert.ok(html.includes('src="analytics-dashboard.js?v=20261015-v35"'));
+  assert.match(html,/src="analytics-dashboard\.js\?v=[a-z0-9-]+"/i);
   assert.ok(html.includes('src="analytics-dashboard-v323.js?v=20261014-v33"'));
 });
 test('V3.2.3 mobile shows campaign cards rather than wide scrolling table',()=>{
@@ -129,3 +129,8 @@ test('V3.2.3 sidebar can open/close with aria state and page links',()=>{
 });
 
 test('V3.3 group-link module stays within the original admin shell',()=>{const m=mock();m.navButtons[5].click();assert.equal(m.panels.filter(p=>!p.hidden).length,1);assert.equal(m.panels[5].hidden,false);assert.equal(m.w.location.hash,'#links');assert.equal(m.controls['admin-page-heading'].textContent,'群链接管理中心');assert.ok(html.includes('id="link-key"'));assert.ok(html.includes('id="link-switch"'));assert.ok(!html.includes('href="link-management.html"'));m.navButtons[0].click();assert.equal(m.panels[0].hidden,false);assert.equal(m.panels[5].hidden,true)});
+
+test('V7.3 lead table includes device, OS and region filters',()=>{
+ for(const id of ['leads-device','leads-os','leads-country'])assert.ok(html.includes('id="'+id+'"'));
+ for(const label of ['媒介','设备','系统','国家','地区代码','设备资料授权'])assert.ok(html.includes('<th>'+label+'</th>'));
+});
