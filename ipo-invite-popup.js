@@ -44,15 +44,15 @@ const next=dialog.querySelector('.ar-next');
 const q=new URLSearchParams(location.search);
 const dest=new URL('https://angel-research-conversion-v31.majian901104.workers.dev/join');
 for(const [a,b] of [['s','utm_source'],['c','utm_campaign'],['m','utm_medium']])dest.searchParams.set(a,(q.get(b)||'direct').replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,48));
-next.href=dest.href;
+next.href=dest.href;window.AngelCampaign?.decorate(next);
 let shown=false;
 function mark(){shown=true;try{localStorage.setItem(key,String(Date.now()))}catch(e){}}
 function recent(){try{return Date.now()-Number(localStorage.getItem(key)||0)<86400000}catch(e){return false}}
-function open(){if(dialog.open)return;mark();dialog.showModal();float.hidden=true;try{window.AngelAnalytics?.track('ipo_invitation_open',{button_location:'homepage_popup'})}catch(e){}}
+function open(){if(dialog.open)return;mark();dialog.showModal();float.hidden=true;try{window.AngelAnalytics?.track('ipo_invitation_open',{button_location:'sitewide_popup'})}catch(e){}}
 dialog.querySelector('.ar-close').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('close',()=>{float.hidden=false;float.focus({preventScroll:true})});
 float.addEventListener('click',open);
-function auto(){if(!shown&&!recent()&&!document.getElementById('angel-consent-banner')&&!document.querySelector('dialog[open]'))open()}
+function auto(){if(!/^\/(?:index\.html)?$/.test(location.pathname))return;if(!shown&&!recent()&&!document.getElementById('angel-consent-banner')&&!document.querySelector('dialog[open]'))open()}
 setTimeout(auto,3000);
 window.addEventListener('angel-analytics-choice',()=>setTimeout(auto,3000));
 next.addEventListener('click',()=>{try{window.AngelAnalytics?.track('ipo_invitation_click',{button_location:'ipo_popup_registration'})}catch(e){}});
