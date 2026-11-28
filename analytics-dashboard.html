@@ -130,9 +130,9 @@
  <button type="button" id="leads-reload" class="action outline">刷新记录</button>
  <button type="button" id="leads-export" class="action outline" disabled>导出筛选结果 CSV</button>
  </div></div>
- <div class="table-toolbar" style="display:flex;flex-wrap:wrap;gap:12px;margin:12px 0"><label>搜索客户 <input id="leads-search" type="search" placeholder="姓名、号码或活动"></label><label>年龄 <select id="leads-age"><option value="">全部</option><option>18–24</option><option>25–34</option><option>35–44</option><option>45–54</option><option>55+</option><option value="unknown">未记录</option></select></label><label>渠道 <input id="leads-source" type="search" placeholder="来源"></label><label>时间 <select id="leads-days"><option value="">不限</option><option value="1">24小时</option><option value="7">7天</option><option value="30">30天</option></select></label></div><p class="helper">仅筛选当前已加载记录，点击加载更早记录扩大范围。请勿将登记人数视为实际入群人数。</p><p id="leads-message" role="status" aria-live="polite" style="color:#527082;font-size:13px">登录后读取记录。</p>
- <div style="overflow-x:auto"><table style="width:100%;min-width:760px;border-collapse:collapse;font-size:13px;text-align:left">
- <thead><tr><th>提交时间 (UTC)</th><th>姓名</th><th>年龄范围</th><th>WhatsApp 手机号</th><th>来源</th><th>活动</th><th>更新同意</th><th>操作</th></tr></thead>
+ <div class="table-toolbar" style="display:flex;flex-wrap:wrap;gap:12px;margin:12px 0"><label>搜索客户 <input id="leads-search" type="search" placeholder="姓名、号码或活动"></label><label>年龄 <select id="leads-age"><option value="">全部</option><option>18–24</option><option>25–34</option><option>35–44</option><option>45–54</option><option>55+</option><option value="unknown">未记录</option></select></label><label>渠道 <input id="leads-source" type="search" placeholder="来源"></label><label>设备 <select id="leads-device"><option value="">全部</option><option value="mobile">手机</option><option value="desktop">电脑</option><option value="tablet">平板</option><option value="unknown">未知</option></select></label><label>系统 <select id="leads-os"><option value="">全部</option><option value="android">Android</option><option value="ios">iOS</option><option value="windows">Windows</option><option value="macos">macOS</option><option value="linux">Linux</option><option value="chromeos">ChromeOS</option><option value="unknown">未知</option></select></label><label>国家代码 <input id="leads-country" maxlength="2" placeholder="IN"></label><label>时间 <select id="leads-days"><option value="">不限</option><option value="1">24小时</option><option value="7">7天</option><option value="30">30天</option></select></label></div><p class="helper">仅筛选当前已加载记录，点击加载更早记录扩大范围。请勿将登记人数视为实际入群人数。</p><p id="leads-message" role="status" aria-live="polite" style="color:#527082;font-size:13px">登录后读取记录。</p>
+ <div style="overflow-x:auto"><table style="width:100%;min-width:1380px;border-collapse:collapse;font-size:13px;text-align:left">
+ <thead><tr><th>提交时间 (UTC)</th><th>姓名</th><th>年龄范围</th><th>WhatsApp 手机号</th><th>来源</th><th>活动</th><th>媒介</th><th>设备</th><th>系统</th><th>国家</th><th>地区代码</th><th>设备资料授权</th><th>更新同意</th><th>操作</th></tr></thead>
  <tbody id="leads-body"></tbody></table></div>
  <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center">
  <small id="leads-page-count">尚无可查看的记录</small><button type="button" id="leads-more" class="action outline" hidden>加载更早 50 条</button>
@@ -172,5 +172,5 @@
 <script src="analytics-dashboard-v323.js?v=20261014-v33" defer></script>
 <script src="link-management.js?v=20261015-v36" defer></script>
 <script src="ops-health-v34.js?v=20261128-v44" defer></script>
-<script src="leads-admin-v37.js?v=20261128-v41" defer></script>
+<script src="leads-admin-v37.js?v=20261128-v73" defer></script>
 </body></html>
