@@ -38,9 +38,10 @@ function visit(dir){
     // Rewrite legacy public CTAs to our controlled Cloudflare /join entry.
     // Admission enforcement is deliberately disabled until the rollout is tested.
     const original=s;
+    s=s.replace(/ga4-analytics\.js(?:\?[^"']*)?(?=["'])/g,'ga4-analytics.js?v=20261128-consent2');
     s=s.replace(/href=(["'])https:\/\/cc\.stockscode\.click\/?\1/gi,
        'href="https://angel-research-conversion-v31.majian901104.workers.dev/join" data-conversion-join');
-    if(s.includes('src="ga4-analytics.js"') || s.includes('/ga4-analytics.js"')){
+    if(/src=["'][^"']*ga4-analytics\.js(?:\?[^"']*)?["']/i.test(s)){
       if(s!==original)fs.writeFileSync(full,s,'utf8');
       skipped++;continue
     }
@@ -50,7 +51,7 @@ function visit(dir){
     const scripts='<script src="'+prefix+'conversion-config.js" defer></script>\n'
        +'<script src="'+prefix+'link-entry-v34.js" defer></script>\n'
        +'<script src="'+prefix+'ga4-config.js" defer></script>\n'
-       +'<script src="'+prefix+'ga4-analytics.js" defer></script>\n'
+       +'<script src="'+prefix+'ga4-analytics.js?v=20261128-consent2" defer></script>\n'
        +'<script src="'+prefix+'conversion-tracker.js" defer></script>\n';
     s=s.replace(/<\/head\s*>/i,scripts+'</head>');
     if(/href=(["'])https:\/\/cc\.stockscode\.click\/?\1/i.test(s))throw new Error('Legacy CTA remained in '+full);
