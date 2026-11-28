@@ -69,13 +69,15 @@
  .faq details{padding:13px 0}
  .mobile-join a{min-height:45px}
 }
+
+.inline-register{background:#fff;color:#183443;padding:clamp(20px,3vw,34px);border:1px solid #dbe2e3;border-radius:8px;scroll-margin-top:16px}.inline-register h2{font:700 27px/1.2 Arial,sans-serif;margin:0 0 7px}.inline-register>p{font-size:14px;color:#526875;margin-bottom:14px}.inline-register label:not(.reg-check){display:block;font-size:14px;font-weight:700;margin:10px 0 4px}.inline-register input:not([type=checkbox]):not([type=hidden]),.inline-register select{width:100%;min-width:0;min-height:48px;padding:10px 12px;border:1px solid #aebfc6;border-radius:4px;background:white;color:#183443;font:16px Arial,sans-serif}.reg-phone{display:flex;align-items:center;gap:8px}.reg-phone span{font-weight:700}.reg-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.4;margin-top:12px}.reg-check input{width:18px;height:18px;flex:none;margin:1px 0}.inline-register button{width:100%;margin-top:15px;cursor:pointer}.inline-register button:disabled{opacity:.6;cursor:wait}.reg-trap{position:absolute;left:-9999px}.inline-register #reg-status{font-size:13px;margin:8px 0;color:#526875}.inline-register small{font-size:12px;color:#526875}.reg-fallback{margin:6px 0!important;font-size:13px!important}.reg-fallback a{text-decoration:underline}@media(max-width:760px){.hero-inner{gap:16px;padding-top:18px}.hero h1{font-size:32px!important;margin:8px 0}.hero-desc{font-size:14px!important;margin-bottom:8px}.hero-points,.hero-copy>.join-button,.hero-copy>.link-note{display:none}.inline-register{padding:18px}.inline-register h2{font-size:23px}.inline-register label:not(.reg-check){margin-top:8px}.hero-copy{padding:0}.inline-register #reg-status{margin:6px 0}}
 </style>
 </head>
 <body>
 <a class="sr-only" href="#main">Skip to main content</a>
 <header class="site-header"><div class="container header-inner">
 <a class="identity" href="index.html" aria-label="Angel Research official site home"><span class="identity-logo" aria-hidden="true">AR</span><span><strong class="identity-name">ANGEL RESEARCH</strong><small class="identity-tag">INDIA · IPO RESEARCH</small></span></a>
-<nav class="header-actions" aria-label="Site navigation"><a class="text-link" href="#research">View Research</a><a class="header-join" data-cta="header" data-conversion-join="true" href="https://angel-research-conversion-v31.majian901104.workers.dev/join" target="_blank" rel="noopener noreferrer">JOIN FREE COMMUNITY ↗</a></nav>
+<nav class="header-actions" aria-label="Site navigation"><a class="text-link" href="#research">View Research</a><a class="header-join" data-cta="header" href="#register">JOIN FREE COMMUNITY ↗</a></nav>
 </div></header>
 <main id="main">
 <section class="hero" aria-labelledby="hero-title"><div class="container hero-inner">
@@ -84,10 +86,25 @@
 <h1 id="hero-title">India IPO insights.<br><em>Learn together, free.</em></h1>
 <p class="hero-desc">Explore IPO calendars, subscription news and listing reviews with an India-focused education community.</p>
 <div class="hero-points"><span>Mainboard &amp; SME IPOs</span><span>IPO News &amp; Key Dates</span><span>Investor Education</span></div>
-<a class="join-button" data-cta="hero" data-conversion-join="true" href="https://angel-research-conversion-v31.majian901104.workers.dev/join" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.2 7.6L3.5 20.5l1.5-4.6a8.5 8.5 0 1 1 15.5-4.4Z"/><path d="m9 9 1.4 2 1.5 1.6 2.1 1.3 1.5-1.1"/></svg> JOIN FREE IPO COMMUNITY <span aria-hidden="true">↗</span></a>
+<a class="join-button" data-cta="hero" href="#register"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.2 7.6L3.5 20.5l1.5-4.6a8.5 8.5 0 1 1 15.5-4.4Z"/><path d="m9 9 1.4 2 1.5 1.6 2.1 1.3 1.5-1.1"/></svg> JOIN FREE IPO COMMUNITY <span aria-hidden="true">↗</span></a>
 <p class="link-note">Free education · External community link · No guaranteed returns. Verify the destination before sharing personal information.</p>
 </div>
-<div class="hero-media"><img src="https://images.unsplash.com/photo-1770331373157-89d085ed7ea2?auto=format&amp;fit=crop&amp;w=1600&amp;q=88" srcset="https://images.unsplash.com/photo-1770331373157-89d085ed7ea2?auto=format&amp;fit=crop&amp;w=720&amp;q=82 720w, https://images.unsplash.com/photo-1770331373157-89d085ed7ea2?auto=format&amp;fit=crop&amp;w=1200&amp;q=85 1200w, https://images.unsplash.com/photo-1770331373157-89d085ed7ea2?auto=format&amp;fit=crop&amp;w=1600&amp;q=88 1600w" sizes="(max-width:760px) 100vw, 48vw" alt="City financial district skyline photograph" width="1000" height="1100" fetchpriority="high" decoding="async"><span class="hero-corner" aria-hidden="true"></span><div class="photo-note"><small>INDIA · CAPITAL MARKETS</small><strong>See the facts.<br>Know the risks.</strong><span>Research · Context · Education</span></div></div>
+<section class="inline-register" id="register" aria-labelledby="register-title">
+<h2 id="register-title">Join the free community</h2><p>Three short fields to request your WhatsApp invitation.</p>
+<form id="ipo-inline-form" method="post" action="https://angel-research-conversion-v31.majian901104.workers.dev/join" autocomplete="on">
+<input type="hidden" name="request_token" id="ipo-form-token">
+<label for="reg-name">Full name</label><input id="reg-name" name="full_name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Your full name">
+<label for="reg-age">Age range</label><select id="reg-age" name="age_range" required><option value="">Select age range</option><option>18–24</option><option>25–34</option><option>35–44</option><option>45–54</option><option>55+</option></select>
+<label for="reg-phone">WhatsApp number</label><div class="reg-phone"><span>+91</span><input id="reg-phone" name="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" required pattern="[6-9][0-9]{9}" minlength="10" maxlength="10" placeholder="10-digit mobile number"></div>
+<label class="reg-check"><input type="checkbox" name="consent" value="yes" required><span>I agree to provide these details for my invitation, as described in the <a href="privacy.html">Privacy Notice</a>.</span></label>
+<label class="reg-check"><input type="checkbox" name="updates_opt_in" value="yes"><span>Optional: send me future research updates via WhatsApp.</span></label>
+<div class="reg-trap" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>
+<button class="join-button" type="submit" id="reg-submit" disabled>SUBMIT &amp; OPEN WHATSAPP →</button>
+<p id="reg-status" role="status" aria-live="polite">Connecting securely…</p>
+</form>
+<p class="reg-fallback"><a id="reg-fallback" href="https://angel-research-conversion-v31.majian901104.workers.dev/join">Open the separate registration page instead →</a></p>
+<small>Free education. No guaranteed allotment or returns. Basic service statistics are kept separately from contact records.</small>
+</section>
 </div></section>
 <section class="credibility" aria-label="Our approach"><div class="container credibility-inner">
 <div class="credibility-item"><strong>Research, not rumours</strong><p>Dated information and visible sources</p></div>
@@ -107,18 +124,18 @@
 <a class="research-card" href="track-record.html"><span class="kicker">SOURCE-LABELLED RESULTS</span><h3>IPO listing reviews</h3><p>Compare reported expectations with documented listing outcomes.</p><span class="more">EXPLORE LISTINGS →</span></a>
 </div><p class="research-disclaimer">Research snapshots may not reflect today’s prices or schedules. Confirm the latest information with official issuer, NSE, BSE and SEBI sources.</p></div></section>
 <section class="end-cta"><div class="container end-grid"><div><span class="eyebrow gold">FREE COMMUNITY · INDIA FOCUSED</span><h2>Keep learning about India's IPO market.</h2><p>Explore IPO market developments with source-aware commentary and risk context. No guarantees, no unrealistic claims.</p></div>
-<div class="end-action"><a class="join-button" data-cta="bottom" data-conversion-join="true" href="https://angel-research-conversion-v31.majian901104.workers.dev/join" target="_blank" rel="noopener noreferrer">JOIN FREE IPO COMMUNITY <span aria-hidden="true">↗</span></a><small>Registration with name and WhatsApp number is required before opening an invitation</small></div>
+<div class="end-action"><a class="join-button" data-cta="bottom" href="#register">JOIN FREE IPO COMMUNITY <span aria-hidden="true">↗</span></a><small>Registration with name and WhatsApp number is required before opening an invitation</small></div>
 </div></section>
 <section class="more-options"><div class="container more-grid"><div><strong>Prefer research updates instead?</strong><p>Submit an optional request form. This does not automatically enrol you in a WhatsApp group.</p></div><a data-form-link href="apply.html">Request research updates →</a></div></section>
 <section class="faq"><div class="container faq-wrap"><span class="eyebrow dark">GOOD TO KNOW</span><h2>Before you join.</h2>
 <details><summary>Is it free to access this community?</summary><p>The community is promoted as free to join. This landing page does not request payment. External services have their own terms and access requirements.</p></details>
-<details><summary>What happens when I tap “Join”?</summary><p>Indian visitors open a secure Angel Research registration form, provide their name and WhatsApp number, and confirm the privacy notice. After successful submission, a confirmation page opens the current WhatsApp invitation. The website cannot independently verify group membership or guarantee approval.</p></details>
+<details><summary>What happens when I tap “Join”?</summary><p>Indian visitors can complete the secure registration form on this page, providing their name, age range and WhatsApp number and confirming the privacy notice. After successful submission, a confirmation page opens the current WhatsApp invitation. The website cannot independently verify group membership or guarantee approval.</p></details>
 <details><summary>Does IPO research guarantee allotment or returns?</summary><p>No. IPO investing involves market risks; grey-market premium is unofficial. Educational material is not a guarantee of allotment, listing gains or personal investment advice.</p></details>
 <details><summary>Who publishes this information?</summary><p>This page is published under the Angel Research website brand. Review our <a href="about.html">About</a>, <a href="disclosures.html">methodology and sources</a>, and <a href="regulatory.html">regulatory information</a>. Links to external institutions do not imply endorsements.</p></details>
 </div></section>
 </main>
 <footer class="footer"><div class="container footer-inner"><div><strong class="footer-brand">ANGEL RESEARCH</strong><p>India-focused market research and education. Not an offer to sell securities, personalized investment advice, or a guarantee of financial returns. Investment in securities is subject to market risk.</p></div><nav class="footer-links" aria-label="Legal and company links"><a href="about.html">About</a><a href="disclosures.html">Sources</a><a href="regulatory.html">Regulatory</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="risk-disclosure.html">Risks</a></nav></div></footer>
-<div class="mobile-join" aria-label="Join community shortcut"><a data-cta="mobile_sticky" data-conversion-join="true" href="https://angel-research-conversion-v31.majian901104.workers.dev/join" target="_blank" rel="noopener noreferrer">JOIN FREE IPO COMMUNITY ↗</a></div>
+<div class="mobile-join" aria-label="Join community shortcut"><a data-cta="mobile_sticky" href="#register">JOIN FREE IPO COMMUNITY ↗</a></div>
 <script>
 (function(){
   'use strict';
@@ -144,5 +161,40 @@
   // GA4's standard page_view covers the landing page when analytics is accepted.
 })();
 </script>
-<script src="community-entry-v39.js?v=20261015" defer></script></body>
+<script>
+(function(){
+ const form=document.getElementById('ipo-inline-form'),token=document.getElementById('ipo-form-token'),button=document.getElementById('reg-submit'),status=document.getElementById('reg-status'),fallback=document.getElementById('reg-fallback');
+ const base='https://angel-research-conversion-v31.majian901104.workers.dev';
+ let issued=0,pending=null,submitted=false;
+ function params(){
+  const q=new URLSearchParams(location.search);
+  const clean=(v,n)=>String(v||'').toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,n);
+  const source=clean(q.get('utm_source')||window.AngelCampaign?.get('utm_source'),32)||'direct';
+  const medium=clean(q.get('utm_medium')||window.AngelCampaign?.get('utm_medium'),32)||'direct';
+  let campaign=clean(q.get('utm_campaign')||window.AngelCampaign?.get('utm_campaign'),48);
+  if(!/[a-z0-9]/.test(campaign))campaign='unknown';
+  let reject=false;try{reject=localStorage.getItem('angelresearch_ga4_consent_v1')==='denied'}catch(e){reject=true}
+  return new URLSearchParams({s:source,c:campaign,m:medium,stats:reject||navigator.globalPrivacyControl===true||navigator.doNotTrack==='1'||window.doNotTrack==='1'?'0':'1'});
+ }
+ function prepare(){
+  if(pending)return pending;
+  const q=params();form.action=base+'/join?'+q;fallback.href=form.action;
+  button.disabled=true;status.textContent='Connecting securely…';
+  pending=fetch(base+'/join-token?'+q,{credentials:'omit',cache:'no-store',mode:'cors'}).then(async r=>{
+   const data=await r.json();if(!r.ok||!data.ok||!data.token)throw Error(data.error||'unavailable');
+   token.value=data.token;issued=Date.now();button.disabled=false;status.textContent='';return true;
+  }).catch(()=>{status.textContent='Unable to connect here. Please use the separate registration page below.';button.disabled=true;return false}).finally(()=>{pending=null});
+  return pending;
+ }
+ form.addEventListener('submit',async e=>{
+  if(submitted){e.preventDefault();return}
+  if(!token.value||Date.now()-issued>17*60*1000){e.preventDefault();if(await prepare())form.requestSubmit();return}
+  form.action=base+'/join?'+params();
+  submitted=true;button.disabled=true;status.textContent='Submitting securely…';
+  try{if(localStorage.getItem('angelresearch_ads_measurement_v1')==='granted'&&navigator.globalPrivacyControl!==true&&navigator.doNotTrack!=='1'&&window.doNotTrack!=='1'&&Array.isArray(window.dataLayer))window.dataLayer.push({event:'ipo_join_button_click'});}catch(_e){}
+ });
+ window.addEventListener('pageshow',e=>{if(e.persisted){submitted=false;prepare()}});
+ prepare();
+})();
+</script></body>
 </html>
