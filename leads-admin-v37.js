@@ -21,11 +21,26 @@ function rowCell(row,text){
  const td=d.createElement('td');td.textContent=String(text??'');td.style.padding='13px 8px';
  td.style.borderBottom='1px solid #e2eaf0';row.appendChild(td);return td
 }
+// Group loaded records by canonical Indian mobile number; preserve raw records for audit.
+function grouped(){
+ const groups=new Map();
+ for(const record of records){
+  const phone=String(record.whatsapp_number||'').replace(/[^0-9]/g,'');
+  const key=/^91[6-9][0-9]{9}$/.test(phone)?phone:'record:'+record.id;
+  if(!groups.has(key))groups.set(key,[]);
+  groups.get(key).push(record);
+ }
+ return [...groups.values()].map(items=>{
+  items.sort((a,b)=>Number(a.created_at)-Number(b.created_at)||Number(a.id)-Number(b.id));
+  const first=items[0],last=items[items.length-1];
+  return {...first,last_registered_at:last.created_at,registration_count:items.length,record_ids:items.map(x=>x.id)};
+ }).sort((a,b)=>Number(b.last_registered_at)-Number(a.last_registered_at)||Number(b.id)-Number(a.id));
+}
 function filtered(){
  const q=($('leads-search')?.value||'').trim().toLowerCase(),age=$('leads-age')?.value||'',source=($('leads-source')?.value||'').trim().toLowerCase();
  const device=$('leads-device')?.value||'',os=$('leads-os')?.value||'',country=($('leads-country')?.value||'').trim().toUpperCase();
  const days=Number($('leads-days')?.value||0),cutoff=Date.now()/1000-days*86400;
- return records.filter(x=>(!q||[x.full_name,x.whatsapp_number,x.campaign].some(v=>String(v||'').toLowerCase().includes(q)))&&(!age||(x.age_range||'unknown')===age)&&(!source||String(x.source||'').toLowerCase().includes(source))&&(!device||(x.device_type||'unknown')===device)&&(!os||(x.operating_system||'unknown')===os)&&(!country||(x.country_code||'').toUpperCase()===country)&&(!days||Number(x.created_at)>=cutoff));
+ return grouped().filter(x=>(!q||[x.full_name,x.whatsapp_number,x.campaign].some(v=>String(v||'').toLowerCase().includes(q)))&&(!age||(x.age_range||'unknown')===age)&&(!source||String(x.source||'').toLowerCase().includes(source))&&(!device||(x.device_type||'unknown')===device)&&(!os||(x.operating_system||'unknown')===os)&&(!country||(x.country_code||'').toUpperCase()===country)&&(!days||Number(x.last_registered_at)>=cutoff));
 }
 const deviceLabel=x=>({mobile:'手机',desktop:'电脑',tablet:'平板',unknown:'未知'}[x]||'未知');
 const osLabel=x=>({ios:'iOS',android:'Android',windows:'Windows',macos:'macOS',linux:'Linux',chromeos:'ChromeOS',unknown:'未知'}[x]||'未知');
@@ -36,14 +51,14 @@ function show(){
   const tr=d.createElement('tr');
   const time=Number(lead.created_at);
   rowCell(tr,Number.isFinite(time)?new Date(time*1000).toISOString().replace('T',' ').slice(0,16):'—');
-  rowCell(tr,lead.full_name);rowCell(tr,lead.age_range||'未记录');rowCell(tr,lead.whatsapp_number);rowCell(tr,lead.source);
+  rowCell(tr,new Date(Number(lead.last_registered_at)*1000).toISOString().replace('T',' ').slice(0,16));rowCell(tr,lead.registration_count);rowCell(tr,lead.full_name);rowCell(tr,lead.age_range||'未记录');rowCell(tr,lead.whatsapp_number);rowCell(tr,lead.source);
   rowCell(tr,lead.campaign);rowCell(tr,lead.medium||'未知');rowCell(tr,deviceLabel(lead.device_type));rowCell(tr,osLabel(lead.operating_system));rowCell(tr,lead.country_code||'未知');rowCell(tr,lead.region_code||'未知');rowCell(tr,lead.metadata_opt_in===1?'已授权':'未记录 / 未授权');rowCell(tr,lead.updates_opt_in?'已单独同意':'未同意');
-  const td=rowCell(tr,'');const del=d.createElement('button');del.type='button';del.textContent='删除';
+  const td=rowCell(tr,'');const del=d.createElement('button');del.type='button';del.textContent=lead.registration_count>1?'删除首条记录':'删除';
   del.className='action outline';del.style.minHeight='32px';del.style.padding='4px 10px';
   del.addEventListener('click',()=>remove(lead));td.appendChild(del);body.appendChild(tr)
  }
  $('leads-export').disabled=!shown.length;
- $('leads-page-count').textContent='筛选显示 '+shown.length+' / 已加载 '+records.length+' 条 · 非全库统计 · 数据保留上限 90 天 · 并非实际入群人数';
+ $('leads-page-count').textContent='筛选显示 '+shown.length+' 位 / 已加载 '+grouped().length+' 个不同号码（'+records.length+' 条原始登记） · 非全库统计 · 数据保留上限 90 天 · 并非实际入群人数';
  $('leads-more').hidden=!nextBefore;
 }
 async function load(more=false){
@@ -65,7 +80,7 @@ async function load(more=false){
  finally{loading=false;$('leads-reload').disabled=false}
 }
 async function remove(lead){
- if(!token||!w.confirm('确定永久删除 '+lead.full_name+' 的登记资料吗？此操作无法撤销。'))return;
+ if(!token||!w.confirm('确定永久删除 '+lead.full_name+' 的这条原始登记记录吗？同号码的其他记录不会删除。此操作无法撤销。'))return;
  try{
   const r=await w.fetch(apiBase+'/admin/leads/'+encodeURIComponent(lead.id),{method:'DELETE',
     headers:{Authorization:'Bearer '+token},cache:'no-store',mode:'cors'});
@@ -82,8 +97,8 @@ const csvCell=s=>{
 function exportCurrent(){
  if(!filtered().length||!token)return;
  if(!w.confirm('此 CSV 包含姓名和手机号码。请仅保存到授权设备，并妥善删除不再需要的副本。确认导出？'))return;
- const rows=[['时间 (UTC)','姓名','年龄范围','WhatsApp','来源','活动','媒介','设备','系统','国家','地区','设备资料授权','同意研究更新'],
- ...filtered().map(x=>[new Date(x.created_at*1000).toISOString(),x.full_name,x.age_range||'',x.whatsapp_number,x.source,x.campaign,x.medium||'',deviceLabel(x.device_type),osLabel(x.operating_system),x.country_code||'',x.region_code||'',x.metadata_opt_in===1?'Yes':'No / unknown',x.updates_opt_in?'Yes':'No'])];
+ const rows=[['首次登记 (UTC)','最后登记 (UTC)','登记次数','姓名','年龄范围','WhatsApp','来源','活动','媒介','设备','系统','国家','地区','设备资料授权','同意研究更新'],
+ ...filtered().map(x=>[new Date(x.created_at*1000).toISOString(),new Date(x.last_registered_at*1000).toISOString(),x.registration_count,x.full_name,x.age_range||'',x.whatsapp_number,x.source,x.campaign,x.medium||'',deviceLabel(x.device_type),osLabel(x.operating_system),x.country_code||'',x.region_code||'',x.metadata_opt_in===1?'Yes':'No / unknown',x.updates_opt_in?'Yes':'No'])];
  const blob=new Blob(['\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
  const ref=w.URL.createObjectURL(blob);const a=d.createElement('a');a.href=ref;a.download='angel-community-leads.csv';a.style.display='none';d.body.appendChild(a);a.click();a.remove();
  w.setTimeout(()=>w.URL.revokeObjectURL(ref),1000);
